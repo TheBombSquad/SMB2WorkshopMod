@@ -16,7 +16,7 @@ struct Ball
     u16 g_some_rot;
     u16 g_some_rot2;
     u16 g_some_rot3;
-    char g_not_padding; /* Used to be called padding, but I saw it written to */
+    u8 idx; /* Used to be called padding, but I saw it written to */
     u8 field_0x2f;
     float g_some_rot4;
     float g_some_rot5;
@@ -71,6 +71,7 @@ static_assert(sizeof(Ape) == 0x2f0);
 extern "C" {
 
 extern Ball balls[8];
+extern PoolInfo ball_pool_info;
 extern u32 ball_mode;
 extern u16 g_standstill_camera_frame_counter;
 
