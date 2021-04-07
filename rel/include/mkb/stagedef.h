@@ -224,7 +224,8 @@ static_assert(sizeof(StagedefBumper) == 0x20);
 struct StagedefReflectiveStageModel
 {
     char *model_name;
-    u8 unk_0x8[8];
+    struct GmaModelHeader* gma_ptr;
+    u8 unk0xc[0x4];
 } __attribute__((__packed__));
 
 static_assert(sizeof(StagedefReflectiveStageModel) == 0xc);

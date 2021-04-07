@@ -11,24 +11,11 @@ include $(DEVKITPPC)/gamecube_rules
 
 ifeq ($(REGION),)
 
-all: us gaiden monkeyed2 deluxein2 commpack2020
-us: elf2rel
-	@$(MAKE) --no-print-directory REGION=us GAMECODE=GM2E8P
-gaiden: elf2rel
-	@$(MAKE) --no-print-directory REGION=us GAMECODE=GM2EGD
-monkeyed2: elf2rel
-	@$(MAKE) --no-print-directory REGION=us GAMECODE=GM2EBJ
-deluxein2: elf2rel
-	@$(MAKE) --no-print-directory REGION=us GAMECODE=GM2EDX
-commpack2020: elf2rel
-	@$(MAKE) --no-print-directory REGION=us GAMECODE=GM2ECP
+default: elf2rel
+	@$(MAKE) --no-print-directory REGION=us 
 
 clean: clean_elf2rel
-	@$(MAKE) --no-print-directory clean_target REGION=us GAMECODE=GM2E8P
-	@$(MAKE) --no-print-directory clean_target REGION=us GAMECODE=GM2EGD
-	@$(MAKE) --no-print-directory clean_target REGION=us GAMECODE=GM2EBJ
-	@$(MAKE) --no-print-directory clean_target REGION=us GAMECODE=GM2EDX
-	@$(MAKE) --no-print-directory clean_target REGION=us GAMECODE=GM2ECP
+	@$(MAKE) --no-print-directory clean_target REGION=us 
 
 #---------------------------------------------------------------------------------
 # For now, make elf2rel a phony target
@@ -58,7 +45,7 @@ clean_elf2rel:
 	@echo "clean ... elf2rel"
 	@rm -rf $(ELF2REL_BUILD)
 
-.PHONY: all clean us gaiden monkeyed2 deluxein2 commpack2020 elf2rel clean_elf2rel
+.PHONY: default clean 
 
 else
 
@@ -68,8 +55,8 @@ else
 # SOURCES is a list of directories containing source code
 # INCLUDES is a list of directories containing extra header files
 #---------------------------------------------------------------------------------
-TARGET		:=	$(notdir $(CURDIR)).$(GAMECODE)
-BUILD		:=	build.$(GAMECODE)
+TARGET		:=	mkb2.rel_sample
+BUILD		:=	build
 SOURCES		:=	rel $(wildcard rel/*)
 DATA		:=	data  
 INCLUDES	:=	rel/include
@@ -81,24 +68,10 @@ INCLUDES	:=	rel/include
 MACHDEP		= -mno-sdata -mgcn -DGEKKO -mcpu=750 -meabi -mhard-float
 
 CFLAGS		= -nostdlib -ffreestanding -ffunction-sections -fdata-sections -g -Os -Wall $(MACHDEP) $(INCLUDE)
-CXXFLAGS	= -fno-exceptions -fno-rtti -std=gnu++20 $(CFLAGS)
+CXXFLAGS	= -fno-threadsafe-statics -fno-exceptions -fno-rtti -std=gnu++20 $(CFLAGS)
 ASFLAGS     = -mregnames # Don't require % in front of register names
 
 LDFLAGS		= -r -e _prolog -u _prolog -u _epilog -u _unresolved -Wl,--gc-sections -nostdlib -g $(MACHDEP) -Wl,-Map,$(notdir $@).map
-
-# Platform options
-ifeq ($(GAMECODE),GM2E8P)
-	PRINTVER = "US"
-else ifeq ($(GAMECODE),GM2EGD)
-	PRINTVER = "GAIDEN"
-else ifeq ($(GAMECODE),GM2EBJ)
-	PRINTVER = "MONKEYED2"
-else ifeq ($(GAMECODE),GM2EDX)
-	PRINTVER = "DELUXEIN2"
-else ifeq ($(GAMECODE),GM2ECP)
-	PRINTVER = "COMMPACK2020"
-endif
-
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
@@ -189,8 +162,8 @@ $(BUILD):
 
 #---------------------------------------------------------------------------------
 clean_target:
-	@echo clean ... $(GAMECODE)
-	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).dol $(OUTPUT).rel $(OUTPUT).gci
+	@echo clean ... default
+	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).dol $(OUTPUT).rel 
 
 #---------------------------------------------------------------------------------
 else
@@ -199,12 +172,10 @@ DEPENDS	:=	$(OFILES:.o=.d)
 
 TTYDTOOLS := $(abspath $(CURDIR)/../dep/ttyd-tools/ttyd-tools)
 ELF2REL := $(TTYDTOOLS)/elf2rel/build/elf2rel
-GCIPACK := /usr/bin/env python3 $(TTYDTOOLS)/gcipack/gcipack.py
 
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-$(OUTPUT).gci: $(OUTPUT).rel $(BANNERFILE) $(ICONFILE)
 $(OUTPUT).rel: $(OUTPUT).elf $(MAPFILE)
 $(OUTPUT).elf: $(LDFILES) $(OFILES)
 
@@ -214,10 +185,6 @@ $(OFILES_SOURCES) : $(HFILES)
 %.rel: %.elf
 	@echo output ... $(notdir $@)
 	@$(ELF2REL) $< -s $(MAPFILE) --rel-version 2
-	
-%.gci: %.rel
-	@echo packing ... $(notdir $@)
-	@$(GCIPACK) $< "rel" "Super Monkey Ball 2" "ApeSphere ($(PRINTVER))" $(BANNERFILE) $(ICONFILE) $(GAMECODE)
 	
 #---------------------------------------------------------------------------------
 # This rule links in binary data with the .jpg extension

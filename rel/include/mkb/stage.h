@@ -59,6 +59,7 @@ extern Itemgroup *itemgroups;
 extern s32 current_stage_id;
 extern u16 stage_time_frames_remaining;
 extern u16 stage_time_limit;
+extern s32 g_next_stage_id;
 
 }
 

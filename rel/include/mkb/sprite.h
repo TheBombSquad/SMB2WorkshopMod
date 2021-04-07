@@ -109,6 +109,7 @@ void sprite_replay_tick(u8 *status, Sprite *sprite);
 void sprite_loadin_stage_name_tick(u8 *status, Sprite *sprite);
 void sprite_bonus_stage_tick(u8 *status, Sprite *sprite);
 void sprite_final_stage_tick(u8 *status, Sprite *sprite);
+void sprite_monkey_counter_tick(u8 *status, Sprite *sprite);
 }
 
 }
