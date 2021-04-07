@@ -29,7 +29,7 @@ void tick();
 }
 
 namespace no_hurry_up_music {
-void init();
+void init_main_game();
 void tick();
 }
 
@@ -49,7 +49,7 @@ void tick();
 }
 
 namespace challenge_death_count {
-void init();
+void init_main_game();
 void tick();
 u32 update_death_count();
 void death_counter_sprite_tick(u8 *status, mkb::Sprite *sprite);

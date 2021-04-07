@@ -1,9 +1,14 @@
-# :confetti_ball: ApeSphere Practice Mod
+# :confetti_ball: ApeSphere-Custom 
 
-A Super Monkey Ball 2 mod for speedrun practice and general experimentation. It supports vanilla SMB2 as well as most romhacks, including Gaiden, Deluxe in 2, SMB651, Monkeyed Ball 2, and Community Pack 2020.
+An extension of ComplexPlane's [Super Monkey Ball 2 mod, ApeSphere](htps://github.com/ComplexPlane/ApeSphere), adding features useful to custom pack creators. Includes the original practice mod, as well as quality-of-life and feature-adding patches, and easier options for tweaking in-game variables.
 
 Features include:
 
+* Easy-to-modify configuration file for tweaking and enabling or disabling patches
+* All REL patches included in the [smb2-rel-hacks repo](https://github.com/TheBombSquad/smb2-rel-hacks/)
+* New patch extending reflective stage objects
+
+Original ApeSphere features included:
 * Console savestates
 * An RTA timer that tracks time spent paused
 * An individual-world practice mode
@@ -12,23 +17,20 @@ Features include:
 
 ...and more to come!
 
+Planned upcoming features:
+* Difficulty rearrangement in configuration file
+* Lighting modification in configuration file
+* Double 'Stage Select' REL patch
+* Ultimate mode patch
+* SMB1 camera toggle patch
+* Missing 'w' patch
+* Custom party game configuration (lap timer, course names, etc)
+
 # Setup
-
-To set up the mod on a **Wii console** (recommended), either follow this [video guide](https://www.youtube.com/watch?v=BwI_HtiMUiQ&list=PL7BL-I_VX5tNeBwc7jlweIXvf59QG_dMG&index=1) or this [text guide](/doc/console-setup-guide.md). _Note:_ you only need to copy the `codes` and `saves` folders in the `.zip` to your SD card, not the other files.
-
-To set up the mod on **Dolphin Emulator**, follow [this text guide](/doc/dolphin-setup-guide.md). 
 
 # Usage
 
-Press L+R at the same time on your controller to toggle the in-game menu which also shows controller bindings. For individual-world practice, head to Story Mode and press Up/Down on a savefile to change world.
-
-For a more in-depth guide, check out this [basic usage guide video](https://www.youtube.com/watch?v=dfeA8ruJx18&list=PL7BL-I_VX5tNeBwc7jlweIXvf59QG_dMG&index=2).
-
-If you have any questions, message me on Discord (`ComplexPlane#3111`).
-
-Be sure to look for the Easter egg!
-
-# Credits
+# Original ApeSphere Credits
 
 Thank you to:
 

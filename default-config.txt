@@ -1,6 +1,18 @@
-// This is the config file!
+// This is the config file for ApeSphere-Custom 0.3.0!
+// Place this in the root of your game directory, and name it config.txt
+// It should be in the same folder as the included REL file, mkb2.rel_sample.rel
+//
+// DO NOT ADD NEW LINES OR ENTRIES TO THIS FILE, ONLY MODIFY EXISTING ENTRIES!
+// IF YOU ABSOLUTELY MUST ADD NEW ENTRIES, USE TABS (\T) AND NOT SPACES!
+
+// ----------------------------------------------------------------------------
+
+// Valid values: 'enabled', 'disabled', decimal integer values
+
+// ----------------------------------------------------------------------------
 
 // Information about REL patches:
+//
 // perfect-bonus-completion
 //
 // When the number of bananas remaining on a stage that is marked as a bonus 
@@ -55,11 +67,28 @@
 // Fixes an issue where goal posts would not reflect properly, and makes any 
 // stage object with the effect bitflag 0x4 reflect in a reflective stage object.
 
-// music-id-per-stage
+// enhance-reflective-surfaces
 //
-// Draws music ID data from a per-stage list, defined below. 
+// Allows for arbritarily many mirror planes on a stage, renderring the mirror plane
+// from the origin of the reflective object nearest to the player. Also applies the
+// item group/collision header transformation to the mirror plane, allowing for
+// reflective objects to be animated.
+
+// custom-music-id
+//
+// Draws music ID data from a per-stage list, defined below, instead of basing
+// it on the active theme.
+
+// custom-theme-id
+//
+// Draws theme ID data from a per-stage list, defined below, instead of using
+// the built-in list.
 
 // ----------------------------------------------------------------------------
+
+// 'enabled' - Applies the patch
+// 'disabled' - Does not apply the patch
+
 # REL Patches {
 	perfect-bonus-completion: disabled
 	remove-desert-haze: disabled
@@ -78,10 +107,15 @@
 }
 
 // apesphere-practice
-// Whether or not to enable the ApeSphere practice mod
+// Whether or not to enable the ApeSphere practice mod.
+
 # ApeSphere {
 	apesphere-practice: disabled
 }
+
+// Stage ID to theme ID mapping. Theme IDs are in decimal.
+// The default, vanilla theme ID list is provided for your convenience.
+// A theme ID list is included with the download of this mod.
 
 # Theme IDs {
 	STAGE 0: 0
@@ -507,9 +541,15 @@
 	STAGE 420: 32
 }
 
+// To be implemented soon
+
 # Difficulty Layout {
 
 }
+
+// Stage ID to music ID mapping. Music IDs are in decimal.
+// The default, vanilla music ID list is provided for your convenience.
+// A music ID list is included with the download of this mod.
 
 # Music IDs {
 	STAGE 0: 0

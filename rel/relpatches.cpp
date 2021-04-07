@@ -41,7 +41,7 @@ namespace relpatches
     }
 
     // Nop out calls to start the hurry-up music. Call after main_game load
-    void no_hurry_up_music::init()
+    void no_hurry_up_music::init_main_game()
     {
         patch::write_nop(reinterpret_cast<void*>(0x808f509c));
         patch::write_nop(reinterpret_cast<void*>(0x808f50a4));
@@ -105,7 +105,7 @@ namespace relpatches
         // decrement life counter function, and runs the update_death_count func.
         // Then, hooks into the monkey counter sprite tick function, and calls
         // the death counter sprite tick function instead.'
-        void init()
+        void init_main_game()
         {
             memset(death_count, 0, sizeof(death_count));
 

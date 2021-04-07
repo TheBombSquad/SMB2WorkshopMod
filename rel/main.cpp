@@ -139,7 +139,7 @@ void parse_function_toggles(char* buf) {
             gc::OSReport("[mod]  Story mode character select enabled!\n");
         }
         else if is_enabled("no-hurry-up-music") {
-            main_game_init_funcs.push_back(relpatches::no_hurry_up_music::init);
+            main_game_init_funcs.push_back(relpatches::no_hurry_up_music::init_main_game);
             tick_funcs.push_back(&relpatches::no_hurry_up_music::tick);
             gc::OSReport("[mod]  Hurry up music removal enabled!\n");
         }
@@ -156,7 +156,7 @@ void parse_function_toggles(char* buf) {
             gc::OSReport("[mod]  Party game stage slot fix enabled!\n");
         }
         else if is_enabled("challenge-mode-death-count") {
-            main_game_init_funcs.push_back(relpatches::challenge_death_count::init);
+            main_game_init_funcs.push_back(relpatches::challenge_death_count::init_main_game);
             gc::OSReport("[mod]  Challenge mode death count enabled!\n");
         }
         else if is_enabled("disable-how-to-play-screen") {
