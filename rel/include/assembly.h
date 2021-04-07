@@ -46,6 +46,10 @@ void get_bgm_id_hook();
 extern u16 theme_id_lookup[relpatches::STAGE_COUNT];
 void get_theme_id_hook_1();
 void get_theme_id_hook_2();
+
+// story_mode_char_select
+void get_monkey_id_hook();
+
 }
 
 }

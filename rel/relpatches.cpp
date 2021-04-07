@@ -3,6 +3,7 @@
 #include "mkb/mkb.h"
 #include "mkb/mode.h"
 #include "assembly.h"
+#include "pad.h"
 #include <cstring>
 #include <cstdio>
 
@@ -164,7 +165,6 @@ namespace relpatches
             }
 
             sprintf(sprite->text, "%u", display);
-
         }
     }
 
@@ -222,6 +222,7 @@ namespace relpatches
             active_ig = nullptr;
         }
 
+        // Translates the nearest mirror from its origin to the current translation/rotation of its collision header
         void mirror_tick()
         {
             mkb::Ball *ball = mkb::balls;
@@ -275,4 +276,43 @@ namespace relpatches
             return mkb::math_sqrt(xcmp+ycmp+zcmp);
         }
     }
+
+    // Overrides the return value of certain functions to force the chosen monkey to be
+    // preloaded in place of AiAi
+    void story_mode_char_select::init_main_loop()
+    {
+        patch::write_branch_bl(reinterpret_cast<void*>(0x803daffc), reinterpret_cast<void*>(main::get_monkey_id_hook));
+    }
+
+    // Overrides the return value of certain functions to force the chosen monkey to be
+    // preloaded in place of AiAi
+    void story_mode_char_select::init_main_game()
+    {
+        patch::write_branch_bl(reinterpret_cast<void*>(0x808fcac4), reinterpret_cast<void*>(main::get_monkey_id_hook));
+        patch::write_branch_bl(reinterpret_cast<void*>(0x808ff120), reinterpret_cast<void*>(main::get_monkey_id_hook));
+        patch::write_branch_bl(reinterpret_cast<void*>(0x80908894), reinterpret_cast<void*>(main::get_monkey_id_hook));
+    }
+
+    // Assign the correct 'next screen' variables to redirect Story Mode to the
+    // character select screen. Also handle input to prevent Story Mode from not
+    // initializing if mode_cnt isn't set to 1.
+    void story_mode_char_select::tick()
+    {
+        if (mkb::sub_mode == mkb::SMD_SEL_NGC_MAIN) {
+            patch::write_word(reinterpret_cast<void*>(0x80921a20), 0x6000000);
+            patch::write_word(reinterpret_cast<void*>(0x80920ba0), 0xC000000);
+            if (mkb::g_currently_visible_menu_screen == 0x6) {
+                if (pad::button_pressed(gc::PAD_BUTTON_A)) {
+                    mkb::mode_cnt = 1;
+                    *(&mkb::mode_cnt+2) = 7;
+                }
+                else if (pad::button_pressed(gc::PAD_BUTTON_B)){
+                    if (mkb::g_character_selected) return;
+                    mkb::mode_cnt = 2;
+                }
+            }
+        }
+    }
+
+
 }

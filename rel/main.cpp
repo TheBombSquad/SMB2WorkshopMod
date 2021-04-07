@@ -34,8 +34,9 @@ static char* config_file_buf;
 static char config_file_path[] = "/config.txt";
 
 // For dynamically choosing to run init/tick/disp functions based on a config file
-static std::vector<void(*)()> init_funcs;
+static std::vector<void(*)()> main_loop_init_funcs;
 static std::vector<void(*)()> main_game_init_funcs;
+static std::vector<void(*)()> sel_ngc_init_funcs;
 static std::vector<void(*)()> disp_funcs;
 static std::vector<void(*)()> tick_funcs;
 
@@ -119,7 +120,6 @@ void parse_function_toggles(char* buf) {
         strncpy(key, key_start, (key_end-key_start));
         strncpy(value, key_end+2, (end_of_line-key_end)-2);
 
-        //gc::OSReport("key:%s\n", key);
         if is_enabled("perfect-bonus-completion") {
             tick_funcs.push_back(&relpatches::perfect_bonus::tick);
             gc::OSReport("[mod]  Perfect bonus completion enabled!\n");
@@ -131,6 +131,12 @@ void parse_function_toggles(char* buf) {
         else if is_enabled("story-mode-music-fix") {
             relpatches::story_continuous_music::init();
             gc::OSReport("[mod]  Continuous story mode music enabled!\n");
+        }
+        else if is_enabled("story-mode-char-select") {
+            relpatches::story_mode_char_select::init_main_loop();
+            main_game_init_funcs.push_back(&relpatches::story_mode_char_select::init_main_game);
+            tick_funcs.push_back(&relpatches::story_mode_char_select::tick);
+            gc::OSReport("[mod]  Story mode character select enabled!\n");
         }
         else if is_enabled("no-hurry-up-music") {
             main_game_init_funcs.push_back(relpatches::no_hurry_up_music::init);
@@ -187,7 +193,6 @@ void parse_function_toggles(char* buf) {
             iw::init();
             scratch::init();
 
-            tick_funcs.push_back(&pad::tick);
             tick_funcs.push_back(&unlock_everything);
             tick_funcs.push_back(&timer::tick);
             tick_funcs.push_back(&iw::tick);
@@ -317,6 +322,7 @@ void init()
                 tick_funcs[i]();
             }
 
+            pad::tick();
         });
 
     load_additional_rel_trampoline = patch::hook_function(
@@ -327,6 +333,11 @@ void init()
             if (streq(rel_filepath, "mkb2.main_game.rel")) {
                 for (unsigned int i = 0; i < main_game_init_funcs.size(); i++) {
                     main_game_init_funcs[i]();
+                }
+            }
+            else if (streq(rel_filepath, "mkb2.sel_ngc.rel")) {
+                for (unsigned int i = 0; i < sel_ngc_init_funcs.size(); i++) {
+                    sel_ngc_init_funcs[i]();
                 }
             }
         });

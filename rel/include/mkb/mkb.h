@@ -80,6 +80,9 @@ extern u32 bananas_remaining, ball_mode;
 
 extern u32 g_current_stage_id;
 
+extern u8 mode_cnt, g_currently_visible_menu_screen;
+extern bool g_character_selected;
+
 
 void draw_debugtext();
 void draw_debugtext_bg(double x1, double y1, double x2, double y2);
