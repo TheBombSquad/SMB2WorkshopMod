@@ -1,0 +1,44 @@
+Credits to Mechalico for this list
+
+00 ??? Story Mode Level Select Theme. No background objects
+01 ??? Lava theme. No background objects
+02 Jungle 1. Retains goal, lens flare
+03 Water 1. Retains water effect.
+04 Night. Water 2 theme. 
+05 Sky. Retains goal
+06 Space 1. Returns goal, lens flare
+07 Sand. Retains goal, heat haze
+08 Ice. Retains goal
+09 Storm. Retains rain.
+10 Bonus 1. Retains starshine but has it at 0,0,0.
+11 Target 1. 
+12 ??? Continue theme.
+13 ??? Continue theme.
+14 ??? 
+15 Master. Retains goal.
+16 ??? Ending?
+17 Lava
+18 Water 2
+19 Jungle 2
+20 Park
+21 Pot
+22 Space 2
+23 Electric
+24 Gear
+25 Bubbly
+26 Bonus 2
+27 Soccer
+28 Bowling 2
+29 Target 2
+30 Billiards 2
+31 Boat
+32 Whale
+34 Golf
+35 Pot for Monkey Fight.
+36 Village for story mode cutscenes.
+37 Bubbly for story mode.
+38 Park for story mode.
+39 Gear for story mode.
+40 Underwater for story mode.
+41 Ocean surface for story mode.
+42 Bowling for story mode.

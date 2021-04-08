@@ -25,10 +25,13 @@ Planned upcoming features:
 * SMB1 camera toggle patch
 * Missing 'w' patch
 * Custom party game configuration (lap timer, course names, etc)
+* Custom stage timers
+* No story mode cutscene REL aptch
+* Custom UI element names (replacing Stage with Floor, etc)
 
-# Setup
+# Setup and Usage
 
-# Usage
+Instructions for setup and usage of this mod are located in the [relevant section](https://docs.google.com/document/d/194QZxrimkjHEzSSMKbafs86PnmiYmFBZUnoaEnks4es/edit#heading=h.t4unx1ftb63d) of the Super Monkey Ball Custom Level Guide.
 
 # Original ApeSphere Credits
 

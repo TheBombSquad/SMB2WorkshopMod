@@ -27,9 +27,7 @@
 // story-mode-music-fix
 //
 // Prevents the world music from being interrupted by the stage select music 
-// in Story Mode. Also prevents the volume of the music from being lowered 
-// when the game is paused. The 'nopause' version of this patch does not 
-// have the aforementioned feature.
+// in Story Mode.
 
 // story-mode-char-select
 //
@@ -69,7 +67,7 @@
 
 // enhance-reflective-surfaces
 //
-// Allows for arbritarily many mirror planes on a stage, renderring the mirror plane
+// Allows for arbitrarily many mirror planes on a stage, rendering the mirror plane
 // from the origin of the reflective object nearest to the player. Also applies the
 // item group/collision header transformation to the mirror plane, allowing for
 // reflective objects to be animated.
