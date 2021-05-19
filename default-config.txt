@@ -29,6 +29,10 @@
 // Prevents the world music from being interrupted by the stage select music 
 // in Story Mode.
 
+// no-music-vol-decrease-on-pause
+//
+// Prevents the music volume from being lowered when the game is paused.
+
 // story-mode-char-select
 //
 // Allows the player to select between the four playable monkeys in Story Mode.
@@ -91,6 +95,7 @@
 	perfect-bonus-completion: disabled
 	remove-desert-haze: disabled
 	story-mode-music-fix: disabled
+	no-music-vol-decrease-on-pause: disabled
 	story-mode-char-select: disabled
 	no-hurry-up-music: disabled
 	fix-revolution-slot: disabled

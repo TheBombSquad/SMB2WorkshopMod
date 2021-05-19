@@ -40,6 +40,11 @@ namespace relpatches
         patch::write_nop(reinterpret_cast<void*>(0x80273aa0));
     }
 
+    void no_music_vol_decrease_on_pause::init()
+    {
+        patch::write_nop(reinterpret_cast<void*>(0x802a32a8));
+    }
+
     // Nop out calls to start the hurry-up music. Call after main_game load
     void no_hurry_up_music::init_main_game()
     {

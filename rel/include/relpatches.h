@@ -22,6 +22,11 @@ void init();
 void tick();
 }
 
+namespace no_music_vol_decrease_on_pause {
+void init();
+void tick();
+}
+
 namespace story_mode_char_select {
 void init_main_loop();
 void init_main_game();

@@ -132,6 +132,10 @@ void parse_function_toggles(char* buf) {
             relpatches::story_continuous_music::init();
             gc::OSReport("[mod]  Continuous story mode music enabled!\n");
         }
+        else if is_enabled("no-music-vol-decrease-on-pause") {
+            relpatches::no_music_vol_decrease_on_pause::init();
+            gc::OSReport("[mod] No music volume decrease on pause enabled!");
+        }
         else if is_enabled("story-mode-char-select") {
             relpatches::story_mode_char_select::init_main_loop();
             main_game_init_funcs.push_back(&relpatches::story_mode_char_select::init_main_game);
