@@ -134,7 +134,7 @@ void parse_function_toggles(char* buf) {
         }
         else if is_enabled("no-music-vol-decrease-on-pause") {
             relpatches::no_music_vol_decrease_on_pause::init();
-            gc::OSReport("[mod] No music volume decrease on pause enabled!");
+            gc::OSReport("[mod] No music volume decrease on pause enabled!\n");
         }
         else if is_enabled("story-mode-char-select") {
             relpatches::story_mode_char_select::init_main_loop();
@@ -183,6 +183,10 @@ void parse_function_toggles(char* buf) {
         else if is_enabled("custom-theme-id") {
             relpatches::theme_id_per_stage::init();
             gc::OSReport("[mod]  Custom theme ID patch enabled!\n");
+        }
+        else if is_enabled("skip-intro-movie") {
+            relpatches::skip_intro_movie::init();
+            gc::OSReport("[mod]  Skipping intro movie!\n");
         }
         else if is_enabled("apesphere-practice") {
             strcpy(reinterpret_cast<char *>(0x8047f4ec), "APESPHERE PRACTICE MOD");

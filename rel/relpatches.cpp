@@ -40,6 +40,7 @@ namespace relpatches
         patch::write_nop(reinterpret_cast<void*>(0x80273aa0));
     }
 
+    // Nop a call to a function that decreases in-game volume on pause
     void no_music_vol_decrease_on_pause::init()
     {
         patch::write_nop(reinterpret_cast<void*>(0x802a32a8));
@@ -319,5 +320,14 @@ namespace relpatches
         }
     }
 
+    // Hooks into the smd_adv_first_logo_tick function, calling our own tick function
+    void skip_intro_movie::init() {
+        patch::write_branch_bl(reinterpret_cast<void*>(0x8027ec6c), reinterpret_cast<void*>(tick));
+    }
+
+    // Immediately goes to the title screen
+    void skip_intro_movie::tick() {
+        mkb::sub_mode_request = mkb::SMD_ADV_MOVIE_RETURN;
+    }
 
 }

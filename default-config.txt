@@ -86,6 +86,11 @@
 // Draws theme ID data from a per-stage list, defined below, instead of using
 // the built-in list.
 
+// skip-intro-movie
+//
+// Skips the AV logo and intro movie sequence on game start, immediately
+// skipping to the title screen.
+
 // ----------------------------------------------------------------------------
 
 // 'enabled' - Applies the patch
@@ -107,6 +112,7 @@
 	enhance-reflective-surfaces: disabled
 	custom-music-id: disabled
 	custom-theme-id: disabled
+	skip-intro-movie: disabled
 }
 
 // apesphere-practice

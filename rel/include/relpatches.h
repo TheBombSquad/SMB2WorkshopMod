@@ -86,4 +86,9 @@ namespace theme_id_per_stage {
 void init();
 }
 
+namespace skip_intro_movie {
+void init();
+void tick();
+}
+
 }
