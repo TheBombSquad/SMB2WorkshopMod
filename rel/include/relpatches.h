@@ -91,4 +91,9 @@ void init();
 void tick();
 }
 
+namespace smb1_camera_toggle {
+void init();
+void tick();
+}
+
 }

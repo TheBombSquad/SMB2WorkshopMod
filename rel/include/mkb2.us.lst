@@ -8037,6 +8037,7 @@
 803DDE98:g_camera_fov
 803DDEA8:g_camera_turn_rate_scale
 803DDEC0:camera_height
+803DDEC8:camera_pivot_height
 803DDED0:camera_distance
 803DE6B0:g_some_light_color
 803DE790:FLOAT20000

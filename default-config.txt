@@ -113,6 +113,7 @@
 	custom-music-id: disabled
 	custom-theme-id: disabled
 	skip-intro-movie: disabled
+	smb1-camera-toggle: disabled
 }
 
 // apesphere-practice
