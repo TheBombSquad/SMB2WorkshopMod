@@ -189,6 +189,7 @@ void parse_function_toggles(char* buf) {
             gc::OSReport("[mod]  Skipping intro movie!\n");
         }
         else if is_enabled("smb1-camera-toggle") {
+            relpatches::smb1_camera_toggle::init();
             tick_funcs.push_back(relpatches::smb1_camera_toggle::tick);
             gc::OSReport("[mod]  SMB1 camera toggle enabled!\n");
         }
