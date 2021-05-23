@@ -204,7 +204,6 @@ void parse_function_toggles(char* buf) {
             savestate::init();
             timer::init();
             iw::init();
-            scratch::init();
 
             tick_funcs.push_back(&unlock_everything);
             tick_funcs.push_back(&timer::tick);
@@ -235,6 +234,7 @@ void init()
 {
     gc::OSReport("[mod] ApeSphere-Custom version 0.3.0 loaded\n");
     heap::init();
+    scratch::init();
     perform_assembly_patches();
 
     // Load our config file
@@ -336,6 +336,7 @@ void init()
             }
 
             pad::tick();
+            scratch::tick();
         });
 
     load_additional_rel_trampoline = patch::hook_function(
