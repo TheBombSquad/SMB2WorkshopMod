@@ -85,6 +85,7 @@ extern bool g_character_selected;
 
 extern u32 next_stobj_id;
 
+extern u32 g_some_other_flags;
 
 void draw_debugtext();
 void draw_debugtext_bg(double x1, double y1, double x2, double y2);
@@ -100,6 +101,7 @@ void g_fancy_memcpy(void *dest,void *src,size_t count);
 void *memset (void * ptr, int value, size_t num);
 void event_stobj_init();
 int spawn_stobj(Stobj *stobj);
+int spawn_item(Item *item);
 }
 
 }

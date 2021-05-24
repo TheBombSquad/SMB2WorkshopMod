@@ -84,8 +84,11 @@ extern "C"
 extern Item items[MAX_ITEMS];
 extern PoolInfo item_pool_info;
 extern u32 g_next_item_id;
+extern u32 some_item_thing;
 
 void item_coin_init(Item* item);
+void item_coin_tick(Item* item);
+void item_coin_disp(Item* item);
 void item_coin_coli(Item* item, PhysicsBall* phys_ball);
 }
 

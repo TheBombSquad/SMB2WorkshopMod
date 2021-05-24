@@ -242,6 +242,8 @@ void init()
     if (config_file_length != 0) {
         // Round the length of the config file to a multiple of 32, necessary for DVDReadAsyncPrio
         config_file_length = (config_file_info.length + 0x1f) & 0xffffffe0;
+        gc::OSReport("gonna alloc %d! don't exploooode\n", config_file_length);
+
         config_file_buf = static_cast<char*>(heap::alloc_from_heap(config_file_length));
         config_file_length = gc::read_entire_file_using_dvdread_prio_async(&config_file_info, config_file_buf, config_file_length, 0);
         char* eof = config_file_buf + config_file_info.length;
