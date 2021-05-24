@@ -6,6 +6,7 @@
 namespace scratch
 {
 
+
     static bool play = false;
     static bool is_alt_frame = false;
     static int value_file_length;
@@ -81,44 +82,38 @@ namespace scratch
         }
     }
 
+    int round32(int i) {
+        return (i + 0x1f) & 0xffffffe0;
+    }
     void read_bad_apple(int start) {
+        gc::OSReport("[d] read_bad_apple called with param %d\n", start);
         value_file_length = gc::DVDOpen(value_file_path, &value_file_info);
         if (value_file_length != 0) {
+            gc::OSReport("[d] enterring function...\n");
             int length = CHUNK_SIZE;
-            value_file_length = (value_file_info.length + 0x1f) & 0xffffffe0;
-            if (start + CHUNK_SIZE > value_file_length) {
-                length = (value_file_length-start)+0x1f & 0xffffffe0;
-            }
+            bool adjusted = false;
 
-            gc::OSReport("Initial offset: %x\n", start);
-            //gc::OSReport("Attempting read %d of file at %x, offset %d\n", length, bad_apple, start);
-            bool adjust = false;
-            int delta = 0;
+            value_file_length = round32(value_file_info.length);
+
+            if ((start+CHUNK_SIZE) > value_file_length) {
+                gc::OSReport("[d] length adjusted due to near eof (asked for %d, with left: %d)\n", (start+CHUNK_SIZE), value_file_length);
+                length = round32(value_file_length-start);
+            }
+            gc::OSReport("[d] length: %d\n", length);
+
             if (start % 4 != 0) {
-                do {
-                    delta += 2;
-                    start = start-delta;
-                }
-                while ((start % 4 != 0));
-                adjust = true;
+                start = start-2;
+                adjusted = true;
             }
 
-            if (adjust) {
-                gc::OSReport("ADJUSTING!!\n");
-                length = (length+delta)+0x1f & 0xffffffe0;
-                bad_apple = bad_apple+delta;
-            }
-
-            if (chunks > 1) {
-                gc::OSReport("Shifting up %d\n", ((chunks-1)*2));
-                bad_apple = bad_apple + ((chunks-1)*2);
-            }
+            gc::OSReport("[d] reading\n");
             value_file_length = gc::read_entire_file_using_dvdread_prio_async(&value_file_info, bad_apple, length, start);
 
-            gc::OSReport("Read %d of file at %x, adjusted offset %x\n", length, bad_apple, start);
-            gc::OSReport("First char loaded as: %x\n", *bad_apple);
+            gc::OSReport("[d] read %x at %x with offset %d\n", length, bad_apple, start);
 
-
+            if (adjusted) {
+                bad_apple = bad_apple + 2;
+            }
         }
         gc::DVDClose(&value_file_info);
     }
@@ -220,21 +215,17 @@ namespace scratch
 
                         if (counter == 0) {
                             u32 current_pos = active_char-bad_apple;
-                            if (current_pos+2 == CHUNK_SIZE) {
+                            if (current_pos+32 >= CHUNK_SIZE) {
                                 chunks++;
-                                //char old = *active_char;
-                                //char old2 = *(active_char+1);
-                                //gc::OSReport("active_char: %x\n", active_char);
-                                gc::OSReport("chunks: %d\n", chunks);
-                                gc::OSReport("current sequence is %x %x %x %x.\n", *active_char, *(active_char+1), *(active_char+2), *(active_char+3));
+                                gc::OSReport("[p] chunks read: %d\n", chunks);
+                                gc::OSReport("[p] current char is %x %x.\n", *active_char, *(active_char+1));
                                 read_bad_apple(current_pos + processed_data);
                                 active_char = bad_apple;
-                                gc::OSReport("new sequence is %x %x %x %x.\n", *active_char, *(active_char+1), *(active_char+2), *(active_char+3));
+                                gc::OSReport("[p] new sequence is %x %x %x %x %x %x.\n", *active_char, *(active_char+1), *(active_char+2), *(active_char+3), *(active_char+4), *(active_char+5));
                                 processed_data += current_pos;
-                                //gc::OSReport("MISALIGN CHECK: char %x %x %x compared to %x %x\n", processed_data, old, old2, *(bad_apple), *(bad_apple+1));
                             }
+
                             active_char = active_char+2;
-                            current_pos += 2;
                             pix_data = *active_char;
                             counter = *(active_char+1);
                             //gc::OSReport("%x - %x %x\n", (active_char-bad_apple), pix_data, counter);
