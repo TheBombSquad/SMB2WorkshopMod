@@ -5385,7 +5385,7 @@
 803170C4:event_stobj_collision_tick
 803170FC:event_stobj_collision_dest
 80317100:event_stobj_collision_child_tick
-80317550:FUN_80241318
+80317550:g_some_collision_check
 803176BC:FUN_80241484
 80317970:FUN_80241738
 80317A6C:event_stobj_init

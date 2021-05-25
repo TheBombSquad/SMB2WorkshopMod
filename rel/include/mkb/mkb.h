@@ -102,6 +102,11 @@ void *memset (void * ptr, int value, size_t num);
 void event_stobj_init();
 int spawn_stobj(Stobj *stobj);
 int spawn_item(Item *item);
+u32 g_some_collision_check
+               (double ball_scale,double item_scale,Vec3f *ball_prev_pos,Vec3f *ball_pos,
+               Vec3f *item_pos_copy,Vec3f *item_pos);
+
+               int sprintf(char *buffer,char *format,...);
 }
 
 }

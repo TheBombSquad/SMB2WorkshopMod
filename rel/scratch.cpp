@@ -16,10 +16,10 @@ namespace scratch
     static char* bad_apple;
     static mkb::Item* first_banana = nullptr;
     static int frame_counter = 0;
-    static constexpr u32 WIDTH = 32;
-    static constexpr u32 HEIGHT = 24;
-    static constexpr u32 BANANA_COUNT = 768;
-    static constexpr u32 CHUNK_SIZE = 0x18000;
+    static constexpr u32 WIDTH = 40;
+    static constexpr u32 HEIGHT = 30;
+    static constexpr u32 BANANA_COUNT = 1200;
+    static constexpr u32 CHUNK_SIZE = 0x6000;
     static mkb::Item* items_big;
     static mkb::PoolInfo item_big_pool_info;
     static u8 item_big_status_list[BANANA_COUNT];
@@ -27,6 +27,7 @@ namespace scratch
     static char* active_char;
     static u32 processed_data = 0;
     static s8 chunks = 0;
+    static void (*sprtick)(u8 *status,mkb::Sprite *sprite);
 
     void event_item_init_new() {
         gc::OSReport("enterring init free: %d to alloc %d\n", heap::get_free_space(), (BANANA_COUNT*0xb4));
@@ -53,9 +54,16 @@ namespace scratch
             int item_ctr = item_big_pool_info.upper_bound;
 
             while (0 < item_ctr) {
-                //gc::OSReport("checking item %x ctr %d\n", &item, item_ctr);
                 if (*item_status != 0) {
-                    //gc::OSReport("ticking item %x\n", &item);
+                    if (item->field_0xc != 0) {
+                        item->field_0xc = item->field_0xc + -1;
+                    }
+                    if (0 < (short)item->g_some_flag2) {
+                        item->g_some_flag2 = item->g_some_flag2 + -1;
+                    }
+                    if (item->g_some_flag2 == 0) {
+                        *item_status = 0;
+                    }
                     mkb::item_coin_tick(item);
                 }
                 item_ctr--;
@@ -67,6 +75,31 @@ namespace scratch
         return;
     }
 
+    void coli_items_new() {
+        mkb::Item* item = items_big;
+        u8* item_status = item_big_status_list;
+        int item_ctr = item_big_pool_info.upper_bound;
+
+        mkb::PhysicsBall ball;
+        mkb::init_physicsball_from_ball(mkb::current_ball, &ball);
+        while (0 < item_ctr) {
+            if (*item_status != 0 && (item->g_some_bitfield & 2) != 0 && (item->field_0xc == 0)) {
+                u32 coli_check = mkb::g_some_collision_check(ball.ball_size, item->scale, &ball.prev_pos, &ball.pos, &item->g_position_copy, &item->position);
+
+                if (coli_check != 0 && item->scale > 0.1) {
+                    item->field_0xc = 8;
+                    mkb::item_coin_coli(item, &ball);
+                    item->g_some_flag = 6;
+                    item->g_some_bitfield |= 1;
+
+
+                }
+            }
+            item_ctr--;
+            item_status++;
+            item++;
+        }
+    }
     void draw_items_new() {
         mkb::Item* item = items_big;
         u8* item_status = item_big_status_list;
@@ -131,29 +164,27 @@ namespace scratch
         //draw
         patch::write_blr(reinterpret_cast<void*>(0x8031589c));
 
+        // coli
+        sprtick = patch::hook_function(
+            mkb::sprite_hud_stage_name_tick, [](u8 *status, mkb::Sprite *sprite)
+            {
+                sprtick(status, sprite);
+
+                if (mkb::itemgroups[2].playback_state == mkb::PLAYBACK_FORWARD) {
+                    if (sprite->field_0x1 == 0x3) {
+                        mkb::sprintf(sprite->text, "BAD BANANA\0");
+                    }
+                }
+
+            });
+
+       patch::write_blr(reinterpret_cast<void*>(0x802a5e94));
 
     }
 
-    void tick() {
-
-        if (initialized) {
-            event_item_tick_new();
-            draw_items_new();
-        }
-
-        if (mkb::main_mode == mkb::MD_GAME && (mkb::sub_mode == mkb::SMD_GAME_PLAY_MAIN || mkb::sub_mode == mkb::SMD_GAME_READY_MAIN)) {
-            if (pad::button_pressed(gc::PAD_BUTTON_RIGHT)) {
+    void create_bananas() {
                 event_item_init_new();
                 initialized = true;
-            }
-
-            if (pad::button_pressed(gc::PAD_BUTTON_A)) {
-                u32 freeHeapSpace = heap::get_free_space();
-                gc::OSReport("free: %d\n", freeHeapSpace);
-            }
-            if (pad::button_pressed(gc::PAD_BUTTON_X)) {
-                gc::OSReport("Creating\n");
-
                 for (int x = 0; x < WIDTH; x++) {
                     for (int y = 0; y < HEIGHT; y++) {
                         gc::OSReport("Creating %d, %d\n", x, y);
@@ -162,9 +193,9 @@ namespace scratch
                         mkb::memset(&banana,0,0xb4);
                         banana.type = mkb::BANANA_SINGLE;
 
-                        banana.position.x = static_cast<float>(x)-8.0;
-                        banana.position.y = static_cast<float>(-y)+14.0;
-                        banana.position.z = 20;
+                        banana.position.x = static_cast<float>(x)-20;
+                        banana.position.y = static_cast<float>(-y)+5;
+                        banana.position.z = -70;
                         banana.itemgroup_idx = 0;
 
                         int item_pool_iter = mkb::pool_alloc(&item_big_pool_info, 1);
@@ -179,22 +210,57 @@ namespace scratch
                             items_big[item_pool_iter].g_position_copy.x = items_big[item_pool_iter].position.x;
                             items_big[item_pool_iter].g_position_copy.y = items_big[item_pool_iter].position.y;
                             items_big[item_pool_iter].g_position_copy.z = items_big[item_pool_iter].position.z;
-                            items_big[item_pool_iter].item_coli_func = mkb::item_coin_coli;
+                            items_big[item_pool_iter].scale = 0;
+                            items_big[item_pool_iter].item_coli_func = &mkb::item_coin_coli;
                             items_big[item_pool_iter].id = mkb::g_next_item_id;
-                            items_big[item_pool_iter].shadow_intensity = 0.0;
-                            items_big[item_pool_iter].field_0x64 = 0;
+                            //items_big[item_pool_iter].shadow_intensity = 0.0;
+                            //items_big[item_pool_iter].field_0x64 = 0;
                             if (first_banana == nullptr) first_banana = &items_big[item_pool_iter];
                             mkb::g_next_item_id++;
                         }
 
                     }
                 }
-            }
-            if (pad::button_pressed(gc::PAD_BUTTON_Y)) {
+    }
+
+    void start_playback() {
                 play = true;
                 gc::OSReport("Now playing\n");
                 frame_counter = 0;
                 active_char = bad_apple;
+                processed_data = 0;
+    }
+
+    void tick() {
+
+        if (initialized) {
+            event_item_tick_new();
+            draw_items_new();
+            coli_items_new();
+
+            // item list replacement
+            //patch::write_word(reinterpret_cast<void*>(0x803172b4), 0x3c00804d);
+            //patch::write_word(reinterpret_cast<void*>(0x803172b8), 0x6000b540);
+            // item pool replacement
+            //patch::write_word(reinterpret_cast<void*>(0x803172c0), 0x3c60804d);
+            //patch::write_word(reinterpret_cast<void*>(0x803172c4), 0x6063147c);
+        }
+
+        if (mkb::main_mode == mkb::MD_GAME && (mkb::sub_mode == mkb::SMD_GAME_PLAY_MAIN || mkb::sub_mode == mkb::SMD_GAME_READY_MAIN)) {
+            if (pad::button_pressed(gc::PAD_BUTTON_A)) {
+                u32 freeHeapSpace = heap::get_free_space();
+                gc::OSReport("free: %d\n", freeHeapSpace);
+                gc::OSReport("big item: %x bpu: %x, big pool ub: %x\n", &items_big, &item_big_pool_info, &item_big_pool_info.upper_bound);
+            }
+
+            if (mkb::itemgroups[2].playback_state == mkb::PLAYBACK_FORWARD && !play) {
+                mkb::stage_time_frames_remaining = 6520*2;
+                create_bananas();
+                start_playback();
+            }
+
+            if (frame_counter >= 6565) {
+                start_playback();
             }
 
             if (play) {
@@ -209,7 +275,12 @@ namespace scratch
 
 
                     while (active_pix < (WIDTH*HEIGHT)) {
-                        first_banana[active_pix].scale = (static_cast<float>(pix_data)/255.0)*0.5;
+                        if ((first_banana[active_pix].g_some_bitfield & 1) == 0) {
+                            first_banana[active_pix].scale = (static_cast<float>(pix_data)/255.0)*0.5;
+                        }
+                        else {
+                            first_banana[active_pix].scale = 0;
+                        }
                         active_pix++;
                         counter--;
 

@@ -88,11 +88,45 @@ struct Ape
 
 static_assert(sizeof(Ape) == 0x2f0);
 
+struct PhysicsBall { // A representation of a Ball with just the physics/collision-related info
+    u32 g_flags;
+    struct Vec3f pos;
+    struct Vec3f prev_pos;
+    struct Vec3f vel;
+    float ball_size;
+    float acceleration;
+    float restitution;
+    u32 field_0x34;
+    u8 field_0x38;
+    u8 field_0x39;
+    u8 field_0x3a;
+    u8 field_0x3b;
+    u8 field_0x3c;
+    u8 field_0x3d;
+    u8 field_0x3e;
+    u8 field_0x3f;
+    u8 field_0x40;
+    u8 field_0x41;
+    u8 field_0x42;
+    u8 field_0x43;
+    struct Vec3f field_0x44;
+    u8 field_0x50;
+    u8 field_0x51;
+    u8 field_0x52;
+    u8 field_0x53;
+    u32 field_0x54;
+    float field_0x58;
+    u32 itemgroup_idx; // The itemgroup that this PhysicsBall is relative to, aka in the local space of
+};
+
 extern "C" {
 
 extern Ball balls[8];
+extern Ball* current_ball;
 extern u32 ball_mode;
 extern u16 g_standstill_camera_frame_counter;
+
+void init_physicsball_from_ball(Ball *ball,PhysicsBall *physicsball);
 
 }
 
