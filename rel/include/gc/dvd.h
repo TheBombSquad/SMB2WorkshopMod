@@ -40,6 +40,8 @@ void DVDChangeDir(char *dirName);
 bool DVDOpenDir(char *dirName, DVDDir *dir);
 bool DVDClose(DVDFileInfo *fileInfo);
 u32 read_entire_file_using_dvdread_prio_async(DVDFileInfo *fileInfo,void *addr,s32 length,s32 offset);
+bool DVDReadAsyncPrio (DVDFileInfo *fileInfo,void *addr,s32 length,s32 offset, void *callback, s32 prio);
+void mark_finished_waiting_for_dvdread(s32 result,DVDFileInfo *file_info);
 
 // This used to be a documented public-facing SDK function but it was removed in post-2000 SDKs.
 // Still present in SMB2 and potentially useful to us.

@@ -15,6 +15,7 @@ extern "C"
 {
 
 s32 pool_alloc(PoolInfo *info, u8 status);
+s32 pool_clear(PoolInfo *info);
 
 }
 

@@ -5361,7 +5361,7 @@
 80315584:event_item_tick
 803157E0:event_item_dest
 8031589C:g_draw_items
-80315A38:FUN_8023f800
+80315A38:spawn_item
 80315BC8:g_something_with_view_stage_and_item
 80315FFC:FUN_8023fdc4
 803160D8:FUN_8023fea0
@@ -5385,7 +5385,7 @@
 803170C4:event_stobj_collision_tick
 803170FC:event_stobj_collision_dest
 80317100:event_stobj_collision_child_tick
-80317550:FUN_80241318
+80317550:g_some_collision_check
 803176BC:FUN_80241484
 80317970:FUN_80241738
 80317A6C:event_stobj_init
@@ -14964,3 +14964,4 @@ E000002C:mtxa_23
 E0000094:locked_cache_mtx_stack_ptr
 E000019C:e
 E00001A0:0.5
+805E014C:some_item_thing
