@@ -394,4 +394,14 @@ namespace relpatches
 
         }
     }
+
+    // Defines the missing lowercase 'w' character and opints the game's duplicate 't' to the new 'w'.
+    namespace fix_missing_w {
+        static char CHAR_w[4] = {'w', '\0', '\0', '\0'};
+
+        void init_main_game() {
+        mkb::nameentry_character_ptr_list[62] = &(CHAR_w[0]);
+        gc::OSReport("patched %x to %x with %x\n", &mkb::nameentry_character_ptr_list, &(mkb::nameentry_character_ptr_list[46]), &(CHAR_w[0]));
+        }
+    }
 }

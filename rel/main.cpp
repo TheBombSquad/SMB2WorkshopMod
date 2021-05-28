@@ -193,6 +193,10 @@ void parse_function_toggles(char* buf) {
             tick_funcs.push_back(relpatches::smb1_camera_toggle::tick);
             gc::OSReport("[mod]  SMB1 camera toggle enabled!\n");
         }
+        else if KEY_ENABLED("fix-missing-w") {
+            main_game_init_funcs.push_back(relpatches::fix_missing_w::init_main_game);
+            gc::OSReport("[mod]  Missing 'w' restored!");
+        }
         else if KEY_ENABLED("apesphere-practice") {
             strcpy(reinterpret_cast<char *>(0x8047f4ec), "APESPHERE PRACTICE MOD");
             patch::write_branch(reinterpret_cast<void *>(0x8032ad0c),

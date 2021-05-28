@@ -88,9 +88,6 @@ extern u32 next_stobj_id;
 extern u32 g_some_other_flags;
 
 extern u32 active_monkey_id;
-extern u8 g_some_nameentry_length;
-
-extern char CHAR_A, CHAR_I, CHAR_M, CHAR_E, CHAR_B, CHAR_Y, CHAR_G, CHAR_O, CHAR_N, CHAR_H, CHAR_SPACE;
 
 void draw_debugtext();
 void draw_debugtext_bg(double x1, double y1, double x2, double y2);

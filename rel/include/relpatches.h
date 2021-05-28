@@ -97,4 +97,9 @@ void init();
 void tick();
 }
 
+namespace fix_missing_w {
+void init_main_game();
+void tick();
+}
+
 }

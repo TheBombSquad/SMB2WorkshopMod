@@ -54,6 +54,11 @@ extern char start_game_from_beginning_text[36];
 extern u16 curr_world;
 
 extern char* story_file_name[6];
+extern char* nameentry_character_ptr_list[];
+
+extern u8 g_some_nameentry_length;
+
+extern char CHAR_A, CHAR_I, CHAR_M, CHAR_E, CHAR_B, CHAR_Y, CHAR_G, CHAR_O, CHAR_N, CHAR_H, CHAR_SPACE;
 }
 
 }
