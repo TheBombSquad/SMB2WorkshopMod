@@ -52,6 +52,8 @@ extern u8 selected_story_file_idx;
 extern char continue_saved_game_text[40];
 extern char start_game_from_beginning_text[36];
 extern u16 curr_world;
+
+extern char* story_file_name[6];
 }
 
 }

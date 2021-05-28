@@ -18,8 +18,8 @@
 #include <cstdlib>
 #include <vector>
 
-#define streq(x,y) (strcmp(x,y)==0)
-#define is_enabled(x) (streq(key, x) && streq(value, "enabled"))
+#define STREQ(x,y) (strcmp(x,y)==0)
+#define KEY_ENABLED(x) (STREQ(key, x) && STREQ(value, "enabled"))
 
 namespace main
 {
@@ -120,80 +120,80 @@ void parse_function_toggles(char* buf) {
         strncpy(key, key_start, (key_end-key_start));
         strncpy(value, key_end+2, (end_of_line-key_end)-2);
 
-        if is_enabled("perfect-bonus-completion") {
+        if KEY_ENABLED("perfect-bonus-completion") {
             tick_funcs.push_back(&relpatches::perfect_bonus::tick);
             gc::OSReport("[mod]  Perfect bonus completion enabled!\n");
         }
-        else if is_enabled("remove-desert-haze") {
+        else if KEY_ENABLED("remove-desert-haze") {
             relpatches::remove_desert_haze::init();
             gc::OSReport("[mod]  Desert haze removal enabled!\n");
         }
-        else if is_enabled("story-mode-music-fix") {
+        else if KEY_ENABLED("story-mode-music-fix") {
             relpatches::story_continuous_music::init();
             gc::OSReport("[mod]  Continuous story mode music enabled!\n");
         }
-        else if is_enabled("no-music-vol-decrease-on-pause") {
+        else if KEY_ENABLED("no-music-vol-decrease-on-pause") {
             relpatches::no_music_vol_decrease_on_pause::init();
             gc::OSReport("[mod] No music volume decrease on pause enabled!\n");
         }
-        else if is_enabled("story-mode-char-select") {
+        else if KEY_ENABLED("story-mode-char-select") {
             relpatches::story_mode_char_select::init_main_loop();
             main_game_init_funcs.push_back(&relpatches::story_mode_char_select::init_main_game);
             tick_funcs.push_back(&relpatches::story_mode_char_select::tick);
             gc::OSReport("[mod]  Story mode character select enabled!\n");
         }
-        else if is_enabled("no-hurry-up-music") {
+        else if KEY_ENABLED("no-hurry-up-music") {
             main_game_init_funcs.push_back(relpatches::no_hurry_up_music::init_main_game);
             tick_funcs.push_back(&relpatches::no_hurry_up_music::tick);
             gc::OSReport("[mod]  Hurry up music removal enabled!\n");
         }
-        else if is_enabled("fix-revolution-slot") {
+        else if KEY_ENABLED("fix-revolution-slot") {
             relpatches::fix_revolution_slot::init();
             gc::OSReport("[mod]  Revolution stage slot fix enabled!\n");
         }
-        else if is_enabled("fix-labyrinth-camera") {
+        else if KEY_ENABLED("fix-labyrinth-camera") {
             relpatches::fix_labyrinth_camera::init();
             gc::OSReport("[mod]  Labyrinth stage slot fix enabled!\n");
         }
-        else if is_enabled("fix-wormhole-surfaces") {
+        else if KEY_ENABLED("fix-wormhole-surfaces") {
             relpatches::fix_wormhole_surfaces::init();
             gc::OSReport("[mod]  Party game stage slot fix enabled!\n");
         }
-        else if is_enabled("challenge-mode-death-count") {
+        else if KEY_ENABLED("challenge-mode-death-count") {
             main_game_init_funcs.push_back(relpatches::challenge_death_count::init_main_game);
             gc::OSReport("[mod]  Challenge mode death count enabled!\n");
         }
-        else if is_enabled("disable-how-to-play-screen") {
+        else if KEY_ENABLED("disable-how-to-play-screen") {
             relpatches::disable_tutorial::init();
             gc::OSReport("[mod]  Tutorial sequence disabled!\n");
         }
-        else if is_enabled("fix-stage-object-reflection") {
+        else if KEY_ENABLED("fix-stage-object-reflection") {
             relpatches::fix_stobj_reflection::init_main_loop();
             main_game_init_funcs.push_back(relpatches::fix_stobj_reflection::init_main_game);
             gc::OSReport("[mod]  Stobj reflection flag support enabled!\n");
         }
-        else if is_enabled("enhance-reflective-surfaces") {
+        else if KEY_ENABLED("enhance-reflective-surfaces") {
             relpatches::extend_reflections::init();
             gc::OSReport("[mod]  Reflective surface enhancements enabled!\n");
         }
-        else if is_enabled("custom-music-id") {
+        else if KEY_ENABLED("custom-music-id") {
             relpatches::music_id_per_stage::init();
             gc::OSReport("[mod]  Custom music ID patch enabled!\n");
         }
-        else if is_enabled("custom-theme-id") {
+        else if KEY_ENABLED("custom-theme-id") {
             relpatches::theme_id_per_stage::init();
             gc::OSReport("[mod]  Custom theme ID patch enabled!\n");
         }
-        else if is_enabled("skip-intro-movie") {
+        else if KEY_ENABLED("skip-intro-movie") {
             relpatches::skip_intro_movie::init();
             gc::OSReport("[mod]  Skipping intro movie!\n");
         }
-        else if is_enabled("smb1-camera-toggle") {
+        else if KEY_ENABLED("smb1-camera-toggle") {
             relpatches::smb1_camera_toggle::init();
             tick_funcs.push_back(relpatches::smb1_camera_toggle::tick);
             gc::OSReport("[mod]  SMB1 camera toggle enabled!\n");
         }
-        else if is_enabled("apesphere-practice") {
+        else if KEY_ENABLED("apesphere-practice") {
             strcpy(reinterpret_cast<char *>(0x8047f4ec), "APESPHERE PRACTICE MOD");
             patch::write_branch(reinterpret_cast<void *>(0x8032ad0c),
                                 reinterpret_cast<void *>(main::custom_titlescreen_text_color));
@@ -266,20 +266,20 @@ void init()
                     gc::OSReport("[mod] Now parsing category %s...\n", section);
 
                     // Parsing function toggles
-                    if (streq(section, "REL Patches") || streq(section, "ApeSphere")) {
+                    if (STREQ(section, "REL Patches") || STREQ(section, "ApeSphere")) {
                         parse_function_toggles(section_end);
                     }
 
-                    else if (streq(section, "Theme IDs")) {
+                    else if (STREQ(section, "Theme IDs")) {
                         parse_stageid_list(section_end, theme_id_lookup);
                         gc::OSReport("[mod]  Theme ID list loaded at: 0x%X\n", &theme_id_lookup);
                     }
 
-                    else if (streq(section, "Difficulty Layout")) {
+                    else if (STREQ(section, "Difficulty Layout")) {
                         gc::OSReport("%s\n", section);
                     }
 
-                    else if (streq(section, "Music IDs")) {
+                    else if (STREQ(section, "Music IDs")) {
                         parse_stageid_list(section_end, bgm_id_lookup);
                         gc::OSReport("[mod]  Music ID list loaded at: 0x%X\n", &bgm_id_lookup);
                     }
@@ -343,12 +343,12 @@ void init()
         {
             load_additional_rel_trampoline(rel_filepath, rel_buffer_ptrs);
 
-            if (streq(rel_filepath, "mkb2.main_game.rel")) {
+            if (STREQ(rel_filepath, "mkb2.main_game.rel")) {
                 for (unsigned int i = 0; i < main_game_init_funcs.size(); i++) {
                     main_game_init_funcs[i]();
                 }
             }
-            else if (streq(rel_filepath, "mkb2.sel_ngc.rel")) {
+            else if (STREQ(rel_filepath, "mkb2.sel_ngc.rel")) {
                 for (unsigned int i = 0; i < sel_ngc_init_funcs.size(); i++) {
                     sel_ngc_init_funcs[i]();
                 }

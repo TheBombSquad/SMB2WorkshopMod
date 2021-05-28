@@ -90,6 +90,7 @@ void item_coin_init(Item* item);
 void item_coin_tick(Item* item);
 void item_coin_disp(Item* item);
 void item_coin_coli(Item* item, PhysicsBall* phys_ball);
+u32 g_some_item_collision_check (double ball_scale,double item_scale,Vec3f *ball_prev_pos,Vec3f *ball_pos, Vec3f *item_pos_copy,Vec3f *item_pos);
 }
 
 }

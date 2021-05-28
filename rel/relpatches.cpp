@@ -284,26 +284,54 @@ namespace relpatches
         }
     }
 
+
+    namespace story_mode_char_select {
+
+    static char* AIAI[] = {&mkb::CHAR_A, &mkb::CHAR_I, &mkb::CHAR_A, &mkb::CHAR_I, &mkb::CHAR_SPACE, &mkb::CHAR_SPACE};
+    static char* MEEMEE[] = {&mkb::CHAR_M, &mkb::CHAR_E, &mkb::CHAR_E, &mkb::CHAR_M, &mkb::CHAR_E, &mkb::CHAR_E};
+    static char* BABY[] = {&mkb::CHAR_B, &mkb::CHAR_A, &mkb::CHAR_B, &mkb::CHAR_Y, &mkb::CHAR_SPACE, &mkb::CHAR_SPACE};
+    static char* GONGON[] = {&mkb::CHAR_G, &mkb::CHAR_O, &mkb::CHAR_N, &mkb::CHAR_G, &mkb::CHAR_O, &mkb::CHAR_N};
+    static char* HIHI[] = {&mkb::CHAR_H, &mkb::CHAR_I, &mkb::CHAR_H, &mkb::CHAR_I, &mkb::CHAR_SPACE, &mkb::CHAR_SPACE};
+    static char** monkey_name_lookup[] = {AIAI, MEEMEE, BABY, GONGON, HIHI};
+
     // Overrides the return value of certain functions to force the chosen monkey to be
     // preloaded in place of AiAi
-    void story_mode_char_select::init_main_loop()
+    void init_main_loop()
     {
         patch::write_branch_bl(reinterpret_cast<void*>(0x803daffc), reinterpret_cast<void*>(main::get_monkey_id_hook));
     }
 
+    // Sets the storymode filename to the name of the selected monkey, when no name is provided.
+    void set_nameentry_filename()
+    {
+        for (int i = 0; i < 6; i++) {
+            mkb::story_file_name[i] = monkey_name_lookup[mkb::active_monkey_id][i];
+        }
+        mkb::g_some_nameentry_length = 0x6;
+    }
+
     // Overrides the return value of certain functions to force the chosen monkey to be
-    // preloaded in place of AiAi
-    void story_mode_char_select::init_main_game()
+    // preloaded in place of AiAi.
+    // Also calls the function to set the default filename to the name of the selected
+    // monkey, rather than deafulting to 'AIAI'.
+    void init_main_game()
     {
         patch::write_branch_bl(reinterpret_cast<void*>(0x808fcac4), reinterpret_cast<void*>(main::get_monkey_id_hook));
         patch::write_branch_bl(reinterpret_cast<void*>(0x808ff120), reinterpret_cast<void*>(main::get_monkey_id_hook));
         patch::write_branch_bl(reinterpret_cast<void*>(0x80908894), reinterpret_cast<void*>(main::get_monkey_id_hook));
+
+        patch::write_branch_bl(reinterpret_cast<void*>(0x80906368), reinterpret_cast<void*>(set_nameentry_filename));
+        patch::write_nop(reinterpret_cast<void*>(0x8090636c));
+        patch::write_nop(reinterpret_cast<void*>(0x80906370));
+        patch::write_nop(reinterpret_cast<void*>(0x80906374));
+        patch::write_nop(reinterpret_cast<void*>(0x80906378));
+
     }
 
     // Assign the correct 'next screen' variables to redirect Story Mode to the
     // character select screen. Also handle input to prevent Story Mode from not
     // initializing if mode_cnt isn't set to 1.
-    void story_mode_char_select::tick()
+    void tick()
     {
         if (mkb::sub_mode == mkb::SMD_SEL_NGC_MAIN) {
             patch::write_word(reinterpret_cast<void*>(0x80921a20), 0x6000000);
@@ -321,6 +349,7 @@ namespace relpatches
         }
     }
 
+    }
     // Hooks into the smd_adv_first_logo_tick function, calling our own tick function
     void skip_intro_movie::init() {
         patch::write_branch_bl(reinterpret_cast<void*>(0x8027ec6c), reinterpret_cast<void*>(tick));

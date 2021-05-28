@@ -31,6 +31,7 @@ namespace story_mode_char_select {
 void init_main_loop();
 void init_main_game();
 void tick();
+void set_nameentry_filename();
 }
 
 namespace no_hurry_up_music {

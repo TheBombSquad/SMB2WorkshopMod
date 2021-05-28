@@ -87,6 +87,11 @@ extern u32 next_stobj_id;
 
 extern u32 g_some_other_flags;
 
+extern u32 active_monkey_id;
+extern u8 g_some_nameentry_length;
+
+extern char CHAR_A, CHAR_I, CHAR_M, CHAR_E, CHAR_B, CHAR_Y, CHAR_G, CHAR_O, CHAR_N, CHAR_H, CHAR_SPACE;
+
 void draw_debugtext();
 void draw_debugtext_bg(double x1, double y1, double x2, double y2);
 void draw_debugtext_char_en(u32 x, u32 y, char ch, u32 color);
@@ -102,7 +107,6 @@ void *memset (void * ptr, int value, size_t num);
 void event_stobj_init();
 int spawn_stobj(Stobj *stobj);
 int spawn_item(Item *item);
-u32 g_some_collision_check (double ball_scale,double item_scale,Vec3f *ball_prev_pos,Vec3f *ball_pos, Vec3f *item_pos_copy,Vec3f *item_pos);
 int sprintf(char *buffer,char *format,...);
 
 }
