@@ -8,7 +8,6 @@
 #include <cstring>
 #include <cstdio>
 
-#define activeidx mkb::balls[0]
 namespace relpatches
 {
 
@@ -401,7 +400,6 @@ namespace relpatches
 
         void init_main_game() {
         mkb::nameentry_character_ptr_list[62] = &(CHAR_w[0]);
-        gc::OSReport("patched %x to %x with %x\n", &mkb::nameentry_character_ptr_list, &(mkb::nameentry_character_ptr_list[46]), &(CHAR_w[0]));
         }
     }
 }
