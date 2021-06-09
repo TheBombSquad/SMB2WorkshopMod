@@ -4,6 +4,7 @@
 #include "mkb/camera.h"
 #include "mkb/mode.h"
 #include "assembly.h"
+#include "ppcutil.h"
 #include "pad.h"
 #include <cstring>
 #include <cstdio>
@@ -64,18 +65,16 @@ namespace relpatches
 
     // Always return 'false' for a specific function that checks if the stage ID
     // is 348 when determining whether or not to handle level loading specially
-    // 0x38600000 = li r3, 0x0
     void fix_revolution_slot::init()
     {
-        patch::write_word(reinterpret_cast<void*>(0x802ca9fc), 0x38600000);
+        patch::write_word(reinterpret_cast<void*>(0x802ca9fc), PPC_INSTR_LI(PPC_R3, 0x0));
     }
 
     // Always return 'true' for a specific function that checks if the stage ID
     // belongs to a slot normally used for party games.
-    // 0x38000001 = li r0, 0x1
     void fix_wormhole_surfaces::init()
     {
-        patch::write_word(reinterpret_cast<void*>(0x802c8ce4), 0x38000001);
+        patch::write_word(reinterpret_cast<void*>(0x802c8ce4), PPC_INSTR_LI(PPC_R0, 0x1));
     }
 
     // Always compare the stage ID to 0xFFFF when these camera functions check
@@ -187,7 +186,7 @@ namespace relpatches
     // 0x38000000 = li r0, 0
     void fix_stobj_reflection::init_main_loop()
     {
-        patch::write_word(reinterpret_cast<void*>(0x802ca480), 0x38000000);
+        patch::write_word(reinterpret_cast<void*>(0x802ca480), PPC_INSTR_LI(PPC_R0, 0x0));
 	    patch::write_branch_bl(reinterpret_cast<void*>(0x802c9434), reinterpret_cast<void*>(main::reflection_draw_stage_hook));
     }
 
@@ -373,14 +372,14 @@ namespace relpatches
             if (mkb::main_mode == mkb::MD_GAME && (mkb::sub_mode == mkb::SMD_GAME_PLAY_MAIN || mkb::sub_mode == mkb::SMD_GAME_READY_MAIN)) {
                 if (smb1_cam_toggled) {
                     if (mkb::cameras[0].mode == 0x4c) mkb::cameras[0].mode = 1;
-                    patch::write_word(reinterpret_cast<void*>(0x802886c8), 0x38000400);
+                    patch::write_word(reinterpret_cast<void*>(0x802886c8), PPC_INSTR_LI(PPC_R0, 0x400));
                     mkb::g_camera_turn_rate_scale = 0.6875;
                     mkb::camera_pivot_height = -0.5;
                     mkb::camera_height = 1;
                 }
                 else {
                     if (mkb::cameras[0].mode == 0x1) mkb::cameras[0].mode = 0x4c;
-                    patch::write_word(reinterpret_cast<void*>(0x802886c8), 0x38000200);
+                    patch::write_word(reinterpret_cast<void*>(0x802886c8), PPC_INSTR_LI(PPC_R0, 0x200));
                     mkb::g_camera_turn_rate_scale = 0.75;
                     mkb::camera_pivot_height = 0.18;
                     mkb::camera_height = 0.8;
