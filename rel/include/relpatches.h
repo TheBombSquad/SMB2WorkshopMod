@@ -102,4 +102,9 @@ void init_main_game();
 void tick();
 }
 
+namespace party_game_toggle {
+void init();
+void sel_ngc_init();
+void tick();
+}
 }

@@ -401,4 +401,17 @@ namespace relpatches
         mkb::nameentry_character_ptr_list[62] = &(CHAR_w[0]);
         }
     }
+
+    namespace party_game_toggle {
+        void init()
+        {
+            // Return 'locked' for all party games by default
+            patch::write_word(reinterpret_cast<void*>(0x803dd2c0), PPC_INSTR_LI(PPC_R3, 0x1));
+            patch::write_blr(reinterpret_cast<void*>(0x803dd2c4));
+        }
+
+        void sel_ngc_init() {
+            patch::write_word(reinterpret_cast<void*>(0x808f9154), PPC_INSTR_LI(PPC_R0, 0xFFE));
+        }
+   }
 }

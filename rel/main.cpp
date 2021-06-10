@@ -307,6 +307,7 @@ void init()
     }
 
 
+    relpatches::party_game_toggle::init();
     s_draw_debug_text_trampoline = patch::hook_function(
         mkb::draw_debugtext, []()
         {
@@ -353,6 +354,7 @@ void init()
                 }
             }
             else if (STREQ(rel_filepath, "mkb2.sel_ngc.rel")) {
+                relpatches::party_game_toggle::sel_ngc_init();
                 for (unsigned int i = 0; i < sel_ngc_init_funcs.size(); i++) {
                     sel_ngc_init_funcs[i]();
                 }

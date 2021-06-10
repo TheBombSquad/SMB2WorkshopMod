@@ -28,7 +28,7 @@ enum RelRelocationType
 template<typename T>
 void save(std::vector<uint8_t> &buffer, const T &value)
 {
-	for (size_t i = sizeof(T); i > 0; --i)
+	for (std::size_t i = sizeof(T); i > 0; --i)
 	{
 		buffer.emplace_back(static_cast<uint8_t>((value >> (i - 1) * 8) & 0xFF));
 	}
@@ -38,7 +38,7 @@ template<typename T>
 void load(std::vector<uint8_t> &buffer, T &value)
 {
 	value = 0;
-	for (size_t i = sizeof(T); i > 0; --i)
+	for (std::size_t i = sizeof(T); i > 0; --i)
 	{
 		value |= static_cast<T>(buffer.front()) << ((i - 1) * 8);
 		buffer.erase(buffer.begin());
