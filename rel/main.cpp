@@ -11,6 +11,7 @@
 #include "jump.h"
 #include "scratch.h"
 #include "relpatches.h"
+#include "ppcutil.h"
 #include <mkb/mkb.h>
 #include <gc/dvd.h>
 
@@ -240,6 +241,8 @@ void init()
     gc::OSReport("[mod] ApeSphere-Custom version 0.3.0 loaded\n");
     heap::init();
     perform_assembly_patches();
+
+    patch::write_word(reinterpret_cast<void*>(0x803dd448), PPC_INSTR_LI(PPC_R3, 12));
 
     // Load our config file
     config_file_length = gc::DVDOpen(config_file_path, &config_file_info);
