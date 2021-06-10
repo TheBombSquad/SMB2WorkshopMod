@@ -349,6 +349,7 @@ void init()
             load_additional_rel_trampoline(rel_filepath, rel_buffer_ptrs);
 
             if (STREQ(rel_filepath, "mkb2.main_game.rel")) {
+                relpatches::skip_cutscenes::init_main_game();
                 for (unsigned int i = 0; i < main_game_init_funcs.size(); i++) {
                     main_game_init_funcs[i]();
                 }

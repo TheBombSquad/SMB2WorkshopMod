@@ -38,8 +38,12 @@ struct StoryModeSaveFile
 
 static_assert(sizeof(StoryModeSaveFile) == 132);
 
+
+
 extern "C"
 {
+extern void g_load_stageselect_after_cutscene();
+
 extern StoryModeSaveFile storymode_save_files[3];
 extern u16 g_storymode_mode;
 extern u8 curr_storymode_save_file_idx;
@@ -57,6 +61,8 @@ extern char* story_file_name[6];
 extern char* nameentry_character_ptr_list[];
 
 extern u8 g_some_nameentry_length;
+
+extern u16 g_storymode_next_world;
 
 extern char CHAR_A, CHAR_I, CHAR_M, CHAR_E, CHAR_B, CHAR_Y, CHAR_G, CHAR_O, CHAR_N, CHAR_H, CHAR_SPACE;
 }

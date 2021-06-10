@@ -89,6 +89,9 @@ extern u32 g_some_other_flags;
 
 extern u32 active_monkey_id;
 
+void g_maybe_related_to_music_crossfading2(int param_1,int param_2,char param_3);
+extern s16 g_active_music_tracks[0x5];
+int SoftStreamStart(u32 g_looping_state, u16 g_bgm_id,int param_3);
 void draw_debugtext();
 void draw_debugtext_bg(double x1, double y1, double x2, double y2);
 void draw_debugtext_char_en(u32 x, u32 y, char ch, u32 color);

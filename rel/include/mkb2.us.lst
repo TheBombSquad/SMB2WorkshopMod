@@ -15025,3 +15025,4 @@ E0000094:locked_cache_mtx_stack_ptr
 E000019C:e
 E00001A0:0.5
 809800d0:g_some_nameentry_length
+80562838:g_active_music_tracks

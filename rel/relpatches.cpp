@@ -414,4 +414,64 @@ namespace relpatches
             patch::write_word(reinterpret_cast<void*>(0x808f9154), PPC_INSTR_LI(PPC_R0, 0xFFE));
         }
    }
+
+   namespace skip_cutscenes {
+        void init_main_game() {
+            //patch::write_branch(reinterpret_cast<void*>(0x803d9f34), reinterpret_cast<void*>(tick));
+
+            // patch init first load
+            patch::write_branch(reinterpret_cast<void*>(0x808fd8bc), reinterpret_cast<void*>(tick));
+
+            // don't pre-load certain scene files
+            patch::write_blr(reinterpret_cast<void*>(0x80382ab4));
+
+            // patch sequential
+            patch::write_branch(reinterpret_cast<void*>(0x808fdcfc), reinterpret_cast<void*>(tick_next));
+            //patch::write_blr(reinterpret_cast<void*>(0x808fdd18));
+            // dest all events
+            //patch::write_nop(reinterpret_cast<void*>(0x808fde90));
+
+            //patch::write_word(reinterpret_cast<void*>(0x808fdec0), PPC_INSTR_LI(PPC_R0, mkb::MD_GAME));
+            //patch::write_word(reinterpret_cast<void*>(0x808fded0), PPC_INSTR_LI(PPC_R0, mkb::SMD_GAME_SCENSCNPLAY_RETURN));
+
+
+            // kill loading cutscenes
+            //patch::write_blr(reinterpret_cast<void*>(0x803b13dc));
+            //patch::write_word(reinterpret_cast<void*>(0x808f81e4), PPC_INSTR_LI(PPC_R0, mkb::SMD_GAME_SCENSCNPLAY_RETURN));
+        }
+        void tick() {
+
+            for (int i = 0; i < 10; i++) {
+                if (mkb::g_active_music_tracks[i] > -1) {
+                    mkb::g_maybe_related_to_music_crossfading2(mkb::g_active_music_tracks[i], 15, 0);
+                }
+            }
+            //int id = mkb::SoftStreamStart(0,0x3c,100);
+            mkb::g_SoftStreamStart_with_some_defaults_2(0);
+            //mkb::g_maybe_related_to_music_crossfading2(0, 0xf, 100);
+            mkb::g_storymode_next_world = 0;
+            mkb::g_storymode_mode = 0x8;
+            return;
+            //mkb::g_load_stageselect_after_cutscene();
+            //mkb::g_storymode_mode = 10;
+            //mkb::main_mode_request = mkb::MD_GAME;
+            //mkb::sub_mode_request = mkb::SMD_GAME_SCENSCNPLAY_RETURN;
+
+        }
+
+        void tick_next() {
+
+            for (int i = 0; i < 10; i++) {
+                if (mkb::g_active_music_tracks[i] > -1) {
+                    mkb::g_maybe_related_to_music_crossfading2(mkb::g_active_music_tracks[i], 15, 0);
+                }
+            }
+            //int id = mkb::SoftStreamStart(0,0x3c,100);
+            mkb::g_SoftStreamStart_with_some_defaults_2(0);
+            //mkb::g_maybe_related_to_music_crossfading2(0, 0xf, 100);
+            mkb::g_storymode_next_world = 0;
+            mkb::g_storymode_mode = 0x9;
+            return;
+        }
+   }
 }
