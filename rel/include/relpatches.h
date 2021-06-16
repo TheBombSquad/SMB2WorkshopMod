@@ -112,6 +112,7 @@ namespace skip_cutscenes {
 void init_main_game();
 void tick();
 void tick_next();
+void update_state();
 }
 
 }

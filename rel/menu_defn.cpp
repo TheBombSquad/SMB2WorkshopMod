@@ -151,10 +151,10 @@ static Widget help_widgets[] = {
     {.type = WidgetType::Text, .text = {"  B          \x1c Resize minimap"}},
     {.type = WidgetType::Separator},
 
-    {.type = WidgetType::Header, .header = {"Updates"}},
-    {.type = WidgetType::Text, .text = {"  Current version: v0.2.2"}},
-    {.type = WidgetType::Text, .text = {"  For the latest version of this mod:"}},
-    {.type = WidgetType::Text, .text = {"  github.com/ComplexPlane/ApeSphere/releases"}},
+    {.type = WidgetType::Header, .header = {"Information"}},
+    {.type = WidgetType::Text, .text = {"  Current version: v0.3.1 (for 1.5HD)"}},
+    {.type = WidgetType::Text, .text = {"  ApeSphere by ComplexPlane"}},
+    {.type = WidgetType::Text, .text = {"  ApeSphere-Custom extensions by The BombSquad"}},
 };
 
 static Widget root_widgets[] = {

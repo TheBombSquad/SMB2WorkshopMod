@@ -386,7 +386,7 @@ namespace relpatches
                 }
             }
 
-            if (pad::button_pressed(gc::PAD_TRIGGER_Z)) {
+            if (mkb::main_mode == mkb::MD_GAME && pad::button_pressed(gc::PAD_TRIGGER_Z)) {
                 smb1_cam_toggled = !smb1_cam_toggled;
             }
 
@@ -416,6 +416,7 @@ namespace relpatches
    }
 
    namespace skip_cutscenes {
+        static int active_state = 0;
         void init_main_game() {
             //patch::write_branch(reinterpret_cast<void*>(0x803d9f34), reinterpret_cast<void*>(tick));
 
@@ -427,6 +428,10 @@ namespace relpatches
 
             // patch sequential
             patch::write_branch(reinterpret_cast<void*>(0x808fdcfc), reinterpret_cast<void*>(tick_next));
+
+
+            // patch update to active_state
+            patch::write_branch(reinterpret_cast<void*>(0x808fe34c), reinterpret_cast<void*>(update_state));
             //patch::write_blr(reinterpret_cast<void*>(0x808fdd18));
             // dest all events
             //patch::write_nop(reinterpret_cast<void*>(0x808fde90));
@@ -439,7 +444,17 @@ namespace relpatches
             //patch::write_blr(reinterpret_cast<void*>(0x803b13dc));
             //patch::write_word(reinterpret_cast<void*>(0x808f81e4), PPC_INSTR_LI(PPC_R0, mkb::SMD_GAME_SCENSCNPLAY_RETURN));
         }
+
+        void update_state() {
+             active_state = mkb::curr_world;
+             mkb::g_storymode_mode = 0xb;
+             u32 data = *reinterpret_cast<u32*>(0x8054dbc0);
+             patch::write_word(reinterpret_cast<void*>(0x8054dbc0), data|2);
+             reinterpret_cast<void(*)()>(0x80903d74)();
+        }
+
         void tick() {
+
 
             for (int i = 0; i < 10; i++) {
                 if (mkb::g_active_music_tracks[i] > -1) {
@@ -460,17 +475,71 @@ namespace relpatches
         }
 
         void tick_next() {
+            //mkb::g_storymode_mode = 0x16;
 
+            //destroy all sprite
+            reinterpret_cast<void(*)()>(0x8031f3e0)();
+
+            if (active_state > 10) {
+                active_state++;
+            }
+
+            else {
+                active_state = mkb::g_storymode_next_world;
+            }
+
+            gc::OSReport("active_state: %d\n", active_state);
             for (int i = 0; i < 10; i++) {
                 if (mkb::g_active_music_tracks[i] > -1) {
                     mkb::g_maybe_related_to_music_crossfading2(mkb::g_active_music_tracks[i], 15, 0);
                 }
             }
+
+            if (active_state == 10) {
+                mkb::mode_flags = mkb::mode_flags | 0x100000;
+                patch::write_word(reinterpret_cast<void*>(0x8054dbdc), 0xffffffff);
+                mkb::g_storymode_mode = 0xe;
+            }
+
+
+            // name entry
+            else if (active_state == 11) {
+                mkb::dest_all_events();
+                // heap claer stuff 2
+                gc::OSReport("clearing 1");
+                reinterpret_cast<void(*)()>(0x803b30dc)();
+                // heap clear stuff 1
+                gc::OSReport("clearing 2");
+                reinterpret_cast<void(*)()>(0x80298ca0)();
+
+                gc::OSReport("clearing 3");
+                reinterpret_cast<void(*)(int)>(0x80271160)(0);
+
+                gc::OSReport("destroying bns2\n");
+
+                gc::OSSetCurrentHeap(mkb::chara_heap);
+
+                reinterpret_cast<void(*)()>(0x80310ca8)();
+                mkb::mode_flags = mkb::mode_flags | 0x100000;
+                patch::write_word(reinterpret_cast<void*>(0x8054dbdc), 0xffffffff);
+                mkb::g_storymode_mode = 0x19;
+            }
+
+
+            //game over
+            else if (active_state == 12) {
+                mkb::mode_flags = mkb::mode_flags | 0x100000;
+                patch::write_word(reinterpret_cast<void*>(0x8054dbdc), 0xffffffff);
+                mkb::g_storymode_mode = 0x10;
+            }
+
+            else {
             //int id = mkb::SoftStreamStart(0,0x3c,100);
             mkb::g_SoftStreamStart_with_some_defaults_2(0);
+            mkb::g_storymode_next_world++;
             //mkb::g_maybe_related_to_music_crossfading2(0, 0xf, 100);
-            mkb::g_storymode_next_world = 0;
             mkb::g_storymode_mode = 0x9;
+            }
             return;
         }
    }

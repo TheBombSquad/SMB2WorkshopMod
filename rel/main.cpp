@@ -28,7 +28,10 @@ namespace main
 static void (*s_draw_debug_text_trampoline)();
 static void (*s_process_inputs_trampoline)();
 static void (*load_additional_rel_trampoline)(const char *rel_filepath, void *rel_buffer_ptrs);
-
+static void (*menu_load_trampoline)();
+static void (*tex_load_trampoline)(mkb::SpriteTex *sprite_tex,char *file_path,u32 param_3,u16 width,u16 height,u32 format);
+mkb::SpriteTex* preview_image_ptrs[10];
+u8 active_preview = 0;
 static int config_file_length;
 static gc::DVDFileInfo config_file_info;
 static char* config_file_buf;
@@ -41,8 +44,12 @@ static std::vector<void(*)()> sel_ngc_init_funcs;
 static std::vector<void(*)()> disp_funcs;
 static std::vector<void(*)()> tick_funcs;
 
+static std::vector<mkb::SpriteTex*> texes;
+
 static bool tetris_enabled = false;
 bool debug_mode_enabled = false;
+bool chara_heap_cleared = false;
+bool ape_sphere_init = false;
 
 static void perform_assembly_patches()
 {
@@ -103,6 +110,36 @@ u16* parse_stageid_list(char* buf, u16* array) {
     }
     while (buf < end_of_section);
     return array;
+}
+
+void apesphere_init() {
+    strcpy(reinterpret_cast<char *>(0x8047f4ec), "APESPHERE PRACTICE MOD");
+    patch::write_branch(reinterpret_cast<void *>(0x8032ad0c),
+                        reinterpret_cast<void *>(main::custom_titlescreen_text_color));
+
+    draw::init();
+    Tetris::get_instance().init();
+    tetris_enabled = true;
+    savestate::init();
+    timer::init();
+    iw::init();
+    scratch::init();
+
+    tick_funcs.push_back(&unlock_everything);
+    tick_funcs.push_back(&timer::tick);
+    tick_funcs.push_back(&iw::tick);
+    tick_funcs.push_back(&savestate::tick);
+    tick_funcs.push_back(&menu::tick);
+    tick_funcs.push_back(&jump::tick);
+    tick_funcs.push_back(&scratch::tick);
+
+    disp_funcs.push_back(draw::predraw);
+    disp_funcs.push_back(draw::disp);
+    disp_funcs.push_back(timer::disp);
+    disp_funcs.push_back(iw::disp);
+    disp_funcs.push_back(menu::disp);
+    gc::OSReport("[mod]  ApeSphere practice mod enabled!\n");
+    ape_sphere_init = true;
 }
 
 void parse_function_toggles(char* buf) {
@@ -199,32 +236,7 @@ void parse_function_toggles(char* buf) {
             gc::OSReport("[mod]  Missing 'w' restored!");
         }
         else if KEY_ENABLED("apesphere-practice") {
-            strcpy(reinterpret_cast<char *>(0x8047f4ec), "APESPHERE PRACTICE MOD");
-            patch::write_branch(reinterpret_cast<void *>(0x8032ad0c),
-                                reinterpret_cast<void *>(main::custom_titlescreen_text_color));
-
-            draw::init();
-            Tetris::get_instance().init();
-            tetris_enabled = true;
-            savestate::init();
-            timer::init();
-            iw::init();
-            scratch::init();
-
-            tick_funcs.push_back(&unlock_everything);
-            tick_funcs.push_back(&timer::tick);
-            tick_funcs.push_back(&iw::tick);
-            tick_funcs.push_back(&savestate::tick);
-            tick_funcs.push_back(&menu::tick);
-            tick_funcs.push_back(&jump::tick);
-            tick_funcs.push_back(&scratch::tick);
-
-            disp_funcs.push_back(draw::predraw);
-            disp_funcs.push_back(draw::disp);
-            disp_funcs.push_back(timer::disp);
-            disp_funcs.push_back(iw::disp);
-            disp_funcs.push_back(menu::disp);
-            gc::OSReport("[mod]  ApeSphere practice mod enabled!\n");
+            apesphere_init();
         }
         else {
             gc::OSReport("[mod]  Unknown option: %s\n", key);
@@ -234,6 +246,11 @@ void parse_function_toggles(char* buf) {
         memset(value, '\0', 64);
     }
     while (buf < end_of_section);
+}
+
+static void rendefc() {
+    gc::OSReport("Zoosh\n");
+    mkb::event_init(mkb::EVENT_REND_EFC);
 }
 
 void init()
@@ -343,7 +360,82 @@ void init()
                 tick_funcs[i]();
             }
 
+            /*
+            if (mkb::main_mode == mkb::MD_GAME && mkb::sub_mode == mkb::SMD_GAME_CONTINUE_MAIN) {
+                mkb::g_some_render_flag |= 4;
+            }
+            else if (mkb::main_mode == mkb::MD_GAME && mkb::sub_mode == mkb::SMD_ADV_GAME_PLAY_INIT) {
+                mkb::g_some_render_flag = 1;
+            }*/
+
+
+            patch::write_branch(reinterpret_cast<void*>(0x802de1d4), reinterpret_cast<void*>(fix_rain_ripple));
             pad::tick();
+
+            if (mkb::sub_mode == mkb::SMD_GAME_SUGG_SAVE_INIT) {
+                chara_heap_cleared = false;
+            }
+            if (mkb::sub_mode == mkb::SMD_GAME_SUGG_SAVE_MAIN) {
+                if (!chara_heap_cleared) {
+                    gc::OSReport("Rebuilding heap\n");
+
+                    for (int i = 0; i < texes.size(); i++) {
+
+                        void* ptr = *((void**)(((u32)texes[i])+0x28));
+
+                        if (ptr != 0) {
+                        gc::OSReport("Popping sprite %X\n", ptr);
+                        gc::OSFreeToHeap(mkb::chara_heap, ptr);
+                        }
+                        else {
+                        gc::OSReport("Sprite tex_data for sprite %X was nullptr!\n", texes[i]);
+                        }
+                                   }          /*  for (int i = 0; i < 10; i++) {
+                        mkb::SpriteTex* tex = preview_image_ptrs[i];
+                        gc::OSFreeToHeap(mkb::chara_heap, tex->tex_data);
+                    }*/
+
+                    //reinterpret_cast<void(*)()>(0x803816b4)();
+                    /*void* chara_ptr = mkb::chara_heap;
+                    gc::OSDestroyHeap(mkb::chara_heap);
+                    void* new_chara_heap = gc::OSAllocFromArenaHi(0x480000, 0x20);
+                    mkb::chara_heap = gc::OSCreateHeap(new_chara_heap, (void*)( reinterpret_cast<u32>(new_chara_heap) + 0x480000));
+                    mkb::chara_heap_size = gc::OSCheckHeap(mkb::chara_heap);
+                    */
+                    chara_heap_cleared = true;
+                    gc::OSReport("Rebuilt heap\n");
+                }
+            }
+
+            // Rendefc on title screen
+            if (mkb::main_mode == mkb::MD_SEL && mkb::events[mkb::EVENT_REND_EFC].status == mkb::STAT_NULL) {
+                //gc::OSReport("Zoosh\n");
+                mkb::event_init(mkb::EVENT_REND_EFC);
+                //mkb::g_init_rendefc_for_stage();
+            }
+
+            //mkb::event_init(mkb::EVENT_REND_EFC);
+            //mkb::g_init_rendefc_for_stage();
+            //patch::write_branch_bl(reinterpret_cast<void*>(0x80911098), reinterpret_cast<void*>())
+
+            // no pre-loading
+
+            if (mkb::main_mode == mkb::MD_GAME) {
+                patch::write_nop(reinterpret_cast<void*>(0x803db0d4));
+                patch::write_nop(reinterpret_cast<void*>(0x803db0ec));
+                patch::write_nop(reinterpret_cast<void*>(0x803db104));
+                patch::write_nop(reinterpret_cast<void*>(0x803db118));
+                patch::write_nop(reinterpret_cast<void*>(0x803db124));
+                patch::write_nop(reinterpret_cast<void*>(0x803db130));
+                patch::write_nop(reinterpret_cast<void*>(0x803db138));
+                patch::write_nop(reinterpret_cast<void*>(0x803db188));
+            }
+
+            if (mkb::main_mode == mkb::MD_ADV && mkb::sub_mode == mkb::SMD_ADV_TITLE_MAIN && pad::button_chord_pressed(gc::PAD_TRIGGER_L, gc::PAD_TRIGGER_R) && !ape_sphere_init) {
+                apesphere_init();
+            }
+
+            //patch::write_branch_bl(reinterpret_cast<void*>(0x80282c8c), reinterpret_cast<void*>(mkb::g_load_stage));
         });
 
     load_additional_rel_trampoline = patch::hook_function(
@@ -353,17 +445,50 @@ void init()
 
             if (STREQ(rel_filepath, "mkb2.main_game.rel")) {
                 relpatches::skip_cutscenes::init_main_game();
+
+                gc::OSReport("rendefec init\n");
+                mkb::event_init(mkb::EVENT_REND_EFC);
+
+                // removes playpoint screen
+                patch::write_nop(reinterpret_cast<void*>(0x808f9ecc));
+                patch::write_nop(reinterpret_cast<void*>(0x808f9eec));
+
+
+                // removes game over screen
+                patch::write_nop(reinterpret_cast<void*>(0x808f801c));
+                patch::write_nop(reinterpret_cast<void*>(0x808f803c));
+
+                //patch::write_nop(reinterpret_cast<void*>(0x808f9efc));
+                //patch::write_word(reinterpret_cast<void*>(0x808f9f10), PPC_INSTR_LI(PPC_R0, mkb::SMD_GAME_SUGG_SAVE_INIT));
                 for (unsigned int i = 0; i < main_game_init_funcs.size(); i++) {
                     main_game_init_funcs[i]();
                 }
             }
             else if (STREQ(rel_filepath, "mkb2.sel_ngc.rel")) {
                 relpatches::party_game_toggle::sel_ngc_init();
+                patch::write_word(reinterpret_cast<void*>(0x80911090), 0x2c00ffff);
+                //patch::write_branch_bl(reinterpret_cast<void*>(0x808f5890), reinterpret_cast<void*>(rendefc));
+                //patch::write_nop(reinterpret_cast<void*>(0x08f5890));
                 for (unsigned int i = 0; i < sel_ngc_init_funcs.size(); i++) {
                     sel_ngc_init_funcs[i]();
                 }
             }
         });
+
+    tex_load_trampoline = patch::hook_function(
+        mkb::g_load_preview_texture, [](mkb::SpriteTex *sprite_tex,char *file_path,u32 param_3,u16 width,u16 height,u32 format) {
+            if (texes.size() > 9) texes.clear();
+            tex_load_trampoline(sprite_tex, file_path, param_3, width, height, format);
+            gc::OSReport("Pushing sprite %X\n", sprite_tex);
+            texes.push_back(sprite_tex);
+        });
+/*
+    menu_load_trampoline = patch::hook_function(
+        mkb::g_create_main_menu, []() {
+            menu_load_trampoline();
+            mkb::event_init(mkb::EVENT_REND_EFC);
+            gc::OSReport("Zoosh\n");
+        });*/
 }
 
 /*
@@ -382,6 +507,9 @@ void tick()
         mkb::dip_switches &= ~(mkb::DIP_DEBUG | mkb::DIP_DISP);
     }*/
     pad::on_frame_start();
+
+    //patch::write_branch_bl(reinterpret_cast<void*>(0x80369bac), reinterpret_cast<void*>(cutscene_crash_fix));
+
 }
 
 }

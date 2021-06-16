@@ -1,11 +1,27 @@
 #pragma once
 
 #include "pool.h"
+#include "mkb.h"
 
 namespace mkb
 {
 
 constexpr s32 MAX_SPRITES = 80;
+
+struct SpriteTex {
+    u8 field_0x0;
+    s8 field_0x1;
+    u16 field_0x2;
+    s32 tex_index;
+    void * tex;
+    void * tex_data;
+    u32 tex_data_size;
+    u16 width;
+    u16 height;
+    u32 format;
+    void * heap;
+    void * dvd_file;
+};
 
 struct Sprite
 {

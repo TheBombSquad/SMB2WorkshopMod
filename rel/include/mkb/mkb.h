@@ -69,8 +69,8 @@ extern u32 frame_counter;
 extern gc::GXColor debug_text_bg_color;
 extern GraphicsInfo *graphics_info;
 
-extern gc::OSHeapHandle main_heap, stage_heap, bg_heap, char_heap, replay_heap;
-extern u32 main_heap_size, stage_heap_size, bg_heap_size, char_heap_size, replay_heap_size;
+extern gc::OSHeapHandle main_heap, stage_heap, bg_heap, chara_heap, replay_heap;
+extern u32 main_heap_size, stage_heap_size, bg_heap_size, chara_heap_size, replay_heap_size;
 extern u32 g_something_with_game_heaps;
 
 extern u32 curr_player_idx;
@@ -88,6 +88,10 @@ extern u32 next_stobj_id;
 extern u32 g_some_other_flags;
 
 extern u32 active_monkey_id;
+
+extern u32 g_some_render_flag;
+
+extern u32 mode_flags;
 
 void g_maybe_related_to_music_crossfading2(int param_1,int param_2,char param_3);
 extern s16 g_active_music_tracks[0x5];
@@ -108,7 +112,15 @@ void event_stobj_init();
 int spawn_stobj(Stobj *stobj);
 int spawn_item(Item *item);
 int sprintf(char *buffer,char *format,...);
+void g_create_main_menu();
+void g_init_rendefc_for_stage();
 
+void dest_all_events();
+
+void g_load_stage();
+u32 g_smth_with_file_loading();
+
+void g_load_preview_texture (SpriteTex *sprite_tex, char* file_path, u32 param_3, u16 width, u16 height, u32 format);
 }
 
 }
