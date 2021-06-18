@@ -116,8 +116,10 @@ void g_create_main_menu();
 void g_init_rendefc_for_stage();
 
 void dest_all_events();
+void event_dest(EventID event);
 
-void g_load_stage();
+void g_load_stage(u32 id);
+void g_load_stage_2(u32 id);
 u32 g_smth_with_file_loading();
 
 void g_load_preview_texture (SpriteTex *sprite_tex, char* file_path, u32 param_3, u16 width, u16 height, u32 format);

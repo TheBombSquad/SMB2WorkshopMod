@@ -29,6 +29,8 @@ static void (*s_draw_debug_text_trampoline)();
 static void (*s_process_inputs_trampoline)();
 static void (*load_additional_rel_trampoline)(const char *rel_filepath, void *rel_buffer_ptrs);
 static void (*menu_load_trampoline)();
+static void (*load_stage_1_trampoline)(u32 id);
+static void (*load_stage_2_trampoline)(u32 id);
 static void (*tex_load_trampoline)(mkb::SpriteTex *sprite_tex,char *file_path,u32 param_3,u16 width,u16 height,u32 format);
 mkb::SpriteTex* preview_image_ptrs[10];
 u8 active_preview = 0;
@@ -248,9 +250,19 @@ void parse_function_toggles(char* buf) {
     while (buf < end_of_section);
 }
 
-static void rendefc() {
-    gc::OSReport("Zoosh\n");
-    mkb::event_init(mkb::EVENT_REND_EFC);
+static void rendefc(u32 id) {
+    if (mkb::main_mode == mkb::MD_SEL) {
+        if (id == 0x3 || id == 201) {
+            if (mkb::events[mkb::EVENT_REND_EFC].status == mkb::STAT_NULL) {
+                gc::OSReport("Created menu rendefc stage %d\n", mkb::g_current_stage_id);
+            mkb::event_init(mkb::EVENT_REND_EFC);
+            }
+        }
+        else {
+            gc::OSReport("Destroyed menu rendefc stage %d\n", mkb::g_current_stage_id);
+            mkb::event_dest(mkb::EVENT_REND_EFC);
+        }
+    }
 }
 
 void init()
@@ -407,12 +419,6 @@ void init()
                 }
             }
 
-            // Rendefc on title screen
-            if (mkb::main_mode == mkb::MD_SEL && mkb::events[mkb::EVENT_REND_EFC].status == mkb::STAT_NULL) {
-                //gc::OSReport("Zoosh\n");
-                mkb::event_init(mkb::EVENT_REND_EFC);
-                //mkb::g_init_rendefc_for_stage();
-            }
 
             //mkb::event_init(mkb::EVENT_REND_EFC);
             //mkb::g_init_rendefc_for_stage();
@@ -446,8 +452,8 @@ void init()
             if (STREQ(rel_filepath, "mkb2.main_game.rel")) {
                 relpatches::skip_cutscenes::init_main_game();
 
-                gc::OSReport("rendefec init\n");
-                mkb::event_init(mkb::EVENT_REND_EFC);
+                //gc::OSReport("rendefec init\n");
+                //mkb::event_init(mkb::EVENT_REND_EFC);
 
                 // removes playpoint screen
                 patch::write_nop(reinterpret_cast<void*>(0x808f9ecc));
@@ -467,6 +473,7 @@ void init()
             else if (STREQ(rel_filepath, "mkb2.sel_ngc.rel")) {
                 relpatches::party_game_toggle::sel_ngc_init();
                 patch::write_word(reinterpret_cast<void*>(0x80911090), 0x2c00ffff);
+                patch::write_nop(reinterpret_cast<void*>(0x80911358));
                 //patch::write_branch_bl(reinterpret_cast<void*>(0x808f5890), reinterpret_cast<void*>(rendefc));
                 //patch::write_nop(reinterpret_cast<void*>(0x08f5890));
                 for (unsigned int i = 0; i < sel_ngc_init_funcs.size(); i++) {
@@ -482,7 +489,17 @@ void init()
             gc::OSReport("Pushing sprite %X\n", sprite_tex);
             texes.push_back(sprite_tex);
         });
-/*
+
+    load_stage_1_trampoline = patch::hook_function(
+        mkb::g_load_stage, [](u32 id) {
+            rendefc(id);
+            load_stage_1_trampoline(id);
+        });
+    load_stage_2_trampoline = patch::hook_function(
+        mkb::g_load_stage_2, [](u32 id) {
+            rendefc(id);
+            load_stage_2_trampoline(id);
+        });/*
     menu_load_trampoline = patch::hook_function(
         mkb::g_create_main_menu, []() {
             menu_load_trampoline();
