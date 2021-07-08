@@ -4,12 +4,10 @@
 #include "tetris.h"
 #include "pad.h"
 #include "config.h"
-#include "main.h"
 #include <mkb/mkb.h>
 #include <gc/dvd.h>
 
 #include <cstring>
-#include <vector>
 
 
 #define STREQ(x,y) (strcmp(x,y)==0)
@@ -45,8 +43,6 @@ static void perform_assembly_patches()
     */
 }
 
-
-
 void init()
 {
     gc::OSReport("[mod] ApeSphere-Custom version 0.3.0 loaded\n");
@@ -63,10 +59,18 @@ void init()
             // Gets run at the start of smb2's function which draws debug text windows,
             // which is called at the end of smb2's function which draws the UI in general.
 
+            // Disp functions (REL patches)
+            for (unsigned int i = 0; i < relpatches::PATCH_COUNT; i++) {
+                if (relpatches::patches[i].enabled && relpatches::patches[i].disp_func != nullptr) {
+                    relpatches::patches[i].disp_func();
+                }
+            }
 
-            // Disp functions
-            for (unsigned int i = 0; i < config::disp_funcs.size(); i++) {
-                config::disp_funcs[i]();
+            // Disp functions (ApeSphere)
+            for (unsigned int i = 0; i < config::APESPHERE_TICKABLE_COUNT; i++) {
+                if (config::apesphere_tickables[i].enabled && config::apesphere_tickables[i].disp_func != nullptr) {
+                    config::apesphere_tickables[i].disp_func();
+                }
             }
 
             if (config::tetris_enabled) {
@@ -83,9 +87,19 @@ void init()
 
             // These run after all controller inputs have been processed on the current frame,
             // to ensure lowest input delay
-            // Tick functions
-            for (unsigned int i = 0; i < config::tick_funcs.size(); i++) {
-                config::tick_funcs[i]();
+
+            // Tick functions (REL patches)
+            for (unsigned int i = 0; i < relpatches::PATCH_COUNT; i++) {
+                if (relpatches::patches[i].enabled && relpatches::patches[i].tick_func != nullptr) {
+                    relpatches::patches[i].tick_func();
+                }
+            }
+
+            // Tick functions (ApeSphere)
+            for (unsigned int i = 0; i < config::APESPHERE_TICKABLE_COUNT; i++) {
+                if (config::apesphere_tickables[i].enabled && config::apesphere_tickables[i].tick_func != nullptr) {
+                    config::apesphere_tickables[i].tick_func();
+                }
             }
 
             pad::tick();
@@ -96,14 +110,21 @@ void init()
         {
             load_additional_rel_trampoline(rel_filepath, rel_buffer_ptrs);
 
+            // Main game init functions
             if (STREQ(rel_filepath, "mkb2.main_game.rel")) {
-                for (unsigned int i = 0; i < config::main_game_init_funcs.size(); i++) {
-                    config::main_game_init_funcs[i]();
+                for (unsigned int i = 0; i < relpatches::PATCH_COUNT; i++) {
+                    if (relpatches::patches[i].enabled && relpatches::patches[i].main_game_init_func != nullptr) {
+                        relpatches::patches[i].main_game_init_func();
+                    }
                 }
             }
+
+            // Sel_ngc init functions
             else if (STREQ(rel_filepath, "mkb2.sel_ngc.rel")) {
-                for (unsigned int i = 0; i < config::sel_ngc_init_funcs.size(); i++) {
-                    config::sel_ngc_init_funcs[i]();
+                for (unsigned int i = 0; i < relpatches::PATCH_COUNT; i++) {
+                    if (relpatches::patches[i].enabled && relpatches::patches[i].sel_ngc_init_func != nullptr) {
+                        relpatches::patches[i].sel_ngc_init_func();
+                    }
                 }
             }
         });

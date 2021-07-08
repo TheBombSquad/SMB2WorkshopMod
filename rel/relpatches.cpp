@@ -12,6 +12,110 @@
 namespace relpatches
 {
 
+    Tickable patches[] = {
+        {
+            .name = "challenge-mode-death-count",
+            .message = "[mod]  Challenge mode death count %s\n",
+            .main_game_init_func = challenge_death_count::init_main_game,
+        },
+
+        {
+            .name = "disable-how-to-play-screen",
+            .message = "[mod]  Tutorial sequence removal %s\n",
+            .main_loop_init_func = disable_tutorial::init_main_loop,
+        },
+
+        {
+            .name = "enhance-reflective-surfaces",
+            .message = "[mod]  Reflective surface enhancements %s\n",
+            .main_loop_init_func = extend_reflections::init_main_loop,
+        },
+
+        {
+            .name = "fix-labyrinth-camera",
+            .message = "[mod]  Labyrinth stage slot fix %s\n",
+            .main_loop_init_func = fix_labyrinth_camera::init_main_loop,
+        },
+        {
+            .name = "fix-missing-w",
+            .message = "[mod]  Missing 'w'  patch %s\n",
+            .main_game_init_func = fix_missing_w::init_main_game,
+        },
+        {
+            .name = "fix-revolution-slot",
+            .message = "[mod]  Revolution stage slot fix %s\n",
+            .main_loop_init_func = fix_revolution_slot::init_main_loop,
+        },
+        {
+            .name = "fix-stage-object-reflection",
+            .message = "[mod]  Stobj reflection flag support %s\n",
+            .main_loop_init_func = fix_stobj_reflection::init_main_loop,
+            .main_game_init_func = fix_stobj_reflection::init_main_game,
+        },
+        {
+            .name = "fix-wormhole-surfaces",
+            .message = "[mod]  Party game stage slot fix %s\n",
+            .main_loop_init_func = fix_wormhole_surfaces::init_main_loop,
+        },
+        {
+            .name = "custom-music-id",
+            .message = "[mod]  Custom music ID patch %s\n",
+            .main_loop_init_func = music_id_per_stage::init_main_loop,
+        },
+        {
+            .name = "no-hurry-up-music",
+            .message = "[mod]  Hurry up music removal %s\n",
+            .main_game_init_func = no_hurry_up_music::init_main_game,
+            .tick_func = no_hurry_up_music::tick,
+        },
+        {
+            .name = "no-music-vol-decrease-on-pause",
+            .message = "[mod]  No music volume decrease on pause %s\n",
+            .main_loop_init_func = no_music_vol_decrease_on_pause::init_main_loop,
+        },
+        {
+            .name = "perfect-bonus-completion",
+            .message = "[mod]  Perfect bonus completion %s\n",
+            .tick_func = perfect_bonus::tick,
+        },
+        {
+            .name = "remove-desert-haze",
+            .message = "[mod]  Desert haze removal %s\n",
+            .main_loop_init_func = remove_desert_haze::init_main_loop,
+        },
+        {
+            .name = "skip-intro-movie",
+            .message = "[mod]  Skip intro movie patch %s\n",
+            .main_loop_init_func = skip_intro_movie::init_main_loop,
+            .tick_func = skip_intro_movie::tick,
+        },
+        {
+            .name = "smb1-camera-toggle",
+            .message = "[mod]  SMB1 camera toggle %s\n",
+            .main_loop_init_func = smb1_camera_toggle::init_main_loop,
+            .tick_func = smb1_camera_toggle::tick,
+        },
+        {
+            .name = "story-mode-music-fix",
+            .message = "[mod]  Continuous story mode music %s\n",
+            .main_loop_init_func = story_continuous_music::init_main_loop,
+        },
+        {
+            .name = "story-mode-char-select",
+            .message = "[mod]  Story mode character select %s\n",
+            .main_loop_init_func = story_mode_char_select::init_main_loop,
+            .main_game_init_func = story_mode_char_select::init_main_game,
+            .tick_func = story_mode_char_select::tick,
+        },
+        {
+            .name = "custom-theme-id",
+            .message = "[mod]  Custom theme ID patch %s\n",
+            .main_loop_init_func = theme_id_per_stage::init_main_loop,
+        },
+    };
+
+    const unsigned int PATCH_COUNT = sizeof(patches) / sizeof(patches[0]);
+
     // If the stage is a bonus stage (ball mode 0x40) and no bananas remain,
     // end the stage with a perfect (|= 0x228)
 	void relpatches::perfect_bonus::tick() {
@@ -25,7 +129,7 @@ namespace relpatches
 	// haze for the specific desert theme ID, the theme ID is compared to 0xffff
 	// instead of 0x7.
 	// 0x2c00ffff = cmpwi r0, 0xffff
-	void remove_desert_haze::init()
+	void remove_desert_haze::init_main_loop()
 	{
 		patch::write_word(reinterpret_cast<void*>(0x802e4ed8), 0x2c00ffff);
 	}
@@ -35,14 +139,14 @@ namespace relpatches
     // Modifies the 1st parameter to SoftStreamStart following the goal sequence
     // affecting whether or not the music restarts/changes. Only modifies this when
     // the submode indicates we're currently on a stage, or if we're on the 'Retry' screen.
-	void story_continuous_music::init()
+	void story_continuous_music::init_main_loop()
 	{
 	    patch::write_branch_bl(reinterpret_cast<void*>(0x802a5c34), reinterpret_cast<void*>(main::story_mode_music_hook));
         patch::write_nop(reinterpret_cast<void*>(0x80273aa0));
     }
 
     // Nop a call to a function that decreases in-game volume on pause
-    void no_music_vol_decrease_on_pause::init()
+    void no_music_vol_decrease_on_pause::init_main_loop()
     {
         patch::write_nop(reinterpret_cast<void*>(0x802a32a8));
     }
@@ -65,14 +169,14 @@ namespace relpatches
 
     // Always return 'false' for a specific function that checks if the stage ID
     // is 348 when determining whether or not to handle level loading specially
-    void fix_revolution_slot::init()
+    void fix_revolution_slot::init_main_loop()
     {
         patch::write_word(reinterpret_cast<void*>(0x802ca9fc), PPC_INSTR_LI(PPC_R3, 0x0));
     }
 
     // Always return 'true' for a specific function that checks if the stage ID
     // belongs to a slot normally used for party games.
-    void fix_wormhole_surfaces::init()
+    void fix_wormhole_surfaces::init_main_loop()
     {
         patch::write_word(reinterpret_cast<void*>(0x802c8ce4), PPC_INSTR_LI(PPC_R0, 0x1));
     }
@@ -80,7 +184,7 @@ namespace relpatches
     // Always compare the stage ID to 0xFFFF when these camera functions check
     // if the current stage ID is 0x15a when determining specific constants.
     // 0x2c00ffff = cmpwi r0. 0xFFFF
-    void fix_labyrinth_camera::init()
+    void fix_labyrinth_camera::init_main_loop()
     {
         patch::write_word(reinterpret_cast<void*>(0x802858D4), 0x2c00ffff);
         patch::write_word(reinterpret_cast<void*>(0x802874BC), 0x2c00ffff);
@@ -175,7 +279,7 @@ namespace relpatches
 
     // Nops the sub_mode_frame_counter decrement in smd_adv_title_tick.
     // This ensures the tutorial sequence will never start.
-    void disable_tutorial::init()
+    void disable_tutorial::init_main_loop()
     {
         patch::write_nop(reinterpret_cast<void*>(0x8027bbb0));
     }
@@ -199,14 +303,14 @@ namespace relpatches
 
     // Hooks into g_handle_world_bgm, modifies the variable for BGM ID to point to
     // the one in our stage ID ->
-    void music_id_per_stage::init()
+    void music_id_per_stage::init_main_loop()
     {
         patch::write_branch_bl(reinterpret_cast<void*>(0x802a5f08), reinterpret_cast<void*>(main::get_bgm_id_hook));
     }
 
     // Hooks into two functions that set the global world_theme variable
     // Not entirely sure what the second one is for, but it may be used for SMB1 themes
-    void theme_id_per_stage::init()
+    void theme_id_per_stage::init_main_loop()
     {
        patch::write_branch(reinterpret_cast<void*>(0x802c7c3c), reinterpret_cast<void*>(main::get_theme_id_hook_1));
        patch::write_branch(reinterpret_cast<void*>(0x802c7cc8), reinterpret_cast<void*>(main::get_theme_id_hook_2));
@@ -218,7 +322,7 @@ namespace relpatches
         mkb::Itemgroup* active_ig;
 
         // Hooks into the reflection-handling function, calling our function instead
-        void init()
+        void init_main_loop()
         {
             patch::write_branch_bl(reinterpret_cast<void*>(0x8034b270), reinterpret_cast<void*>(mirror_tick));
             patch::write_nop(reinterpret_cast<void*>(0x8034b11c));
@@ -349,7 +453,7 @@ namespace relpatches
 
     }
     // Hooks into the smd_adv_first_logo_tick function, calling our own tick function
-    void skip_intro_movie::init() {
+    void skip_intro_movie::init_main_loop() {
         patch::write_branch_bl(reinterpret_cast<void*>(0x8027ec6c), reinterpret_cast<void*>(tick));
     }
 
@@ -361,7 +465,7 @@ namespace relpatches
     namespace smb1_camera_toggle {
         static bool smb1_cam_toggled;
 
-        void init() {
+        void init_main_loop() {
             smb1_cam_toggled = false;
         }
 

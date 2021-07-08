@@ -12,7 +12,6 @@
 #include "scratch.h"
 #include "assembly.h"
 #include <cstring>
-#include <cstdlib>
 
 #define STREQ(x,y) (strcmp(x,y)==0)
 #define KEY_ENABLED(x) (STREQ(key, x) && STREQ(value, "enabled"))
@@ -39,6 +38,16 @@ static void unlock_everything()
     memset(mkb::storymode_unlock_entries, 0xff, sizeof(mkb::storymode_unlock_entries));
 }
 
+static void misc_apesphere_init()
+{
+    strcpy(reinterpret_cast<char *>(0x8047f4ec), "APESPHERE PRACTICE MOD");
+    patch::write_branch(reinterpret_cast<void *>(0x8032ad0c),
+                        reinterpret_cast<void *>(main::custom_titlescreen_text_color));
+
+    Tetris::get_instance().init();
+    tetris_enabled = true;
+}
+
 u16* parse_stageid_list(char* buf, u16* array) {
     buf = strchr(buf, '\n')+1;
 
@@ -53,8 +62,8 @@ u16* parse_stageid_list(char* buf, u16* array) {
         end_of_line = strchr(buf, '\n');
         strncpy(key, key_start, (key_end-key_start));
         strncpy(value, key_end+2, (end_of_line-key_end)-2);
-        int key_idx = atoi(key);
-        u16 value_short = (u16)atoi(value);
+        int key_idx = mkb::atoi(key);
+        u16 value_short = (u16)mkb::atoi(value);
         array[key_idx] = value_short;
 
         buf = end_of_line+1;
@@ -64,6 +73,48 @@ u16* parse_stageid_list(char* buf, u16* array) {
     while (buf < end_of_section);
     return array;
 }
+
+relpatches::Tickable apesphere_tickables[] = {
+        {
+            .tick_func = unlock_everything,
+        },
+        {
+            .main_loop_init_func = draw::init,
+            .disp_func = draw::predraw,
+        },
+        {
+            .disp_func = draw::disp,
+        },
+        {   .main_loop_init_func = iw::init,
+            .disp_func = iw::disp,
+            .tick_func = iw::tick,
+        },
+        {
+            .main_loop_init_func = savestate::init,
+            .tick_func = savestate::tick,
+        },
+        {
+            .main_loop_init_func = timer::init,
+            .disp_func = timer::disp,
+            .tick_func = timer::tick,
+        },
+        {
+            .disp_func = menu::disp,
+            .tick_func = menu::tick,
+        },
+        {
+            .tick_func = jump::tick,
+        },
+        {
+            .main_loop_init_func = scratch::init,
+            .tick_func = scratch::tick,
+        },
+        {
+            .main_loop_init_func = misc_apesphere_init,
+        }
+};
+
+const unsigned int APESPHERE_TICKABLE_COUNT = sizeof(apesphere_tickables)/sizeof(apesphere_tickables[0]);
 
 void parse_function_toggles(char* buf) {
     // Enters from section parsing, so skip to the next line
@@ -81,114 +132,45 @@ void parse_function_toggles(char* buf) {
         strncpy(key, key_start, (key_end-key_start));
         strncpy(value, key_end+2, (end_of_line-key_end)-2);
 
-        if KEY_ENABLED("perfect-bonus-completion") {
-            tick_funcs.push_back(&relpatches::perfect_bonus::tick);
-            gc::OSReport("[mod]  Perfect bonus completion enabled!\n");
-        }
-        else if KEY_ENABLED("remove-desert-haze") {
-            relpatches::remove_desert_haze::init();
-            gc::OSReport("[mod]  Desert haze removal enabled!\n");
-        }
-        else if KEY_ENABLED("story-mode-music-fix") {
-            relpatches::story_continuous_music::init();
-            gc::OSReport("[mod]  Continuous story mode music enabled!\n");
-        }
-        else if KEY_ENABLED("no-music-vol-decrease-on-pause") {
-            relpatches::no_music_vol_decrease_on_pause::init();
-            gc::OSReport("[mod] No music volume decrease on pause enabled!\n");
-        }
-        else if KEY_ENABLED("story-mode-char-select") {
-            relpatches::story_mode_char_select::init_main_loop();
-            main_game_init_funcs.push_back(&relpatches::story_mode_char_select::init_main_game);
-            tick_funcs.push_back(&relpatches::story_mode_char_select::tick);
-            gc::OSReport("[mod]  Story mode character select enabled!\n");
-        }
-        else if KEY_ENABLED("no-hurry-up-music") {
-            main_game_init_funcs.push_back(relpatches::no_hurry_up_music::init_main_game);
-            tick_funcs.push_back(&relpatches::no_hurry_up_music::tick);
-            gc::OSReport("[mod]  Hurry up music removal enabled!\n");
-        }
-        else if KEY_ENABLED("fix-revolution-slot") {
-            relpatches::fix_revolution_slot::init();
-            gc::OSReport("[mod]  Revolution stage slot fix enabled!\n");
-        }
-        else if KEY_ENABLED("fix-labyrinth-camera") {
-            relpatches::fix_labyrinth_camera::init();
-            gc::OSReport("[mod]  Labyrinth stage slot fix enabled!\n");
-        }
-        else if KEY_ENABLED("fix-wormhole-surfaces") {
-            relpatches::fix_wormhole_surfaces::init();
-            gc::OSReport("[mod]  Party game stage slot fix enabled!\n");
-        }
-        else if KEY_ENABLED("challenge-mode-death-count") {
-            main_game_init_funcs.push_back(relpatches::challenge_death_count::init_main_game);
-            gc::OSReport("[mod]  Challenge mode death count enabled!\n");
-        }
-        else if KEY_ENABLED("disable-how-to-play-screen") {
-            relpatches::disable_tutorial::init();
-            gc::OSReport("[mod]  Tutorial sequence disabled!\n");
-        }
-        else if KEY_ENABLED("fix-stage-object-reflection") {
-            relpatches::fix_stobj_reflection::init_main_loop();
-            main_game_init_funcs.push_back(relpatches::fix_stobj_reflection::init_main_game);
-            gc::OSReport("[mod]  Stobj reflection flag support enabled!\n");
-        }
-        else if KEY_ENABLED("enhance-reflective-surfaces") {
-            relpatches::extend_reflections::init();
-            gc::OSReport("[mod]  Reflective surface enhancements enabled!\n");
-        }
-        else if KEY_ENABLED("custom-music-id") {
-            relpatches::music_id_per_stage::init();
-            gc::OSReport("[mod]  Custom music ID patch enabled!\n");
-        }
-        else if KEY_ENABLED("custom-theme-id") {
-            relpatches::theme_id_per_stage::init();
-            gc::OSReport("[mod]  Custom theme ID patch enabled!\n");
-        }
-        else if KEY_ENABLED("skip-intro-movie") {
-            relpatches::skip_intro_movie::init();
-            gc::OSReport("[mod]  Skipping intro movie!\n");
-        }
-        else if KEY_ENABLED("smb1-camera-toggle") {
-            relpatches::smb1_camera_toggle::init();
-            tick_funcs.push_back(relpatches::smb1_camera_toggle::tick);
-            gc::OSReport("[mod]  SMB1 camera toggle enabled!\n");
-        }
-        else if KEY_ENABLED("fix-missing-w") {
-            main_game_init_funcs.push_back(relpatches::fix_missing_w::init_main_game);
-            gc::OSReport("[mod]  Missing 'w' restored!");
-        }
-        else if KEY_ENABLED("apesphere-practice") {
-            strcpy(reinterpret_cast<char *>(0x8047f4ec), "APESPHERE PRACTICE MOD");
-            patch::write_branch(reinterpret_cast<void *>(0x8032ad0c),
-                                reinterpret_cast<void *>(main::custom_titlescreen_text_color));
+        if KEY_ENABLED("apesphere-practice") {
+            for (unsigned int i = 0; i < APESPHERE_TICKABLE_COUNT; i++) {
+                apesphere_tickables[i].enabled = true;
+                if (apesphere_tickables[i].main_loop_init_func != nullptr) {
+                    apesphere_tickables[i].main_loop_init_func();
+                }
 
-            draw::init();
-            Tetris::get_instance().init();
-            tetris_enabled = true;
-            savestate::init();
-            timer::init();
-            iw::init();
-            scratch::init();
-
-            tick_funcs.push_back(&unlock_everything);
-            tick_funcs.push_back(&timer::tick);
-            tick_funcs.push_back(&iw::tick);
-            tick_funcs.push_back(&savestate::tick);
-            tick_funcs.push_back(&menu::tick);
-            tick_funcs.push_back(&jump::tick);
-            tick_funcs.push_back(&scratch::tick);
-
-            disp_funcs.push_back(draw::predraw);
-            disp_funcs.push_back(draw::disp);
-            disp_funcs.push_back(timer::disp);
-            disp_funcs.push_back(iw::disp);
-            disp_funcs.push_back(menu::disp);
-            gc::OSReport("[mod]  ApeSphere practice mod enabled!\n");
+            }
         }
+
         else {
-            gc::OSReport("[mod]  Unknown option: %s\n", key);
+            // Iterate through all the REL patch tickables, looking for match of key name
+            for (unsigned int i = 0; i < relpatches::PATCH_COUNT; i++) {
+                if (relpatches::patches[i].name != nullptr && STREQ(key, relpatches::patches[i].name)) {
+                    if (STREQ(value, "enabled")) {
+                        relpatches::patches[i].enabled = true;
+
+                        // Execute the main_loop init func, if it exists
+                        if (relpatches::patches[i].main_loop_init_func != nullptr) {
+                            relpatches::patches[i].main_loop_init_func();
+                        }
+
+                        // Print init message, if it exists
+                        if (relpatches::patches[i].message != nullptr) {
+                            gc::OSReport(relpatches::patches[i].message, "ENABLED!");
+                        }
+
+                        break;
+                    }
+                    else {
+                        if (relpatches::patches[i].message != nullptr) {
+                            gc::OSReport(relpatches::patches[i].message, "disabled!");
+                        }
+                        break;
+                    }
+                }
+            }
         }
+
         buf = end_of_line+1;
         memset(key, '\0', 64);
         memset(value, '\0', 64);

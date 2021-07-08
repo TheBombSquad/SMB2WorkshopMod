@@ -105,6 +105,7 @@ void event_stobj_init();
 int spawn_stobj(Stobj *stobj);
 int spawn_item(Item *item);
 int sprintf(char *buffer,char *format,...);
+int atoi(char *__nptr);
 
 }
 
