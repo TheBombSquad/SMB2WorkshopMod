@@ -4,20 +4,18 @@
 #include "tetris.h"
 #include "pad.h"
 #include "config.h"
-#include <mkb/mkb.h>
-#include <gc/dvd.h>
+#include <mkb.h>
 
 #include <cstring>
 
-
-#define STREQ(x,y) (strcmp(x,y)==0)
+#define STREQ(x,y) (mkb::strcmp(const_cast<char*>(x),const_cast<char*>(y))==0)
 
 namespace main
 {
 
 static void (*s_draw_debug_text_trampoline)();
 static void (*s_process_inputs_trampoline)();
-static void (*load_additional_rel_trampoline)(const char *rel_filepath, void *rel_buffer_ptrs);
+static void (*load_additional_rel_trampoline)(char *rel_filepath, mkb::RelBufferInfo *rel_buffer_ptrs);
 
 // For dynamically choosing to run init/tick/disp functions based on a config file
 bool debug_mode_enabled = false;
@@ -45,7 +43,7 @@ static void perform_assembly_patches()
 
 void init()
 {
-    gc::OSReport("[mod] ApeSphere-Custom version 0.3.0 loaded\n");
+    mkb::OSReport("[mod] ApeSphere-Custom version 0.3.0 loaded\n");
     heap::init();
     perform_assembly_patches();
 
@@ -106,7 +104,7 @@ void init()
         });
 
     load_additional_rel_trampoline = patch::hook_function(
-        mkb::load_additional_rel, [](const char *rel_filepath, void *rel_buffer_ptrs)
+        mkb::load_additional_rel, [](char *rel_filepath, mkb::RelBufferInfo *rel_buffer_ptrs)
         {
             load_additional_rel_trampoline(rel_filepath, rel_buffer_ptrs);
 

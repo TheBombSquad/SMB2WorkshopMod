@@ -2,7 +2,7 @@
 
 #include "draw.h"
 
-#include <mkb/mkb.h>
+#include <mkb.h>
 
 namespace timer
 {
@@ -20,7 +20,7 @@ void init()
 {
     if (s_enabled) return;
 
-    if (!s_ever_enabled) s_retrace_count = gc::VIGetRetraceCount();
+    if (!s_ever_enabled) s_retrace_count = mkb::VIGetRetraceCount();
 
     s_enabled = true;
     s_ever_enabled = true;
@@ -61,7 +61,7 @@ void disp()
     }
 
     s_prev_retrace_count = s_retrace_count;
-    s_retrace_count = gc::VIGetRetraceCount();
+    s_retrace_count = mkb::VIGetRetraceCount();
 
     if (mkb::sub_mode == mkb::SMD_GAME_READY_INIT)
     {
@@ -110,7 +110,7 @@ void save_state(memstore::MemStore *store)
     if (store->get_mode() == memstore::Mode::LOAD)
     {
         // This might not be completely consistently correct
-        u32 count = gc::VIGetRetraceCount();
+        u32 count = mkb::VIGetRetraceCount();
         s_prev_retrace_count = count - 1;
         s_retrace_count = count - 1;
     }

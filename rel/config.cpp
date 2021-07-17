@@ -11,15 +11,14 @@
 #include "jump.h"
 #include "scratch.h"
 #include "assembly.h"
-#include <cstring>
 
-#define STREQ(x,y) (strcmp(x,y)==0)
+#define STREQ(x,y) (mkb::strcmp(const_cast<char*>(x),const_cast<char*>(y))==0)
 #define KEY_ENABLED(x) (STREQ(key, x) && STREQ(value, "enabled"))
 
 namespace config {
 
 static int config_file_length;
-static gc::DVDFileInfo config_file_info;
+static mkb::DVDFileInfo config_file_info;
 static char* config_file_buf;
 static char config_file_path[] = "/config.txt";
 
@@ -33,14 +32,14 @@ static void unlock_everything()
     mkb::unlock_info.newest_play_point_record = 99999;
     mkb::unlock_info.movies = 0x0fff;
     mkb::unlock_info.party_games = 0x0001b600;
-    mkb::unlock_info.movies_watched = 0x0fff;
-    memset(mkb::cm_unlock_entries, 0xff, sizeof(mkb::cm_unlock_entries));
-    memset(mkb::storymode_unlock_entries, 0xff, sizeof(mkb::storymode_unlock_entries));
+    mkb::unlock_info.g_movies_watched = 0x0fff;
+    mkb::memset(mkb::cm_unlock_entries, 0xff, sizeof(mkb::cm_unlock_entries));
+    mkb::memset(mkb::storymode_unlock_entries, 0xff, sizeof(mkb::storymode_unlock_entries));
 }
 
 static void misc_apesphere_init()
 {
-    strcpy(reinterpret_cast<char *>(0x8047f4ec), "APESPHERE PRACTICE MOD");
+    mkb::strcpy(reinterpret_cast<char *>(0x8047f4ec), "APESPHERE PRACTICE MOD");
     patch::write_branch(reinterpret_cast<void *>(0x8032ad0c),
                         reinterpret_cast<void *>(main::custom_titlescreen_text_color));
 
@@ -49,26 +48,26 @@ static void misc_apesphere_init()
 }
 
 u16* parse_stageid_list(char* buf, u16* array) {
-    buf = strchr(buf, '\n')+1;
+    buf = mkb::strchr(buf, '\n')+1;
 
     char *end_of_section;
     char key[64] = {0};
     char value[64] = {0};
-    end_of_section = strchr(buf, '}');
+    end_of_section = mkb::strchr(buf, '}');
     do {
         char *key_start, *key_end, *end_of_line;
-        key_start = strchr(buf, 'E')+2;
-        key_end = strchr(buf, ':');
-        end_of_line = strchr(buf, '\n');
-        strncpy(key, key_start, (key_end-key_start));
-        strncpy(value, key_end+2, (end_of_line-key_end)-2);
+        key_start = mkb::strchr(buf, 'E')+2;
+        key_end = mkb::strchr(buf, ':');
+        end_of_line = mkb::strchr(buf, '\n');
+        mkb::strncpy(key, key_start, (key_end-key_start));
+        mkb::strncpy(value, key_end+2, (end_of_line-key_end)-2);
         int key_idx = mkb::atoi(key);
         u16 value_short = (u16)mkb::atoi(value);
         array[key_idx] = value_short;
 
         buf = end_of_line+1;
-        memset(key, '\0', 64);
-        memset(value, '\0', 64);
+        mkb::memset(key, '\0', 64);
+        mkb::memset(value, '\0', 64);
     }
     while (buf < end_of_section);
     return array;
@@ -118,19 +117,19 @@ const unsigned int APESPHERE_TICKABLE_COUNT = sizeof(apesphere_tickables)/sizeof
 
 void parse_function_toggles(char* buf) {
     // Enters from section parsing, so skip to the next line
-    buf = strchr(buf, '\n')+1;
+    buf = mkb::strchr(buf, '\n')+1;
 
     char *end_of_section;
     char key[64] = {0};
     char value[64] = {0};
-    end_of_section = strchr(buf, '}');
+    end_of_section = mkb::strchr(buf, '}');
     do {
         char *key_start, *key_end, *end_of_line;
-        key_start = strchr(buf, '\t')+1;
-        key_end = strchr(buf, ':');
-        end_of_line = strchr(buf, '\n');
-        strncpy(key, key_start, (key_end-key_start));
-        strncpy(value, key_end+2, (end_of_line-key_end)-2);
+        key_start = mkb::strchr(buf, '\t')+1;
+        key_end = mkb::strchr(buf, ':');
+        end_of_line = mkb::strchr(buf, '\n');
+        mkb::strncpy(key, key_start, (key_end-key_start));
+        mkb::strncpy(value, key_end+2, (end_of_line-key_end)-2);
 
         if KEY_ENABLED("apesphere-practice") {
             for (unsigned int i = 0; i < APESPHERE_TICKABLE_COUNT; i++) {
@@ -156,14 +155,14 @@ void parse_function_toggles(char* buf) {
 
                         // Print init message, if it exists
                         if (relpatches::patches[i].message != nullptr) {
-                            gc::OSReport(relpatches::patches[i].message, "ENABLED!");
+                            mkb::OSReport(relpatches::patches[i].message, "ENABLED!");
                         }
 
                         break;
                     }
                     else {
                         if (relpatches::patches[i].message != nullptr) {
-                            gc::OSReport(relpatches::patches[i].message, "disabled!");
+                            mkb::OSReport(relpatches::patches[i].message, "disabled!");
                         }
                         break;
                     }
@@ -172,39 +171,39 @@ void parse_function_toggles(char* buf) {
         }
 
         buf = end_of_line+1;
-        memset(key, '\0', 64);
-        memset(value, '\0', 64);
+        mkb::memset(key, '\0', 64);
+        mkb::memset(value, '\0', 64);
     }
     while (buf < end_of_section);
 }
 
 void parse_config() {
-    config_file_length = gc::DVDOpen(config_file_path, &config_file_info);
+    config_file_length = mkb::DVDOpen(config_file_path, &config_file_info);
     if (config_file_length != 0) {
         // Round the length of the config file to a multiple of 32, necessary for DVDReadAsyncPrio
         config_file_length = (config_file_info.length + 0x1f) & 0xffffffe0;
         config_file_buf = static_cast<char*>(heap::alloc_from_heap(config_file_length));
-        config_file_length = gc::read_entire_file_using_dvdread_prio_async(&config_file_info, config_file_buf, config_file_length, 0);
+        config_file_length = mkb::read_entire_file_using_dvdread_prio_async(&config_file_info, config_file_buf, config_file_length, 0);
         char* eof = config_file_buf + config_file_info.length;
 
         if (config_file_length != 0) {
-            gc::OSReport("[mod] Now parsing config file...\n");
+            mkb::OSReport("[mod] Now parsing config file...\n");
             char section[64] = {0};
             char *file = config_file_buf;
             do {
                 char *section_start, *section_end;
                 // Parse the start of a section of the config starting with # and ending with {
                 // Example: # Section {
-                section_start = strchr(file, '#');
-                section_end = strchr(file, '{');
+                section_start = mkb::strchr(file, '#');
+                section_end = mkb::strchr(file, '{');
                 if (section_start != nullptr && section_end != nullptr) {
                     // Strip out the '# ' at the start of string, strip out the ' ' at the end
                     section_start += 2;
                     section_end -= 1;
 
-                    strncpy(section, section_start, (section_end-section_start));
+                    mkb::strncpy(section, section_start, (section_end-section_start));
 
-                    gc::OSReport("[mod] Now parsing category %s...\n", section);
+                    mkb::OSReport("[mod] Now parsing category %s...\n", section);
 
                     // Parsing function toggles
                     if (STREQ(section, "REL Patches") || STREQ(section, "ApeSphere")) {
@@ -213,24 +212,24 @@ void parse_config() {
 
                     else if (STREQ(section, "Theme IDs")) {
                         parse_stageid_list(section_end, main::theme_id_lookup);
-                        gc::OSReport("[mod]  Theme ID list loaded at: 0x%X\n", &main::theme_id_lookup);
+                        mkb::OSReport("[mod]  Theme ID list loaded at: 0x%X\n", &main::theme_id_lookup);
                     }
 
                     else if (STREQ(section, "Difficulty Layout")) {
-                        gc::OSReport("%s\n", section);
+                        mkb::OSReport("%s\n", section);
                     }
 
                     else if (STREQ(section, "Music IDs")) {
                         parse_stageid_list(section_end, main::bgm_id_lookup);
-                        gc::OSReport("[mod]  Music ID list loaded at: 0x%X\n", &main::bgm_id_lookup);
+                        mkb::OSReport("[mod]  Music ID list loaded at: 0x%X\n", &main::bgm_id_lookup);
                     }
 
                     else {
-                        gc::OSReport("[mod]  Unknown category %s found in config!\n", section);
+                        mkb::OSReport("[mod]  Unknown category %s found in config!\n", section);
                     }
 
-                    file = strchr(section_end, '\n')+1;
-                    memset(section, '\0', 64);
+                    file = mkb::strchr(section_end, '\n')+1;
+                    mkb::memset(section, '\0', 64);
                 }
                 else {
                     break;
@@ -239,7 +238,7 @@ void parse_config() {
             while (file <= eof);
 
         }
-        gc::DVDClose(&config_file_info);
+        mkb::DVDClose(&config_file_info);
         heap::free_to_heap(config_file_buf);
     }
 }

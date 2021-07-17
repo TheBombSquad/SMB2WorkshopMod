@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gc/gc.h>
+#include <mkb.h>
 #include <relpatches.h>
 
 namespace main
@@ -21,7 +21,7 @@ void tick();
 
 // Full color to draw debug text in, if not zero
 // Normally, the debug text drawing function uses a single byte for the color in the form RRGGBBAA
-extern gc::GXColor debug_text_color;
+extern mkb::GXColor debug_text_color;
 
 extern bool debug_mode_enabled;
 

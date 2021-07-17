@@ -1,8 +1,8 @@
 #include "relpatches.h"
 #include "patch.h"
-#include "mkb/mkb.h"
-#include "mkb/camera.h"
-#include "mkb/mode.h"
+#include <mkb.h>
+#include <mkb.h>
+#include <mkb.h>
 #include "assembly.h"
 #include "ppcutil.h"
 #include "pad.h"
@@ -162,7 +162,7 @@ namespace relpatches
     // hurry up music is playing. This re-imlements the playing of the sound.
     void no_hurry_up_music::tick()
     {
-        if (mkb::sub_mode == mkb::SubMode::SMD_GAME_TIMEOVER_INIT) {
+        if (mkb::sub_mode == mkb::SMD_GAME_TIMEOVER_INIT) {
             mkb::g_SoftStreamStart_with_some_defaults_2(0x2c);
         }
     }
@@ -216,7 +216,7 @@ namespace relpatches
         // the death counter sprite tick function instead.'
         void init_main_game()
         {
-            memset(death_count, 0, sizeof(death_count));
+            mkb::memset(death_count, 0, sizeof(death_count));
 
             patch::write_nop(reinterpret_cast<void*>(0x808fa4f4));
 
@@ -258,22 +258,22 @@ namespace relpatches
             }
 
             if (display > 9999) {
-                sprite->width = 0.3;
+                sprite->g_width = 0.3;
             }
             else if (display > 999) {
-                sprite->width = 0.4;
+                sprite->g_width = 0.4;
             }
             else if (display > 99) {
-                sprite->width = 0.5;
+                sprite->g_width = 0.5;
             }
             else if (display > 9) {
-                sprite->width = 0.6;
+                sprite->g_width = 0.6;
             }
             else {
-                sprite->width = 1;
+                sprite->g_width = 1;
             }
 
-            sprintf(sprite->text, "%u", display);
+            mkb::sprintf(sprite->text, "%u", display);
         }
     }
 
@@ -339,17 +339,17 @@ namespace relpatches
             // Determines the nearest reflective surface to the active ball
             for (int idx = 0; idx < 4; idx++) {
                 if (ball != nullptr && ball->status == mkb::STAT_NORMAL) {
-                    for (u32 col_hdr_idx = 0; col_hdr_idx < (mkb::stagedef->collision_header_count); col_hdr_idx++) {
-                        mkb::StagedefCollisionHeader* hdr = &mkb::stagedef->collision_header_list[col_hdr_idx];
+                    for (u32 col_hdr_idx = 0; col_hdr_idx < (mkb::stagedef->coli_header_count); col_hdr_idx++) {
+                        mkb::StagedefColiHeader* hdr = &mkb::stagedef->coli_header_list[col_hdr_idx];
                         for (u32 refl_idx = 0; refl_idx < hdr->reflective_stage_model_count; refl_idx++) {
                             mkb::StagedefReflectiveStageModel* refl = &hdr->reflective_stage_model_list[refl_idx];
                             current_ball_position = ball->pos;
-                            distance_to_mirror = get_distance(current_ball_position, refl->gma_ptr->origin);
+                            distance_to_mirror = get_distance(current_ball_position, refl->g_model_header_ptr->origin);
 
                             if (nearest_dist_to_mir == -1.0 || distance_to_mirror < nearest_dist_to_mir) {
                                 nearest_dist_to_mir = distance_to_mirror;
                                 active_ig = &mkb::itemgroups[col_hdr_idx];
-                                mirror_origin = refl->gma_ptr->origin;
+                                mirror_origin = refl->g_model_header_ptr->origin;
                                 ig_init_pos = hdr->origin;
                             }
                         }
@@ -357,9 +357,9 @@ namespace relpatches
                     // Translates the mirror plane according to the active animation and rotates it as well
                     if (active_ig != nullptr) {
                         mkb::mtxa_from_identity();
-                        translation_factor.x = active_ig->pos.x - ig_init_pos.x;
-                        translation_factor.y = active_ig->pos.y - ig_init_pos.y;
-                        translation_factor.z = active_ig->pos.z - ig_init_pos.z;
+                        translation_factor.x = active_ig->position.x - ig_init_pos.x;
+                        translation_factor.y = active_ig->position.y - ig_init_pos.y;
+                        translation_factor.z = active_ig->position.z - ig_init_pos.z;
 
                         mkb::mtxa_translate(&mirror_origin);
                         mkb::mtxa_translate(&translation_factor);
@@ -389,12 +389,12 @@ namespace relpatches
 
     namespace story_mode_char_select {
 
-    static char* AIAI[] = {&mkb::CHAR_A, &mkb::CHAR_I, &mkb::CHAR_A, &mkb::CHAR_I, &mkb::CHAR_SPACE, &mkb::CHAR_SPACE};
-    static char* MEEMEE[] = {&mkb::CHAR_M, &mkb::CHAR_E, &mkb::CHAR_E, &mkb::CHAR_M, &mkb::CHAR_E, &mkb::CHAR_E};
-    static char* BABY[] = {&mkb::CHAR_B, &mkb::CHAR_A, &mkb::CHAR_B, &mkb::CHAR_Y, &mkb::CHAR_SPACE, &mkb::CHAR_SPACE};
-    static char* GONGON[] = {&mkb::CHAR_G, &mkb::CHAR_O, &mkb::CHAR_N, &mkb::CHAR_G, &mkb::CHAR_O, &mkb::CHAR_N};
-    static char* HIHI[] = {&mkb::CHAR_H, &mkb::CHAR_I, &mkb::CHAR_H, &mkb::CHAR_I, &mkb::CHAR_SPACE, &mkb::CHAR_SPACE};
-    static char** monkey_name_lookup[] = {AIAI, MEEMEE, BABY, GONGON, HIHI};
+    static mkb::undefined4* AIAI[] = {&mkb::CHAR_A, &mkb::CHAR_I, &mkb::CHAR_A, &mkb::CHAR_I, &mkb::CHAR_SPACE, &mkb::CHAR_SPACE};
+    static mkb::undefined4* MEEMEE[] = {&mkb::CHAR_M, &mkb::CHAR_E, &mkb::CHAR_E, &mkb::CHAR_M, &mkb::CHAR_E, &mkb::CHAR_E};
+    static mkb::undefined4* BABY[] = {&mkb::CHAR_B, &mkb::CHAR_A, &mkb::CHAR_B, &mkb::CHAR_Y, &mkb::CHAR_SPACE, &mkb::CHAR_SPACE};
+    static mkb::undefined4* GONGON[] = {&mkb::CHAR_G, &mkb::CHAR_O, &mkb::CHAR_N, &mkb::CHAR_G, &mkb::CHAR_O, &mkb::CHAR_N};
+    static mkb::undefined4* HIHI[] = {&mkb::CHAR_H, &mkb::CHAR_I, &mkb::CHAR_H, &mkb::CHAR_I, &mkb::CHAR_SPACE, &mkb::CHAR_SPACE};
+    static mkb::undefined4** monkey_name_lookup[] = {AIAI, MEEMEE, BABY, GONGON, HIHI};
 
     // Overrides the return value of certain functions to force the chosen monkey to be
     // preloaded in place of AiAi
@@ -407,7 +407,7 @@ namespace relpatches
     void set_nameentry_filename()
     {
         for (int i = 0; i < 6; i++) {
-            mkb::story_file_name[i] = monkey_name_lookup[mkb::active_monkey_id][i];
+            mkb::story_file_name[i] = reinterpret_cast<char*>(monkey_name_lookup[mkb::active_monkey_id][i]);
         }
         mkb::g_some_nameentry_length = 0x6;
     }
@@ -439,13 +439,13 @@ namespace relpatches
             patch::write_word(reinterpret_cast<void*>(0x80921a20), 0x6000000);
             patch::write_word(reinterpret_cast<void*>(0x80920ba0), 0xC000000);
             if (mkb::g_currently_visible_menu_screen == 0x6) {
-                if (pad::button_pressed(gc::PAD_BUTTON_A)) {
-                    mkb::mode_cnt = 1;
-                    *(&mkb::mode_cnt+2) = 7;
+                if (pad::button_pressed(mkb::PAD_BUTTON_A)) {
+                    mkb::menu_stack_ptr = 1;
+                    *(&mkb::menu_stack_ptr+2) = 7;
                 }
-                else if (pad::button_pressed(gc::PAD_BUTTON_B)){
+                else if (pad::button_pressed(mkb::PAD_BUTTON_B)){
                     if (mkb::g_character_selected) return;
-                    mkb::mode_cnt = 2;
+                    mkb::menu_stack_ptr = 2;
                 }
             }
         }
@@ -490,7 +490,7 @@ namespace relpatches
                 }
             }
 
-            if (pad::button_pressed(gc::PAD_TRIGGER_Z)) {
+            if (pad::button_pressed(mkb::PAD_TRIGGER_Z)) {
                 smb1_cam_toggled = !smb1_cam_toggled;
             }
 
@@ -502,7 +502,7 @@ namespace relpatches
         static char CHAR_w[4] = {'w', '\0', '\0', '\0'};
 
         void init_main_game() {
-        mkb::nameentry_character_ptr_list[62] = &(CHAR_w[0]);
+        mkb::nameentry_character_ptr_list[62] = reinterpret_cast<mkb::undefined4**>(&(CHAR_w[0]));
         }
     }
 }

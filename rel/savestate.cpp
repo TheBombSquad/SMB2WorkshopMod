@@ -6,7 +6,7 @@
 #include "heap.h"
 #include "draw.h"
 
-#include <mkb/mkb.h>
+#include <mkb.h>
 
 #include <timer.h>
 
@@ -50,7 +50,7 @@ void init()
             mkb::set_minimap_mode, [](u32 mode)
             {
                 if (!s_enabled || !(mkb::main_mode == mkb::MD_GAME
-                      && mkb::main_game_mode == mkb::MGM_PRACTICE
+                      && mkb::main_game_mode == mkb::PRACTICE_MODE
                       && mode == mkb::MINIMAP_SHRINK))
                 {
                     s_set_minimap_mode_trampoline(mode);
@@ -91,7 +91,7 @@ static void pass_over_regions(memstore::MemStore *store)
     store->do_region(mkb::balls[0].ape, sizeof(*mkb::balls[0].ape)); // Store entire ape struct for now
 
     // Itemgroups
-    store->do_region(mkb::itemgroups, sizeof(mkb::Itemgroup) * mkb::stagedef->collision_header_count);
+    store->do_region(mkb::itemgroups, sizeof(mkb::Itemgroup) * mkb::stagedef->coli_header_count);
 
     // Bananas
     store->do_region(&mkb::items, sizeof(mkb::Item) * mkb::stagedef->banana_count);
@@ -115,9 +115,9 @@ static void pass_over_regions(memstore::MemStore *store)
     }
 
     // Seesaws
-    for (u32 i = 0; i < mkb::stagedef->collision_header_count; i++)
+    for (u32 i = 0; i < mkb::stagedef->coli_header_count; i++)
     {
-        if (mkb::stagedef->collision_header_list[i].anim_loop_type_and_seesaw == mkb::ANIM_SEESAW)
+        if (mkb::stagedef->coli_header_list[i].anim_loop_type_and_seesaw == mkb::ANIM_SEESAW)
         {
             store->do_region(mkb::itemgroups[i].seesaw_info->state, 12);
         }
@@ -144,7 +144,7 @@ static void pass_over_regions(memstore::MemStore *store)
         else if (sprite->tick_func == mkb::sprite_score_tick)
         {
             // Score sprite's lerped score value
-            store->do_region(&sprite->lerp_value, sizeof(sprite->lerp_value));
+            store->do_region(&sprite->g_lerp_value, sizeof(sprite->g_lerp_value));
         }
     }
 
@@ -296,7 +296,7 @@ void tick()
     }
     auto &state = s_states[s_active_state_slot];
 
-    if (pad::button_pressed(gc::PAD_BUTTON_X))
+    if (pad::button_pressed(mkb::PAD_BUTTON_X))
     {
         if (mkb::sub_mode != mkb::SMD_GAME_PLAY_MAIN || mkb::sub_mode_request != mkb::SMD_INVALID)
         {
@@ -352,12 +352,12 @@ void tick()
         // TODO allow entering frame advance by pressing L/R while holding X in load-state mode
         s_frame_advance_mode = is_either_trigger_held();
 
-        gc::OSReport("[mod] Saved state:\n");
+        mkb::OSReport("[mod] Saved state:\n");
         state.store.print_stats();
         u32 freeHeapSpace = heap::get_free_space();
-        gc::OSReport("[mod] Heap free:        %d bytes\n", freeHeapSpace);
-        gc::OSReport("[mod] Heap used:        %d bytes\n", heap::HEAP_SIZE - freeHeapSpace);
-        gc::OSReport("[mod] Heap total space: %d bytes\n", heap::HEAP_SIZE);
+        mkb::OSReport("[mod] Heap free:        %d bytes\n", freeHeapSpace);
+        mkb::OSReport("[mod] Heap used:        %d bytes\n", heap::HEAP_SIZE - freeHeapSpace);
+        mkb::OSReport("[mod] Heap total space: %d bytes\n", heap::HEAP_SIZE);
 
         if (s_frame_advance_mode)
         {
@@ -369,8 +369,8 @@ void tick()
         }
     }
     else if (
-        pad::button_down(gc::PAD_BUTTON_Y)
-        || (pad::button_down(gc::PAD_BUTTON_X)
+        pad::button_down(mkb::PAD_BUTTON_Y)
+        || (pad::button_down(mkb::PAD_BUTTON_X)
             && s_created_state_last_frame)
         || s_frame_advance_mode
         || (is_either_trigger_held() && cstick_dir != pad::DIR_NONE)

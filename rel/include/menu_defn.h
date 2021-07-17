@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gc/gc.h>
+#include <mkb.h>
 
 namespace menu
 {
@@ -17,18 +17,18 @@ enum class WidgetType
 
 struct TextWidget
 {
-    const char *label;
+    char *label;
 };
 
 // Just a different color TextWidget
 struct HeaderWidget
 {
-    const char *label;
+    char *label;
 };
 
 struct CheckboxWidget
 {
-    const char *label;
+    char *label;
     // We can't use std::function due to destructors in unions stuff
     bool (*get)();
     void (*set)(bool value);
@@ -36,14 +36,14 @@ struct CheckboxWidget
 
 struct MenuWidget
 {
-    const char *label;
+    char *label;
     struct Widget *widgets;
     u32 num_widgets;
 };
 
 struct FloatViewWidget
 {
-    const char *label;
+    char *label;
     f32 (*get)();
 };
 

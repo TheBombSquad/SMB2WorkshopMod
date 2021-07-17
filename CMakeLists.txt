@@ -4,8 +4,8 @@ project(ApeSphere)
 set(CMAKE_CXX_STANDARD 20)
 
 # Specify 32-bit processor for better linting
-set(CMAKE_C_FLAGS -m32)
-set(CMAKE_CXX_FLAGS -m32)
+set(CMAKE_C_FLAGS -m32 -Wno-write-strings)
+set(CMAKE_CXX_FLAGS -m32 -Wno-write-strings)
 
 include_directories(rel/include)
 include_directories(rel/include/gc)
@@ -31,14 +31,10 @@ add_executable(ApeSphere
         rel/assembly.cpp
         rel/timer.cpp
         rel/include/timer.h
-        rel/include/gc/vi.h
-        rel/include/mkb/story.h
         rel/include/iw.h
         rel/iw.cpp
-        rel/include/mkb/unlock.h
         rel/include/menu_impl.h
         rel/menu_impl.cpp
-        rel/include/gc/mathtypes.h
         rel/relpatches.cpp
         rel/assembly/story_mode_music_fix.s
 )

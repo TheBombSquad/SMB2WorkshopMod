@@ -1,5 +1,5 @@
 #pragma once
-#include "mkb/mkb.h"
+#include <mkb.h>
 #include "relpatches.h"
 
 namespace config {

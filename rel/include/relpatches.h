@@ -1,6 +1,6 @@
 #pragma once
-#include "gc/gc.h"
-#include "mkb/mkb.h"
+#include <mkb.h>
+#include <mkb.h>
 
 namespace relpatches
 {
@@ -8,8 +8,8 @@ namespace relpatches
 static constexpr u16 STAGE_COUNT = 421;
 
 struct Tickable {
-    const char* name = nullptr;
-    const char* message = nullptr;
+    char* name = nullptr;
+    char* message = nullptr;
     bool enabled = false;
     void(*main_loop_init_func)() = nullptr;
     void(*main_game_init_func)() = nullptr;

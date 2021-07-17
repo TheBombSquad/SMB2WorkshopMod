@@ -65,13 +65,13 @@ void MemStore::do_region(void *ptr, u32 size)
         }
         case Mode::SAVE:
         {
-            memcpy(&m_save_buf[m_save_buf_idx], ptr, size);
+            mkb::memcpy(&m_save_buf[m_save_buf_idx], ptr, size);
             m_save_buf_idx += size;
             break;
         }
         case Mode::LOAD:
         {
-            memcpy(ptr, &m_save_buf[m_save_buf_idx], size);
+            mkb::memcpy(ptr, &m_save_buf[m_save_buf_idx], size);
             m_save_buf_idx += size;
             break;
         }
@@ -80,7 +80,7 @@ void MemStore::do_region(void *ptr, u32 size)
 
 void MemStore::print_stats() const
 {
-    gc::OSReport("[mod] MemStore total size: %d bytes\n", m_save_buf_len);
+    mkb::OSReport("[mod] MemStore total size: %d bytes\n", m_save_buf_len);
 }
 
 Mode MemStore::get_mode() const

@@ -1,5 +1,5 @@
 #include "heap.h"
-
+#include <mkb.h>
 #include <cstddef>
 
 void *operator new(u32 size)

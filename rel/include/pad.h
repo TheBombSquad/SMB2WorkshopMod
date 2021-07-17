@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gc/mathtypes.h>
+#include <mkb.h>
 
 namespace pad
 {
@@ -30,7 +30,7 @@ void set_exclusive_mode(bool enabled);
 
 // Simple wrappers about internal MKB2 bitfields. Represents OR-ed inputs of all controllers.
 
-// Accept a gc::PadDigitalInput
+// Accept a mkb::PadDigitalInput
 bool button_down(u16 digital_input, bool priority = false);
 bool button_pressed(u16 digital_input, bool priority = false);
 bool button_released(u16 digital_input, bool priority = false);
