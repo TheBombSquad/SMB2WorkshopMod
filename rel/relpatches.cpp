@@ -122,7 +122,13 @@ namespace relpatches
             .message = "[mod]  Playpoint removal patch %s\n",
             .main_game_init_func = remove_playpoints::init_main_game,
             .tick_func = remove_playpoints::tick,
+        },
+        {
+            .name = "fix-storm-continue-platform",
+            .message = "[mod]  Storm continue platform patch %s\n",
+            .main_loop_init_func = fix_storm_continue_platform::init_main_loop,
         }
+
     };
 
     const unsigned int PATCH_COUNT = sizeof(patches) / sizeof(patches[0]);
@@ -647,4 +653,12 @@ namespace relpatches
             mkb::unlock_info.party_games = 0x0001b600;
         }
    }
+
+   // Fixes an issue with rain droplets not appearing correctly on the continue platform in the storm theme.
+   namespace fix_storm_continue_platform {
+        void init_main_loop() {
+            patch::write_branch(reinterpret_cast<void*>(mkb::effect_bgstm_rainripple_disp), reinterpret_cast<void*>(main::fix_rain_ripple));
+        }
+   }
+
 }
