@@ -8,14 +8,14 @@ namespace relpatches
 static constexpr u16 STAGE_COUNT = 421;
 
 struct Tickable {
-    char* name = nullptr;
-    char* message = nullptr;
-    bool enabled = false;
-    void(*main_loop_init_func)() = nullptr;
-    void(*main_game_init_func)() = nullptr;
-    void(*sel_ngc_init_func)() = nullptr;
-    void(*disp_func)() = nullptr;
-    void(*tick_func)() = nullptr;
+    char* name = nullptr;                       // Name of the patch, what the config parser checks for
+    char* message = nullptr;                    // Message to be output to stdout by the config parser on load. Include %s for 'enabled/disabled'
+    bool enabled = false;                       // Whether or not the patch will be initialized and/or ticked
+    void(*main_loop_init_func)() = nullptr;     // Initialization function on load of mkb2.main_loop.rel
+    void(*main_game_init_func)() = nullptr;     // Initialization function on load of mkb2.main_game.rel
+    void(*sel_ngc_init_func)() = nullptr;       // Initialization function on load of mkb2.sel_ngc.rel
+    void(*disp_func)() = nullptr;               // Display function (debug window stuff)
+    void(*tick_func)() = nullptr;               // Tick function
 };
 
 extern const unsigned int PATCH_COUNT;
@@ -126,6 +126,11 @@ void init_main_game();
 void dmd_scen_newgame_main_patch();
 void dmd_scen_sceneplay_init_patch();
 void dmd_scen_sel_floor_init_patch();
+}
+
+namespace remove_playpoints {
+void init_main_game();
+void tick();
 }
 
 }

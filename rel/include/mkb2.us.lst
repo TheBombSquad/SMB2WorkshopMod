@@ -7948,7 +7948,7 @@
 803DD258:FUN_80307020
 803DD2C0:g_check_if_partygame_unlocked
 803DD318:get_num_of_unlocked_party_games
-803DD3AC:g_get_num_of_unlocked_party_games_2
+803DD3AC:get_num_of_unlocked_party_games_2
 803DD450:set_unlocked_monkeys_to_three
 803DD468:get_num_unlocked_monkeys
 803DD47C:FUN_80307244

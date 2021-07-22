@@ -4828,7 +4828,7 @@ extern "C" {
     extern undefined4 g_loaded_rel_count;
     extern struct RelBufferInfo * g_loaded_rel_infos[10];
     extern undefined4 frame_counter;
-    extern undefined2 g_storymode_mode;
+    extern StoryModeFunc  g_storymode_mode;
     extern StoryModeFunc  active_story_mode_func;
     extern undefined2 curr_world;
     extern undefined2 selected_storymode_stage;
@@ -8235,7 +8235,7 @@ extern "C" {
     void unlock_staff_credits_game(void);
     uint g_check_if_partygame_unlocked(int param_1);
     int get_num_of_unlocked_party_games(void);
-    uint g_get_num_of_unlocked_party_games_2(void);
+    uint get_num_of_unlocked_party_games_2(void);
     void set_unlocked_monkeys_to_three(void);
     uint get_num_unlocked_monkeys(void);
     void g_set_movie_as_unlocked(int param_1);

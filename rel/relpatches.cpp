@@ -116,6 +116,12 @@ namespace relpatches
             .name = "skip-cutscenes",
             .message = "[mod]  Cutscene skip patch %s\n",
             .main_game_init_func = skip_cutscenes::init_main_game,
+        },
+        {
+            .name = "remove-playpoints",
+            .message = "[mod]  Playpoint removal patch %s\n",
+            .main_game_init_func = remove_playpoints::init_main_game,
+            .tick_func = remove_playpoints::tick,
         }
     };
 
@@ -623,5 +629,22 @@ namespace relpatches
             patch::write_branch(reinterpret_cast<void*>(mkb::g_preload_next_stage_files), reinterpret_cast<void*>(handle_preloading));
         }
 
+   }
+
+   // Removes the playpoint notification screens when exiting from story mode or challenge mode, or after a 'game over'.
+   namespace remove_playpoints {
+        void init_main_game() {
+            // Removes playpoint screen when exiting challenge/story mode.
+            patch::write_nop(reinterpret_cast<void*>(0x808f9ecc));
+            patch::write_nop(reinterpret_cast<void*>(0x808f9eec));
+
+            // Removes playpoint screen after the 'game over' sequence.
+            patch::write_nop(reinterpret_cast<void*>(0x808f801c));
+            patch::write_nop(reinterpret_cast<void*>(0x808f803c));
+        }
+
+        void tick() {
+            mkb::unlock_info.party_games = 0x0001b600;
+        }
    }
 }
