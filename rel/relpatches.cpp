@@ -519,7 +519,7 @@ namespace relpatches
         static char CHAR_w[4] = {'w', '\0', '\0', '\0'};
 
         void init_main_game() {
-        mkb::nameentry_character_ptr_list[62] = reinterpret_cast<mkb::undefined4**>(&(CHAR_w[0]));
+        mkb::nameentry_character_ptr_list[114] = reinterpret_cast<mkb::undefined4**>(&(CHAR_w[0]));
         }
     }
 
