@@ -139,11 +139,19 @@ struct DVDDiskID {
 
 typedef struct CmEntry CmEntry, *PCmEntry;
 
+enum { /* See cmEntryFormat.txt notes */
+    CMET_IF=0,
+    CMET_THEN=1,
+    CMET_INFO=2,
+    CMET_END=3
+};
+typedef undefined1 CmEntryType;
+
 struct CmEntry { /* Challenge Mode Entry, see cmEntryFormat.txt by TwixNinja in notes for more info */
-    byte m;
-    byte n;
+    CmEntryType  type;
+    u8 arg;
     undefined field_0x2[2];
-    dword v;
+    u32 value;
     undefined field_0x8[20];
 } __attribute__((__packed__));
 
@@ -1681,6 +1689,28 @@ struct GSomethingWithPadMotorsStruct {
     undefined2 b;
 } __attribute__((__packed__));
 
+typedef struct CmPlayerProgress CmPlayerProgress, *PCmPlayerProgress;
+
+typedef struct CmStage CmStage, *PCmStage;
+
+struct CmStage { /* Stage in Challenge Mode. Stage course number is what's shown in bottom left of screen */
+    s32 stage_course_num;
+    s32 stage_id;
+} __attribute__((__packed__));
+
+struct CmPlayerProgress { /* Seems to be one of these per player, not sure what they are exactly yet */
+    struct CmStage curr_stage;
+    struct CmStage next_stages[3]; /* Appears to track the "next" stage for the player in the first element (assuming a blue goal is taken). The latter two elements are never updated, and I don't think the first element is even used for anything */
+    s16 field_0x20;
+    s16 g_next_stage_idx;
+} __attribute__((__packed__));
+
+enum {
+    OF_G_SMTH_WITH_CAMERA=2,
+    OF_GAME_PAUSED=8
+};
+typedef undefined4 GOtherFlags;
+
 typedef struct RankingEntry RankingEntry, *PRankingEntry;
 
 struct RankingEntry {
@@ -1788,14 +1818,19 @@ typedef undefined2 StoryModeStageSelectState;
 
 enum {
     MF_NONE=0,
+    MF_0x1=1,
+    MF_0x2=2,
+    MF_0x4=4,
     MF_PLAYING_EXTRA_COURSE=8,
     MF_PLAYING_MASTER_NOEX_COURSE=16,
+    MF_0x20=32,
     MF_ADDITIONAL_REL_LOADED=512,
     MF_0x2000=8192,
     MF_OPTION_MODE=262144,
     MF_G_STOP_GAME_LOOP=2097152,
     MF_0x400000=4194304,
-    MF_PLAYING_MASTER_EX_COURSE=8388608
+    MF_PLAYING_MASTER_EX_COURSE=8388608,
+    MF_G_PLAYING_MASTER_COURSE=33554432
 };
 typedef undefined4 ModeFlag;
 
@@ -2168,10 +2203,11 @@ struct StoryModeSaveFile {
     BOOL32 is_valid;
     char file_name[13];
     u8 current_world;
-    undefined field_0x16[0x2];
+    u8 field_0x16;
+    undefined field_0x17[0x1];
     u32 playtime_in_frames;
     u32 score;
-    undefined field_0x20[4];
+    u32 bananas;
     u8 num_beaten_stages_in_current_world;
     u8 beaten_stage_indices[10];
     undefined field_0x2f[85];
@@ -2237,6 +2273,18 @@ struct MemCardInfo { /* Some struct that seems to hold per-memcard info; there a
     dword field_0x3c;
     dword field_0x40;
 } __attribute__((__packed__));
+
+enum {
+    PMT_UNKNOWN0=0,
+    PMT_CHALLENGE=1,
+    PMT_PRACTICE=2,
+    PMT_UNKNOWN3=3,
+    PMT_UNKNOWN4=4,
+    PMT_STORY_STAGE_SELECT=5,
+    PMT_STORY_PLAY=6,
+    PMT_UNKNOWN7=7
+};
+typedef undefined4 PauseMenuType;
 
 typedef struct ytgut ytgut, *Pytgut;
 
@@ -2380,6 +2428,40 @@ struct MemCardFile {
     struct CARDFileInfo gc_file_info; /* Created by retype action */
     undefined field_0x22[0x2];
     char * file_name; /* Struct may be bigger? /shrug */
+} __attribute__((__packed__));
+
+enum {
+    Blue=0,
+    Green=1,
+    Red=2
+};
+typedef undefined1 GoalType;
+
+typedef struct ModeInfo ModeInfo, *PModeInfo;
+
+struct ModeInfo { /* I don't know what to call this, but there's some important global game info in here! -Complex */
+    BallMode  ball_mode; /* Correlates with the ball's 'mode' in the debug menu's ball display. Bonus stages have 0x40 set, final stages in a difficulty have 0x1000 set.  0x8 seems to stop the timer? -Crafted */
+    s16 stage_time_frames_remaining;
+    undefined2 stage_time_limit;
+    undefined4 field_0x8;
+    s16 entered_goal_idx;
+    undefined2 field_0xe;
+    struct Vec3f g_some_ball_vel;
+    undefined2 g_some_timer_frame_remaining_count;
+    undefined2 field_0x1e;
+    undefined2 cm_course_stage_num; /* Current course stage num, updated immediately after completing stage */
+    undefined2 g_some_stage_jump_distance;
+    undefined4 bananas_remaining;
+    undefined2 field_0x28;
+    undefined2 field_0x2a;
+    undefined2 g_next_stage_id2;
+    s16 cm_stage_id; /* Current challenge mode stage id, updated immediately after finishing stage */
+    undefined2 field_0x30;
+    undefined2 cm_next_stage_id;
+    undefined2 field_0x34;
+    undefined2 field_0x36;
+    GoalType  entered_goal_type;
+    undefined field_0x39[0x3];
 } __attribute__((__packed__));
 
 typedef void _IO_lock_t;
@@ -2777,7 +2859,8 @@ struct StagedefColiTri {
 struct StagedefGoal {
     struct Vec3f position;
     struct Vec3s rotation;
-    s16 type;
+    GoalType  type;
+    undefined field_0x13[0x1];
 } __attribute__((__packed__));
 
 struct StagedefWormhole {
@@ -4640,8 +4723,8 @@ extern "C" {
     extern undefined * switchdataD_8039f61c;
     extern undefined * switchdataD_8039ff54;
     extern undefined * switchdataD_803a0864;
-    extern pointer g_some_course_func_table1;
-    extern pointer g_some_course_func_table2;
+    extern pointer cm_entry_if_funcs;
+    extern pointer cm_entry_then_funcs;
     extern struct CmEntry beginner_noex_cm_entries[31];
     extern struct CmEntry advanced_noex_cm_entries[120];
     extern struct CmEntry expert_noex_cm_entries[208];
@@ -4750,8 +4833,8 @@ extern "C" {
     extern undefined2 curr_world;
     extern undefined2 selected_storymode_stage;
     extern undefined2 g_storymode_next_world;
-    extern undefined4 g_storymode_score;
-    extern undefined4 g_storymode_banana_count;
+    extern undefined4 storymode_score;
+    extern undefined4 storymode_bananas;
     extern undefined4 g_some_storymode_func_ptr;
     extern undefined1 curr_storymode_save_file_idx;
     extern Mtx * g_maybe_related_to_stage_tilt;
@@ -4777,6 +4860,8 @@ extern "C" {
     extern undefined4 num_players;
     extern MainGameMode  main_game_mode;
     extern undefined4 curr_player_idx;
+    extern undefined4 g_set_when_enter_cm1;
+    extern undefined2 g_set_when_enter_cm2;
     extern undefined1 g_related_to_fov1;
     extern char * g_curr_main_mode_name;
     extern char * g_curr_sub_mode_name;
@@ -4784,9 +4869,9 @@ extern "C" {
     extern undefined4 g_some_func_ptr_related_to_sub_mode;
     extern undefined1 g_repause_cooldown_counter;
     extern undefined4 g_some_bitflag2;
-    extern undefined4 g_current_selected_pause_menu_entry;
+    extern undefined4 g_current_focused_pause_menu_entry;
     extern undefined4 g_current_pause_menu_entry_count;
-    extern undefined4 g_pause_menu_type;
+    extern PauseMenuType  pausemenu_type;
     extern Status  g_pause_status;
     extern undefined4 g_some_render_flag;
     extern struct Vec3f g_mirror_pos1;
@@ -4830,17 +4915,7 @@ extern "C" {
     extern undefined4 tick_at_gx_finish_frame;
     extern u32 gx_fifo_use_size;
     extern BOOL32 g_video_mode_change_requested;
-    extern BallMode  ball_mode;
-    extern s16 stage_time_frames_remaining;
-    extern undefined2 stage_time_limit;
-    extern struct Vec3f g_some_ball_vel;
-    extern undefined2 g_some_timer_frame_remaining_count;
-    extern undefined2 g_next_stage_id;
-    extern undefined2 g_holds_stage_jump_distance_at_some_point;
-    extern undefined4 bananas_remaining;
-    extern undefined2 g_next_stage_id;
-    extern undefined2 g_some_cm_stage_id;
-    extern undefined2 g_some_stage_id;
+    extern struct ModeInfo mode_info;
     extern struct GmaBuffer * g_background_gma;
     extern struct TplBuffer * g_background_tpl;
     extern undefined4 g_something_related_to_sprites_probably;
@@ -4869,7 +4944,7 @@ extern "C" {
     extern undefined4 g_some_perf_timer17;
     extern undefined4 g_some_perf_timer18;
     extern undefined4 g_some_perf_timer16;
-    extern undefined2 g_active_music_tracks;
+    extern undefined2 g_active_music_tracks[10];
     extern undefined1 g_something_related_to_bgm_track_id;
     extern undefined1 g_some_music_related_counter;
     extern undefined4 current_bgm_volume;
@@ -4887,7 +4962,7 @@ extern "C" {
     extern char g_debugtext_colorbuf2[1961];
     extern u16 os_font_encoding;
     extern DipSwitch  dip_switches;
-    extern undefined4 g_some_other_flags;
+    extern GOtherFlags  g_some_other_flags;
     extern undefined2 g_some_pad_idx;
     extern struct PoolInfo ball_pool_info;
     extern struct PoolInfo item_pool_info;
@@ -4944,7 +5019,7 @@ extern "C" {
     extern undefined2 g_stage_id_in_practice_mode;
     extern ModeFlag  g_mode_flags2;
     extern undefined4 g_some_course_length;
-    extern struct CmListEntry g_some_cm_entry_list[4];
+    extern struct CmPlayerProgress cm_player_progress[12];
     extern undefined1 storymode_unlock_entries[13];
     extern undefined2 g_next_item_id;
     extern struct Item items[256];
@@ -6917,10 +6992,10 @@ extern "C" {
     void smd_null(void);
     void g_set_current_sub_mode_dest(undefined4 param_1);
     void g_maybe_call_some_func_ptr_related_to_sub_mode(void);
-    uint g_get_next_player_idx(void);
+    uint get_next_player_idx(void);
     void g_something_with_pausemenu(int param_1);
     void g_check_input_in_pausemenu(int param_1);
-    void handle_storymode_pausemenu_selection(int param_1);
+    void handle_pausemenu_selection(int param_1);
     void g_related_to_pausemenu(void);
     void init_events(void);
     void tick_events(void);
@@ -7089,9 +7164,11 @@ extern "C" {
     void g_something_with_video_this_also_finishes_a_frame(void);
     void gp_wait_wrapper(void);
     u32 get_gx_fifo_use_size(void);
+    void g_reset_cm_course(void);
     void event_info_init(void);
     void event_info_tick(void);
     void event_info_dest(void);
+    void g_reset_mode_info_stuff(void);
     bool did_ball_enter_goal(struct Ball * ball, int * out_stage_goal_idx, int * out_itemgroup_id, byte * out_goal_flags);
     BOOL32 did_ball_enter_wormhole(struct Ball * ball, int * out_wormhole_idx);
     void g_set_goaled(void);
@@ -7108,6 +7185,7 @@ extern "C" {
     void g_something_with_loading_wl_tpls(int world_number);
     void g_load_efcmdl_gmatpl(void);
     void load_efcmdl_files_from_disc(void);
+    void g_something_freeing_heap_parent(void);
     void process_inputs(void);
     void threshold_analog_inputs(void);
     void g_calc_frames_since_last_input_change(void);
@@ -7645,18 +7723,18 @@ extern "C" {
     void bg_bow2_author_disp(void);
     void bg_bow2_author_item_coin_coli(void);
     void clear_unlocked_cm_stages(void);
-    void g_get_first_cm_entry_of_course(void);
+    void init_course(void);
     void event_course_init(void);
     void event_course_tick(void);
     void event_course_dest(void);
-    bool is_ball_goaled_perfect_or_not_dead(struct CmEntry * entry);
-    uint g_something_with_cm_entries_goals(struct CmEntry * entry);
-    int g_something_with_cm_entries_timer(struct CmEntry * entry);
-    void g_calc_stage_jump_distance(struct CmEntry * entry);
-    void g_set_some_cm_stageid_to_0xffff_2(struct CmEntry * entry);
-    void g_set_some_cm_stageid_to_0xffff(struct CmEntry * entry);
+    bool is_stage_complete(struct CmEntry * entry);
+    bool entered_goal_has_type(struct CmEntry * entry);
+    bool did_beat_stage_faster_than(struct CmEntry * entry);
+    void calc_stage_jump_distance(struct CmEntry * entry);
+    void clear_next_cm_stage_id2(struct CmEntry * entry);
+    void clear_next_cm_stage_id(struct CmEntry * entry);
     s32 g_get_current_cm_stage_time_limit(void);
-    dword g_advance_cm_entry(Difficulty  difficulty, int g_stage_id_or_course_stage_num, ModeFlag  mode_flags);
+    u32 g_update_cm_course(Difficulty  difficulty, s32 course_stage_num, ModeFlag  mode_flags);
     int calc_course_idx(Difficulty  difficulty, ModeFlag  mode_flags);
     uint g_are_on_final_course_level(int difficulty_id, int course_stage, uint difficulty_flags);
     undefined4 is_bonus_stage_being_played(int param_1);
@@ -7664,11 +7742,13 @@ extern "C" {
     undefined4 g_smth_with_cm_entries_in_main_menu(int param_1, int param_2, uint param_3);
     void empty_function(void);
     void update_cm_unlocked_levels(Difficulty  difficulty, int param_2, ModeFlag  mode_flags);
-    void g_something_with_cm_entries(void);
-    void g_something_with_cm_entries2(void);
+    void clear_cm_player_progress(void);
+    void update_course_progress(void);
+    void g_something_with_cm_player_progress(void);
     void sprite_debug_course_display_disp(undefined8 param_1, undefined8 param_2, double param_3, double param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, int param_9, undefined4 param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
     void g_save_cm_unlock_entries(void);
     void g_load_cm_unlock_entries(void);
+    int get_world_beaten_stage_count(int world);
     int g_load_stage_for_stageselect_preview(int param_1, int param_2);
     int g_get_storymode_stage_id(int world, int stage);
     void clear_unlocked_storymode_stages(void);
@@ -8229,10 +8309,12 @@ extern "C" {
     undefined4 g_get_storymode_banana_count(void);
     void g_set_something2(undefined4 value);
     void g_preload_ape_model_for_stageselect(void);
+    void g_save_storymode_progress(void * param_1);
     int g_is_timer_30s_or_60s_current_stage(void);
     int is_timer_30s_or_60s_wrapper(int param_1, int param_2);
     void g_some_scenario_init_func_1(void);
     void g_some_storymode_mode_handler(void);
+    void g_get_storymode_playtime_frames(void);
     void dmd_scen_select_init(void);
     void dmd_scen_select_main(void);
     void dmd_scen_1st_init(void);
@@ -8320,7 +8402,7 @@ extern "C" {
     void g_something_with_menus3(void);
     void g_on_main_menu_pressed(void);
     void g_something_with_menus4(void);
-    void g_enter_challenge_mode(void);
+    void enter_challenge_mode(void);
     void g_something_with_practice_mode_init(void);
     byte * g_handle_starting_monkeys_count(int param_1, int param_2);
     void create_main_menu_sprites(void);

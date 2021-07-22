@@ -121,5 +121,11 @@ namespace fix_missing_w {
 void init_main_game();
 }
 
+namespace skip_cutscenes {
+void init_main_game();
+void dmd_scen_newgame_main_patch();
+void dmd_scen_sceneplay_init_patch();
+void dmd_scen_sel_floor_init_patch();
+}
 
 }
