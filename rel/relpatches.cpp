@@ -127,8 +127,13 @@ namespace relpatches
             .name = "fix-storm-continue-platform",
             .message = "[mod]  Storm continue platform patch %s\n",
             .main_loop_init_func = fix_storm_continue_platform::init_main_loop,
+        },
+        {
+            .name = "fix-any-percent-crash",
+            .message = "[mod]  Story mode any-percent crash fix %s\n",
+            .main_loop_init_func = fix_any_percent_crash::init_main_loop,
+            .tick_func = fix_any_percent_crash::tick,
         }
-
     };
 
     const unsigned int PATCH_COUNT = sizeof(patches) / sizeof(patches[0]);
@@ -659,6 +664,50 @@ namespace relpatches
         void init_main_loop() {
             patch::write_branch(reinterpret_cast<void*>(mkb::effect_bgstm_rainripple_disp), reinterpret_cast<void*>(main::fix_rain_ripple));
         }
+   }
+
+   // Fixes an issue where skipping more than a certain number of stages for story mode any% causes a crash.
+   namespace fix_any_percent_crash {
+        static bool chara_heap_cleared;
+        static mkb::SpriteTex* texes[10] = {};
+        static u8 active_sprite_idx = 0.;
+        static void (*tex_load_trampoline)(mkb::SpriteTex *sprite_tex, char *file_path, u32 param_3, u16 width, u16 height, u32 format);
+
+
+        // Keeps track all preview image sprite pointers as they are loaded. Only 10 are loaded for story mode.
+        void init_main_loop() {
+            tex_load_trampoline = patch::hook_function(mkb::g_load_preview_texture, [](mkb::SpriteTex *sprite_tex,char *file_path,u32 param_3,u16 width,u16 height,u32 format) {
+                if (mkb::main_mode == mkb::MD_GAME || mkb::main_game_mode == mkb::STORY_MODE) {
+                    if (active_sprite_idx > 9) {
+                        for (int i = 0; i < 10; i++) {
+                            texes[i] = nullptr;
+                        }
+                        active_sprite_idx = 0;
+                    }
+
+                    texes[active_sprite_idx] = sprite_tex;
+                    active_sprite_idx++;
+                }
+                tex_load_trampoline(sprite_tex, file_path, param_3, width, height, format);
+            });
+        }
+
+        // Frees the preview images to heap on the 'save data' screen.
+        void tick() {
+            if (mkb::sub_mode == mkb::SMD_GAME_SUGG_SAVE_INIT) {
+                chara_heap_cleared = false;
+            }
+            if (mkb::sub_mode == mkb::SMD_GAME_SUGG_SAVE_MAIN && !chara_heap_cleared) {
+                for (int i = 0; i < 10; i++) {
+                    if (texes[i] != nullptr && texes[i]->tex_data != nullptr) {
+                        mkb::OSFreeToHeap(mkb::chara_heap, texes[i]->tex_data);
+                    }
+                }
+
+                chara_heap_cleared = true;
+            }
+        }
+
    }
 
 }

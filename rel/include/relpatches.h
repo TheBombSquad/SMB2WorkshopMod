@@ -134,7 +134,12 @@ void tick();
 }
 
 namespace fix_storm_continue_platform {
-    void init_main_loop();
+void init_main_loop();
+}
+
+namespace fix_any_percent_crash {
+void init_main_loop();
+void tick();
 }
 
 }
