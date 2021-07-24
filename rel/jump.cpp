@@ -8,19 +8,6 @@
 
 #define ABS(x) ((x) < 0 ? (-x) : (x))
 
-namespace mkb
-{
-extern "C"
-{
-
-extern f32 ball_friction;
-extern f32 ball_restitution;
-
-void toggle_minimap_zoom(void);
-
-}
-}
-
 namespace jump
 {
 

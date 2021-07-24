@@ -16,7 +16,7 @@
 namespace iw
 {
 
-static bool s_enabled;
+static bool s_visible;
 static u32 s_patch1, s_patch2;
 
 static u32 s_anim_counter;
@@ -26,32 +26,28 @@ static char *s_anim_strs[4] = {"/", "-", "\\", " |"};
 static u32 s_iw_time;
 static u32 s_prev_retrace_count;
 
-void init()
+void set_visible(bool visible)
 {
-    if (s_enabled) return;
-
-    s_enabled = true;
-
-    // IW-related patches
-    s_patch1 = patch::write_branch(reinterpret_cast<void *>(0x80274804), reinterpret_cast<void *>(main::stage_select_menu_hook));
-    s_patch2 = patch::write_branch(reinterpret_cast<void *>(0x8032a86c), reinterpret_cast<void *>(main::pause_menu_text_hook));
+    if (visible != s_visible)
+    {
+        s_visible = visible;
+        if (visible)
+        {
+            // IW-related patches
+            s_patch1 = patch::write_branch(reinterpret_cast<void *>(0x80274804), reinterpret_cast<void *>(main::stage_select_menu_hook));
+            s_patch2 = patch::write_branch(reinterpret_cast<void *>(0x8032a86c), reinterpret_cast<void *>(main::pause_menu_text_hook));
+        }
+        else
+        {
+            patch::write_word(reinterpret_cast<void *>(0x80274804), s_patch1);
+            patch::write_word(reinterpret_cast<void *>(0x8032a86c), s_patch2);
+            strcpy(mkb::continue_saved_game_text, "Continue the game from the saved point.");
+            strcpy(mkb::start_game_from_beginning_text, "Start the game from the beginning.");
+        }
+    }
 }
 
-void dest()
-{
-    if (!s_enabled) return;
-
-    s_enabled = false;
-    patch::write_word(reinterpret_cast<void *>(0x80274804), s_patch1);
-    patch::write_word(reinterpret_cast<void *>(0x8032a86c), s_patch2);
-    mkb::strcpy(mkb::continue_saved_game_text, "Continue the game from the saved point.");
-    mkb::strcpy(mkb::start_game_from_beginning_text, "Start the game from the beginning.");
-}
-
-bool is_enabled()
-{
-    return s_enabled;
-}
+bool is_visible() { return s_visible; }
 
 static void handle_iw_selection()
 {
@@ -94,7 +90,7 @@ static void set_save_file_info()
         auto &story_save = mkb::storymode_save_files[i];
         if (story_save.is_valid)
         {
-            mkb::sprintf(story_save.file_name, "W%02d IW %s",
+            sprintf(story_save.file_name, "W%02d IW %s",
                     story_save.current_world + 1,
                     s_anim_strs[s_anim_counter / 2 % 4]);
             story_save.num_beaten_stages_in_current_world = 0;
@@ -129,7 +125,7 @@ static void handle_iw_timer()
 
 void tick()
 {
-    if (!s_enabled) return;
+    if (!s_visible) return;
 
     main::currently_playing_iw = false;
     if (mkb::main_mode != mkb::MD_GAME || mkb::main_game_mode != mkb::STORY_MODE) return;
@@ -158,7 +154,7 @@ void tick()
 
 void disp()
 {
-    if (!s_enabled
+    if (!s_visible
     || mkb::main_mode != mkb::MD_GAME
     || mkb::main_game_mode != mkb::STORY_MODE
     || !main::currently_playing_iw)
@@ -178,15 +174,18 @@ void disp()
 
     if (hours > 0)
     {
-        draw::debug_text(X, Y, draw::Color::White, "IW:  %d:%02d:%02d.%02d", hours, minutes, seconds, centiseconds);
+        draw::debug_text(X, Y, draw::WHITE, "IW:");
+        draw::debug_text(X + 54, Y, draw::WHITE, "%d:%02d:%02d.%02d", hours, minutes, seconds, centiseconds);
     }
     else if (minutes > 0)
     {
-        draw::debug_text(X, Y, draw::Color::White, "IW:  %02d:%02d.%02d", minutes, seconds, centiseconds);
+        draw::debug_text(X, Y, draw::WHITE, "IW:");
+        draw::debug_text(X + 54, Y, draw::WHITE, "%02d:%02d.%02d", minutes, seconds, centiseconds);
     }
     else
     {
-        draw::debug_text(X, Y, draw::Color::White, "IW:  %02d.%02d", seconds, centiseconds);
+        draw::debug_text(X, Y, draw::WHITE, "IW:");
+        draw::debug_text(X + 54, Y, draw::WHITE, "%02d.%02d", seconds, centiseconds);
     }
 }
 

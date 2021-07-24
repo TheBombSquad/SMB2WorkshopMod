@@ -1,29 +1,27 @@
 #include "draw.h"
-#include "patch.h"
-#include "assembly.h"
 
 #include <mkb.h>
-
 #include <cstdarg>
 #include <cstdio>
 #include <cstring>
+
+#include "patch.h"
+#include "assembly.h"
 
 namespace draw
 {
 
 static char s_notify_msg_buf[80];
 static s32 s_notify_frame_counter;
-static Color s_notify_color;
+static mkb::GXColor s_notify_color;
 
-static const mkb::GXColor COLOR_MAP[] = {
-    {0xff, 0xff, 0xff, 0xff}, // white
-    {0xfd, 0x68, 0x75, 0xff}, // red
-    {0xfd, 0xac, 0x68, 0xff}, // orange
-    {0x9d, 0xe3, 0xff, 0xff}, // blue
-    {0xdf, 0x7f, 0xfa, 0xff}, // pink
-    {0xb1, 0x5a, 0xff, 0xff}, // purple
-    {0x00, 0xff, 0x00, 0xff}, // green
-};
+const mkb::GXColor WHITE = {0xff, 0xff, 0xff, 0xff};
+const mkb::GXColor RED = {0xfd, 0x68, 0x75, 0xff};
+const mkb::GXColor ORANGE = {0xfd, 0xac, 0x68, 0xff};
+const mkb::GXColor BLUE = {0x9d, 0xe3, 0xff, 0xff};
+const mkb::GXColor PINK = {0xdf, 0x7f, 0xfa, 0xff};
+const mkb::GXColor PURPLE = {0xb1, 0x5a, 0xff, 0xff};
+const mkb::GXColor GREEN = {0x00, 0xff, 0x00, 0xff};
 
 void init()
 {
@@ -73,7 +71,7 @@ void debug_text_palette()
     }
 }
 
-static void debug_text_buf(s32 x, s32 y, mkb::GXColor color, char *buf)
+static void debug_text_buf(s32 x, s32 y, mkb::GXColor color, const char *buf)
 {
     main::debug_text_color = color;
     for (s32 i = 0; buf[i] != '\0'; i++)
@@ -87,7 +85,7 @@ static void debug_text_buf(s32 x, s32 y, mkb::GXColor color, char *buf)
     main::debug_text_color = {};
 }
 
-static void debug_text_v(s32 x, s32 y, mkb::GXColor color, char *format, va_list args)
+static void debug_text_v(s32 x, s32 y, mkb::GXColor color, const char *format, va_list args)
 {
     // Shouldn't be able to print a string to the screen longer than this
     // Be careful not to overflow! MKB2 doesn't have vsnprintf
@@ -96,19 +94,11 @@ static void debug_text_v(s32 x, s32 y, mkb::GXColor color, char *format, va_list
     debug_text_buf(x, y, color, buf);
 }
 
-void debug_text(s32 x, s32 y, mkb::GXColor color, char *format, ...)
+void debug_text(s32 x, s32 y, mkb::GXColor color, const char *format, ...)
 {
     va_list args;
     va_start(args, format);
     debug_text_v(x, y, color, format, args);
-    va_end(args);
-}
-
-void debug_text(s32 x, s32 y, Color color, char *format, ...)
-{
-    va_list args;
-    va_start(args, format);
-    debug_text_v(x, y, COLOR_MAP[static_cast<s32>(color)], format, args);
     va_end(args);
 }
 
@@ -117,7 +107,7 @@ void disp()
     s32 notify_len = strlen(s_notify_msg_buf);
     s32 draw_x = 640 - notify_len * DEBUG_CHAR_WIDTH - 12;
     s32 draw_y = 426;
-    mkb::GXColor color = COLOR_MAP[static_cast<s32>(s_notify_color)];
+    mkb::GXColor color = s_notify_color;
 
     if (s_notify_frame_counter > 40)
     {
@@ -129,7 +119,7 @@ void disp()
     if (s_notify_frame_counter > 60) s_notify_frame_counter = 60;
 }
 
-void notify(Color color, char *format, ...)
+void notify(mkb::GXColor color, const char *format, ...)
 {
     va_list args;
     va_start(args, format);

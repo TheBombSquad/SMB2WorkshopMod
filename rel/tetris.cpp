@@ -7,12 +7,10 @@ Non shit RNG
 #include "tetris.h"
 
 #include <mkb.h>
-#include <mkb.h>
+#include <cstdlib>
 
 #include "pad.h"
 #include "draw.h"
-
-#include <cstdlib>
 
 static constexpr s32 NUM_TETRADS = 7;
 static constexpr s32 NUM_CELL_TYPES = 8;
@@ -113,7 +111,7 @@ void Tetris::disp()
     if (pad::button_chord_pressed(mkb::PAD_TRIGGER_R, mkb::PAD_TRIGGER_Z, true)
         && !m_ever_shown)
     {
-        draw::notify(draw::Color::Red, "Use L+R to toggle menu");
+        draw::notify(draw::RED, "Use L+R to toggle menu");
     }
 
     bool konami_pressed = pad::konami_pressed();

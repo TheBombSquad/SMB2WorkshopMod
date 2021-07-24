@@ -1,9 +1,9 @@
 #include "patch.h"
-#include "pad.h"
 
 #include <mkb.h>
 
-#include <log.h>
+#include "pad.h"
+#include "log.h"
 
 namespace patch
 {

@@ -1,9 +1,8 @@
 #include "heap.h"
 
-#include <mkb.h>
-
 #include <cstring>
 #include <cinttypes>
+#include <mkb.h>
 
 namespace heap
 {
@@ -204,7 +203,7 @@ void *alloc_from_heap(u32 size)
     // Find a memory area large enough
     for (temp_chunk = info->first_free; temp_chunk; temp_chunk = temp_chunk->next)
     {
-        if (static_cast<s32>(new_size) <= temp_chunk->size)
+        if (new_size <= temp_chunk->size)
         {
             break;
         }
@@ -216,7 +215,7 @@ void *alloc_from_heap(u32 size)
         return nullptr;
     }
 
-    s32 leftover_size = temp_chunk->size - static_cast<s32>(new_size);
+    s32 leftover_size = temp_chunk->size - new_size;
 
     s32 min_size = ((sizeof(mkb::ChunkInfo) +
                          alignment - 1) & ~(alignment - 1)) + alignment;

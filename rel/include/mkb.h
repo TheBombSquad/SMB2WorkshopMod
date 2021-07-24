@@ -3,10 +3,10 @@
 namespace mkb
 {
 
-#include <mkb2_ghidra.h>
+#include "mkb2_ghidra.h"
 
-//void OSReport(char *msg, ...);
-//void OSPanic(char *file, int line, char *msg, ...);
+//void OSReport(const char *msg, ...);
+//void OSPanic(const char *file, int line, const char *msg, ...);
 
 // Originally #define'd
 constexpr GXBool GX_TRUE = 1;
@@ -48,8 +48,8 @@ using mkb::Quat;
 
 #define ASSERT(exp)                                             \
     (void) ((exp) ||                                            \
-            (mkb::OSPanic(__FILE__, __LINE__, "Failed assertion " #exp), 0))
+            (gc::OSPanic(__FILE__, __LINE__, "Failed assertion " #exp), 0))
 
 #define ASSERTMSG(exp, msg)                                     \
     (void) ((exp) ||                                            \
-            (mkb::OSPanic(__FILE__, __LINE__, (msg)), 0))
+            (gc::OSPanic(__FILE__, __LINE__, (msg)), 0))

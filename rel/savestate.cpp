@@ -1,14 +1,14 @@
 #include "savestate.h"
+
+#include <mkb.h>
+
 #include "pad.h"
 #include "log.h"
 #include "patch.h"
 #include "memstore.h"
 #include "heap.h"
 #include "draw.h"
-
-#include <mkb.h>
-
-#include <timer.h>
+#include "timer.h"
 
 namespace savestate
 {
@@ -23,8 +23,7 @@ struct SaveState
     mkb::Sprite pause_menu_sprite;
 };
 
-static bool s_enabled = false;
-static bool s_ever_enabled = false;
+static bool s_visible = false;
 
 static SaveState s_states[8];
 static s32 s_active_state_slot;
@@ -35,41 +34,26 @@ static bool s_frame_advance_mode;
 // For when a state should be loaded on the subsequent frame
 static bool s_reload_state = false;
 
-static void (*s_set_minimap_mode_trampoline)(u32 mode);
+static void (*s_set_minimap_mode_trampoline)(mkb::MinimapMode mode);
 
 void init()
 {
-    if (s_enabled) return;
-    s_enabled = true;
-
-    if (!s_ever_enabled)
-    {
-        // Hook set_minimap_mode() to prevent the minimap from being hidden on goal/fallout
-        // This way the minimap is unaffected when loading savestates after goal/fallout
-        s_set_minimap_mode_trampoline = patch::hook_function(
-            mkb::set_minimap_mode, [](u32 mode)
+    // Hook set_minimap_mode() to prevent the minimap from being hidden on goal/fallout
+    // This way the minimap is unaffected when loading savestates after goal/fallout
+    s_set_minimap_mode_trampoline = patch::hook_function(
+        mkb::set_minimap_mode, [](mkb::MinimapMode mode)
+        {
+            if (!s_visible || !(mkb::main_mode == mkb::MD_GAME
+                  && mkb::main_game_mode == mkb::PRACTICE_MODE
+                  && mode == mkb::MINIMAP_SHRINK))
             {
-                if (!s_enabled || !(mkb::main_mode == mkb::MD_GAME
-                      && mkb::main_game_mode == mkb::PRACTICE_MODE
-                      && mode == mkb::MINIMAP_SHRINK))
-                {
-                    s_set_minimap_mode_trampoline(mode);
-                }
-            });
-    }
-    s_ever_enabled = true;
+                s_set_minimap_mode_trampoline(mode);
+            }
+        });
 }
 
-void dest()
-{
-    if (!s_enabled) return;
-    s_enabled = false;
-}
-
-bool is_enabled()
-{
-    return s_enabled;
-}
+void set_visible(bool visible) { s_visible = visible; }
+bool is_visible() { return s_visible; }
 
 static bool is_either_trigger_held()
 {
@@ -111,6 +95,7 @@ static void pass_over_regions(memstore::MemStore *store)
                 store->do_region(&mkb::stobjs[i], sizeof(mkb::stobjs[i]));
                 break;
             }
+            default: break;
         }
     }
 
@@ -242,6 +227,7 @@ static void destruct_distracting_effects()
             {
                 mkb::effect_pool_info.status_list[i] = 0;
             }
+            default: break;
         }
     }
 }
@@ -259,7 +245,7 @@ static bool handle_load_state_from_nonplay_submode()
     bool paused_now = *reinterpret_cast<u32 *>(0x805BC474) & 8; // TODO actually give this a name
     if (paused_now)
     {
-        draw::notify(draw::Color::Red, "Cannot Load Savestate, Please Unpause");
+        draw::notify(draw::RED, "Cannot Load Savestate, Please Unpause");
         return false;
     }
 
@@ -277,7 +263,7 @@ static bool handle_load_state_from_nonplay_submode()
 
 void tick()
 {
-    if (!s_enabled) return;
+    if (!s_visible) return;
 
     if (!is_either_trigger_held())
     {
@@ -292,7 +278,7 @@ void tick()
     if (cstick_dir != pad::DIR_NONE)
     {
         s_active_state_slot = cstick_dir;
-        draw::notify(draw::Color::White, "Slot %d Selected", cstick_dir + 1);
+        draw::notify(draw::WHITE, "Slot %d Selected", cstick_dir + 1);
     }
     auto &state = s_states[s_active_state_slot];
 
@@ -302,23 +288,23 @@ void tick()
         {
             if (mkb::sub_mode == mkb::SMD_GAME_RINGOUT_INIT || mkb::sub_mode == mkb::SMD_GAME_RINGOUT_MAIN)
             {
-                draw::notify(draw::Color::Red, "Cannot Create Savestate After Fallout");
+                draw::notify(draw::RED, "Cannot Create Savestate After Fallout");
             }
             else if (mkb::sub_mode == mkb::SMD_GAME_GOAL_INIT || mkb::sub_mode == mkb::SMD_GAME_GOAL_MAIN)
             {
-                draw::notify(draw::Color::Red, "Cannot Create Savestate After Goal");
+                draw::notify(draw::RED, "Cannot Create Savestate After Goal");
             }
             else if (mkb::sub_mode == mkb::SMD_GAME_READY_INIT || mkb::sub_mode == mkb::SMD_GAME_READY_MAIN)
             {
-                draw::notify(draw::Color::Red, "Cannot Create Savestate During Retry");
+                draw::notify(draw::RED, "Cannot Create Savestate During Retry");
             }
             else if (mkb::sub_mode == mkb::SMD_GAME_TIMEOVER_INIT || mkb::sub_mode == mkb::SMD_GAME_TIMEOVER_MAIN)
             {
-                draw::notify(draw::Color::Red, "Cannot Create Savestate After Timeout");
+                draw::notify(draw::RED, "Cannot Create Savestate After Timeout");
             }
             else
             {
-                draw::notify(draw::Color::Red, "Cannot Create Savestate Here");
+                draw::notify(draw::RED, "Cannot Create Savestate Here");
             }
 
             return;
@@ -326,7 +312,7 @@ void tick()
 
         if (mkb::events[mkb::EVENT_VIEW].status != mkb::STAT_NULL)
         {
-            draw::notify(draw::Color::Red, "Cannot Create Savestate in View Stage");
+            draw::notify(draw::RED, "Cannot Create Savestate in View Stage");
             return;
         }
 
@@ -336,7 +322,7 @@ void tick()
         pass_over_regions(&state.store);
         if (!state.store.enter_save_mode())
         {
-            draw::notify(draw::Color::Red, "Cannot Create Savestate: Not Enough Memory");
+            draw::notify(draw::RED, "Cannot Create Savestate: Not Enough Memory");
             state.active = false;
             return;
         }
@@ -361,11 +347,11 @@ void tick()
 
         if (s_frame_advance_mode)
         {
-            draw::notify(draw::Color::Pink, "Slot %d Frame Advance", s_active_state_slot + 1);
+            draw::notify(draw::PINK, "Slot %d Frame Advance", s_active_state_slot + 1);
         }
         else
         {
-            draw::notify(draw::Color::Pink, "Slot %d Saved", s_active_state_slot + 1);
+            draw::notify(draw::PINK, "Slot %d Saved", s_active_state_slot + 1);
         }
     }
     else if (
@@ -381,27 +367,27 @@ void tick()
         // TODO allow loading savestate during timeover
         if (mkb::sub_mode == mkb::SMD_GAME_TIMEOVER_INIT || mkb::sub_mode == mkb::SMD_GAME_TIMEOVER_MAIN)
         {
-            draw::notify(draw::Color::Red, "Cannot Load Savestate After Timeout");
+            draw::notify(draw::RED, "Cannot Load Savestate After Timeout");
             return;
         }
         if (!state.active)
         {
-            draw::notify(draw::Color::Red, "Slot %d Empty", s_active_state_slot + 1);
+            draw::notify(draw::RED, "Slot %d Empty", s_active_state_slot + 1);
             return;
         }
         if (state.stage_id != mkb::current_stage_id)
         {
-            draw::notify(draw::Color::Red, "Slot %d Wrong Stage", s_active_state_slot + 1);
+            draw::notify(draw::RED, "Slot %d Wrong Stage", s_active_state_slot + 1);
             return;
         }
         if (state.character != mkb::selected_characters[mkb::curr_player_idx])
         {
-            draw::notify(draw::Color::Red, "Slot %d Wrong Monkey", s_active_state_slot + 1);
+            draw::notify(draw::RED, "Slot %d Wrong Monkey", s_active_state_slot + 1);
             return;
         }
         if (mkb::events[mkb::EVENT_VIEW].status != mkb::STAT_NULL)
         {
-            draw::notify(draw::Color::Red, "Cannot Load Savestate in View Stage");
+            draw::notify(draw::RED, "Cannot Load Savestate in View Stage");
             return;
         }
 
@@ -418,7 +404,7 @@ void tick()
 
         if (!s_created_state_last_frame)
         {
-            draw::notify(draw::Color::Blue, "Slot %d Loaded", s_active_state_slot + 1);
+            draw::notify(draw::BLUE, "Slot %d Loaded", s_active_state_slot + 1);
         }
     }
     else

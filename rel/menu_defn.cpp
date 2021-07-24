@@ -2,11 +2,12 @@
 
 #include <mkb.h>
 #include <assembly.h>
+#include <inputdisp.h>
 
 #include "jump.h"
 #include "timer.h"
 #include "savestate.h"
-#include "iw.h"
+#include "gotostory.h"
 
 #define ARRAY_LEN(a) (sizeof((a)) / sizeof((a)[0]))
 
@@ -23,26 +24,41 @@ extern u8 rumble_enabled_bitflag;
 namespace menu
 {
 
-static bool get_practice_tools_enabled()
-{
-    return timer::is_enabled() && savestate::is_enabled() && iw::is_enabled();
-}
+static const char *inputdisp_colors[] = {
+    "Purple",
+    "Red",
+    "Orange",
+    "Yellow",
+    "Green",
+    "Blue",
+    "Pink",
+    "Black",
+};
+static_assert(ARRAY_LEN(inputdisp_colors) == inputdisp::NUM_COLORS);
 
-static void set_practice_tools_enabled(bool enable)
-{
-    if (enable)
+static Widget inputdisp_widgets[] = {
     {
-        timer::init();
-        savestate::init();
-        iw::init();
-    }
-    else
+        .type = WidgetType::Checkbox,
+        .checkbox = {"Show Input Display", inputdisp::is_visible, inputdisp::set_visible},
+    },
     {
-        timer::dest();
-        savestate::dest();
-        iw::dest();
-    }
-}
+        .type = WidgetType::Checkbox,
+        .checkbox = {"Use Center Location", inputdisp::is_in_center_loc, inputdisp::set_in_center_loc},
+    },
+    {
+        .type = WidgetType::Choose,
+        .choose = {
+            .label = "Color",
+            .choices = inputdisp_colors,
+            .num_choices = ARRAY_LEN(inputdisp_colors),
+            .get = []() { return static_cast<u32>(inputdisp::get_color()); },
+            .set = [](u32 color)
+            {
+                inputdisp::set_color(static_cast<inputdisp::Color>(color));
+            },
+        },
+    },
+};
 
 static Widget rumble_widgets[] = {
     {
@@ -152,15 +168,14 @@ static Widget help_widgets[] = {
     {.type = WidgetType::Separator},
 
     {.type = WidgetType::Header, .header = {"Updates"}},
-    {.type = WidgetType::Text, .text = {"  Current version: v0.2.2"}},
+    {.type = WidgetType::Text, .text = {"  Current version: v0.3.0"}},
     {.type = WidgetType::Text, .text = {"  For the latest version of this mod:"}},
     {.type = WidgetType::Text, .text = {"  github.com/ComplexPlane/ApeSphere/releases"}},
 };
 
 static Widget root_widgets[] = {
     {
-        .type = WidgetType::Checkbox,
-        .checkbox = {"Practice Tools", get_practice_tools_enabled, set_practice_tools_enabled},
+        .type = WidgetType::Menu, .menu = {"Input Display", inputdisp_widgets, ARRAY_LEN(inputdisp_widgets)},
     },
     {
         .type = WidgetType::Checkbox,
@@ -169,6 +184,18 @@ static Widget root_widgets[] = {
             .get = jump::is_enabled,
             .set = [](bool enable) { if (enable) jump::init(); else jump::dest(); },
         },
+    },
+    {
+        .type = WidgetType::Checkbox,
+        .checkbox = {"RTA Timer", timer::is_visible, timer::set_visible},
+    },
+    {
+        .type = WidgetType::Checkbox,
+        .checkbox = {"Savestates", savestate::is_visible, savestate::set_visible},
+    },
+    {
+        .type = WidgetType::Button,
+        .button = {"Go To Story Mode", gotostory::load_storymode},
     },
     {.type = WidgetType::Menu, .menu = {"Rumble", rumble_widgets, ARRAY_LEN(rumble_widgets)}},
     {.type = WidgetType::Menu, .menu = {"Help", help_widgets, ARRAY_LEN(help_widgets)}},
