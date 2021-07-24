@@ -133,6 +133,11 @@ namespace relpatches
             .message = "[mod]  Story mode any-percent crash fix %s\n",
             .main_loop_init_func = fix_any_percent_crash::init_main_loop,
             .tick_func = fix_any_percent_crash::tick,
+        },
+        {
+            .name = "party-game-toggle",
+            .message = "[mod]  Party game toggle patch %s\n",
+            .sel_ngc_init_func = party_game_toggle::sel_ngc_init,
         }
     };
 
@@ -140,30 +145,30 @@ namespace relpatches
 
     // If the stage is a bonus stage (ball mode 0x40) and no bananas remain,
     // end the stage with a perfect (|= 0x228)
-	void relpatches::perfect_bonus::tick() {
+    void relpatches::perfect_bonus::tick() {
         if (mkb::mode_info.ball_mode & 0x40 && mkb::mode_info.bananas_remaining == 0) {
             mkb::mode_info.ball_mode |= 0x228;
-		}
-	}
+        }
+    }
 
-	// TODO: Probably not the best way to implement this, will need to look into a
-	// proper fix soon. In a function that sets a parameter that enables heat
-	// haze for the specific desert theme ID, the theme ID is compared to 0xffff
-	// instead of 0x7.
-	// 0x2c00ffff = cmpwi r0, 0xffff
-	void remove_desert_haze::init_main_loop()
-	{
-		patch::write_word(reinterpret_cast<void*>(0x802e4ed8), 0x2c00ffff);
-	}
+    // TODO: Probably not the best way to implement this, will need to look into a
+    // proper fix soon. In a function that sets a parameter that enables heat
+    // haze for the specific desert theme ID, the theme ID is compared to 0xffff
+    // instead of 0x7.
+    // 0x2c00ffff = cmpwi r0, 0xffff
+    void remove_desert_haze::init_main_loop()
+    {
+        patch::write_word(reinterpret_cast<void*>(0x802e4ed8), 0x2c00ffff);
+    }
 
     // Hooks right before the call to SoftStreamStart, then nops the
     // "Stage Select" music fadeout
     // Modifies the 1st parameter to SoftStreamStart following the goal sequence
     // affecting whether or not the music restarts/changes. Only modifies this when
     // the submode indicates we're currently on a stage, or if we're on the 'Retry' screen.
-	void story_continuous_music::init_main_loop()
-	{
-	    patch::write_branch_bl(reinterpret_cast<void*>(0x802a5c34), reinterpret_cast<void*>(main::story_mode_music_hook));
+    void story_continuous_music::init_main_loop()
+    {
+        patch::write_branch_bl(reinterpret_cast<void*>(0x802a5c34), reinterpret_cast<void*>(main::story_mode_music_hook));
         patch::write_nop(reinterpret_cast<void*>(0x80273aa0));
     }
 
@@ -313,7 +318,7 @@ namespace relpatches
     void fix_stobj_reflection::init_main_loop()
     {
         patch::write_word(reinterpret_cast<void*>(0x802ca480), PPC_INSTR_LI(PPC_R0, 0x0));
-	    patch::write_branch_bl(reinterpret_cast<void*>(0x802c9434), reinterpret_cast<void*>(main::reflection_draw_stage_hook));
+        patch::write_branch_bl(reinterpret_cast<void*>(0x802c9434), reinterpret_cast<void*>(main::reflection_draw_stage_hook));
     }
 
     // Checks the stage object's model flag to determine if the proper flag is set
@@ -334,8 +339,8 @@ namespace relpatches
     // Not entirely sure what the second one is for, but it may be used for SMB1 themes
     void theme_id_per_stage::init_main_loop()
     {
-       patch::write_branch(reinterpret_cast<void*>(0x802c7c3c), reinterpret_cast<void*>(main::get_theme_id_hook_1));
-       patch::write_branch(reinterpret_cast<void*>(0x802c7cc8), reinterpret_cast<void*>(main::get_theme_id_hook_2));
+        patch::write_branch(reinterpret_cast<void*>(0x802c7c3c), reinterpret_cast<void*>(main::get_theme_id_hook_1));
+        patch::write_branch(reinterpret_cast<void*>(0x802c7cc8), reinterpret_cast<void*>(main::get_theme_id_hook_2));
     }
 
     namespace extend_reflections {
@@ -411,67 +416,67 @@ namespace relpatches
 
     namespace story_mode_char_select {
 
-    static mkb::undefined4* AIAI[] = {&mkb::CHAR_A, &mkb::CHAR_I, &mkb::CHAR_A, &mkb::CHAR_I, &mkb::CHAR_SPACE, &mkb::CHAR_SPACE};
-    static mkb::undefined4* MEEMEE[] = {&mkb::CHAR_M, &mkb::CHAR_E, &mkb::CHAR_E, &mkb::CHAR_M, &mkb::CHAR_E, &mkb::CHAR_E};
-    static mkb::undefined4* BABY[] = {&mkb::CHAR_B, &mkb::CHAR_A, &mkb::CHAR_B, &mkb::CHAR_Y, &mkb::CHAR_SPACE, &mkb::CHAR_SPACE};
-    static mkb::undefined4* GONGON[] = {&mkb::CHAR_G, &mkb::CHAR_O, &mkb::CHAR_N, &mkb::CHAR_G, &mkb::CHAR_O, &mkb::CHAR_N};
-    static mkb::undefined4* HIHI[] = {&mkb::CHAR_H, &mkb::CHAR_I, &mkb::CHAR_H, &mkb::CHAR_I, &mkb::CHAR_SPACE, &mkb::CHAR_SPACE};
-    static mkb::undefined4** monkey_name_lookup[] = {AIAI, MEEMEE, BABY, GONGON, HIHI};
+        static mkb::undefined4* AIAI[] = {&mkb::CHAR_A, &mkb::CHAR_I, &mkb::CHAR_A, &mkb::CHAR_I, &mkb::CHAR_SPACE, &mkb::CHAR_SPACE};
+        static mkb::undefined4* MEEMEE[] = {&mkb::CHAR_M, &mkb::CHAR_E, &mkb::CHAR_E, &mkb::CHAR_M, &mkb::CHAR_E, &mkb::CHAR_E};
+        static mkb::undefined4* BABY[] = {&mkb::CHAR_B, &mkb::CHAR_A, &mkb::CHAR_B, &mkb::CHAR_Y, &mkb::CHAR_SPACE, &mkb::CHAR_SPACE};
+        static mkb::undefined4* GONGON[] = {&mkb::CHAR_G, &mkb::CHAR_O, &mkb::CHAR_N, &mkb::CHAR_G, &mkb::CHAR_O, &mkb::CHAR_N};
+        static mkb::undefined4* HIHI[] = {&mkb::CHAR_H, &mkb::CHAR_I, &mkb::CHAR_H, &mkb::CHAR_I, &mkb::CHAR_SPACE, &mkb::CHAR_SPACE};
+        static mkb::undefined4** monkey_name_lookup[] = {AIAI, MEEMEE, BABY, GONGON, HIHI};
 
-    // Overrides the return value of certain functions to force the chosen monkey to be
-    // preloaded in place of AiAi
-    void init_main_loop()
-    {
-        patch::write_branch_bl(reinterpret_cast<void*>(0x803daffc), reinterpret_cast<void*>(main::get_monkey_id_hook));
-    }
-
-    // Sets the storymode filename to the name of the selected monkey, when no name is provided.
-    void set_nameentry_filename()
-    {
-        for (int i = 0; i < 6; i++) {
-            mkb::story_file_name[i] = reinterpret_cast<char*>(monkey_name_lookup[mkb::active_monkey_id][i]);
+        // Overrides the return value of certain functions to force the chosen monkey to be
+        // preloaded in place of AiAi
+        void init_main_loop()
+        {
+            patch::write_branch_bl(reinterpret_cast<void*>(0x803daffc), reinterpret_cast<void*>(main::get_monkey_id_hook));
         }
-        mkb::g_some_nameentry_length = 0x6;
-    }
 
-    // Overrides the return value of certain functions to force the chosen monkey to be
-    // preloaded in place of AiAi.
-    // Also calls the function to set the default filename to the name of the selected
-    // monkey, rather than deafulting to 'AIAI'.
-    void init_main_game()
-    {
-        patch::write_branch_bl(reinterpret_cast<void*>(0x808fcac4), reinterpret_cast<void*>(main::get_monkey_id_hook));
-        patch::write_branch_bl(reinterpret_cast<void*>(0x808ff120), reinterpret_cast<void*>(main::get_monkey_id_hook));
-        patch::write_branch_bl(reinterpret_cast<void*>(0x80908894), reinterpret_cast<void*>(main::get_monkey_id_hook));
+        // Sets the storymode filename to the name of the selected monkey, when no name is provided.
+        void set_nameentry_filename()
+        {
+            for (int i = 0; i < 6; i++) {
+                mkb::story_file_name[i] = reinterpret_cast<char*>(monkey_name_lookup[mkb::active_monkey_id][i]);
+            }
+            mkb::g_some_nameentry_length = 0x6;
+        }
 
-        patch::write_branch_bl(reinterpret_cast<void*>(0x80906368), reinterpret_cast<void*>(set_nameentry_filename));
-        patch::write_nop(reinterpret_cast<void*>(0x8090636c));
-        patch::write_nop(reinterpret_cast<void*>(0x80906370));
-        patch::write_nop(reinterpret_cast<void*>(0x80906374));
-        patch::write_nop(reinterpret_cast<void*>(0x80906378));
+        // Overrides the return value of certain functions to force the chosen monkey to be
+        // preloaded in place of AiAi.
+        // Also calls the function to set the default filename to the name of the selected
+        // monkey, rather than deafulting to 'AIAI'.
+        void init_main_game()
+        {
+            patch::write_branch_bl(reinterpret_cast<void*>(0x808fcac4), reinterpret_cast<void*>(main::get_monkey_id_hook));
+            patch::write_branch_bl(reinterpret_cast<void*>(0x808ff120), reinterpret_cast<void*>(main::get_monkey_id_hook));
+            patch::write_branch_bl(reinterpret_cast<void*>(0x80908894), reinterpret_cast<void*>(main::get_monkey_id_hook));
 
-    }
+            patch::write_branch_bl(reinterpret_cast<void*>(0x80906368), reinterpret_cast<void*>(set_nameentry_filename));
+            patch::write_nop(reinterpret_cast<void*>(0x8090636c));
+            patch::write_nop(reinterpret_cast<void*>(0x80906370));
+            patch::write_nop(reinterpret_cast<void*>(0x80906374));
+            patch::write_nop(reinterpret_cast<void*>(0x80906378));
 
-    // Assign the correct 'next screen' variables to redirect Story Mode to the
-    // character select screen. Also handle input to prevent Story Mode from not
-    // initializing if mode_cnt isn't set to 1.
-    void tick()
-    {
-        if (mkb::sub_mode == mkb::SMD_SEL_NGC_MAIN) {
-            patch::write_word(reinterpret_cast<void*>(0x80921a20), 0x6000000);
-            patch::write_word(reinterpret_cast<void*>(0x80920ba0), 0xC000000);
-            if (mkb::g_currently_visible_menu_screen == 0x6) {
-                if (pad::button_pressed(mkb::PAD_BUTTON_A)) {
-                    mkb::menu_stack_ptr = 1;
-                    *(&mkb::menu_stack_ptr+2) = 7;
-                }
-                else if (pad::button_pressed(mkb::PAD_BUTTON_B)){
-                    if (mkb::g_character_selected) return;
-                    mkb::menu_stack_ptr = 2;
+        }
+
+        // Assign the correct 'next screen' variables to redirect Story Mode to the
+        // character select screen. Also handle input to prevent Story Mode from not
+        // initializing if mode_cnt isn't set to 1.
+        void tick()
+        {
+            if (mkb::sub_mode == mkb::SMD_SEL_NGC_MAIN) {
+                patch::write_word(reinterpret_cast<void*>(0x80921a20), 0x6000000);
+                patch::write_word(reinterpret_cast<void*>(0x80920ba0), 0xC000000);
+                if (mkb::g_currently_visible_menu_screen == 0x6) {
+                    if (pad::button_pressed(mkb::PAD_BUTTON_A)) {
+                        mkb::menu_stack_ptr = 1;
+                        *(&mkb::menu_stack_ptr+2) = 7;
+                    }
+                    else if (pad::button_pressed(mkb::PAD_BUTTON_B)){
+                        if (mkb::g_character_selected) return;
+                        mkb::menu_stack_ptr = 2;
+                    }
                 }
             }
         }
-    }
 
     }
     // Hooks into the smd_adv_first_logo_tick function, calling our own tick function
@@ -524,13 +529,13 @@ namespace relpatches
         static char CHAR_w[4] = {'w', '\0', '\0', '\0'};
 
         void init_main_game() {
-        mkb::nameentry_character_ptr_list[114] = reinterpret_cast<mkb::undefined4**>(&(CHAR_w[0]));
+            mkb::nameentry_character_ptr_list[114] = reinterpret_cast<mkb::undefined4**>(&(CHAR_w[0]));
         }
     }
 
-   // Skips cutscenes in story mode.
-   // TODO: Maybe fade the screen out so the transition screen color is not based off the  world fog
-   namespace skip_cutscenes {
+    // Skips cutscenes in story mode.
+    // TODO: Maybe fade the screen out so the transition screen color is not based off the  world fog
+    namespace skip_cutscenes {
         // Variable for keeping track of the 'state' of the current story mode game.
         // This basically represents the active world, except world 11 is the credits sequence,
         // world 12 is the name entry sequence, and world 13 is the game over sequence.
@@ -612,13 +617,13 @@ namespace relpatches
 
         // Keeps active_state synced between file loads.
         void dmd_scen_sel_floor_init_patch() {
-             active_state = mkb::curr_world;
-             mkb::g_storymode_mode = mkb::DMD_SCEN_SEL_FLOOR_MAIN;
+            active_state = mkb::curr_world;
+            mkb::g_storymode_mode = mkb::DMD_SCEN_SEL_FLOOR_MAIN;
 
-             // I have no idea what this does, it's something the game does in the original function
-             u32 data = *reinterpret_cast<u32*>(0x8054dbc0);
-             patch::write_word(reinterpret_cast<void*>(0x8054dbc0), data|2);
-             mkb::dmd_scen_sel_floor_init_child();
+            // I have no idea what this does, it's something the game does in the original function
+            u32 data = *reinterpret_cast<u32*>(0x8054dbc0);
+            patch::write_word(reinterpret_cast<void*>(0x8054dbc0), data|2);
+            mkb::dmd_scen_sel_floor_init_child();
         }
 
         // Handles preloading, to prevent cutscene files from attempting to be loaded.
@@ -640,10 +645,10 @@ namespace relpatches
             patch::write_branch(reinterpret_cast<void*>(mkb::g_preload_next_stage_files), reinterpret_cast<void*>(handle_preloading));
         }
 
-   }
+    }
 
-   // Removes the playpoint notification screens when exiting from story mode or challenge mode, or after a 'game over'.
-   namespace remove_playpoints {
+    // Removes the playpoint notification screens when exiting from story mode or challenge mode, or after a 'game over'.
+    namespace remove_playpoints {
         void init_main_game() {
             // Removes playpoint screen when exiting challenge/story mode.
             patch::write_nop(reinterpret_cast<void*>(0x808f9ecc));
@@ -657,22 +662,21 @@ namespace relpatches
         void tick() {
             mkb::unlock_info.party_games = 0x0001b600;
         }
-   }
+    }
 
-   // Fixes an issue with rain droplets not appearing correctly on the continue platform in the storm theme.
-   namespace fix_storm_continue_platform {
+    // Fixes an issue with rain droplets not appearing correctly on the continue platform in the storm theme.
+    namespace fix_storm_continue_platform {
         void init_main_loop() {
             patch::write_branch(reinterpret_cast<void*>(mkb::effect_bgstm_rainripple_disp), reinterpret_cast<void*>(main::fix_rain_ripple));
         }
-   }
+    }
 
-   // Fixes an issue where skipping more than a certain number of stages for story mode any% causes a crash.
-   namespace fix_any_percent_crash {
+    // Fixes an issue where skipping more than a certain number of stages for story mode any% causes a crash.
+    namespace fix_any_percent_crash {
         static bool chara_heap_cleared;
         static mkb::SpriteTex* texes[10] = {};
         static u8 active_sprite_idx = 0.;
         static void (*tex_load_trampoline)(mkb::SpriteTex *sprite_tex, char *file_path, u32 param_3, u16 width, u16 height, u32 format);
-
 
         // Keeps track all preview image sprite pointers as they are loaded. Only 10 are loaded for story mode.
         void init_main_loop() {
@@ -682,13 +686,13 @@ namespace relpatches
                         for (int i = 0; i < 10; i++) {
                             texes[i] = nullptr;
                         }
-                        active_sprite_idx = 0;
+                    active_sprite_idx = 0;
                     }
 
-                    texes[active_sprite_idx] = sprite_tex;
-                    active_sprite_idx++;
+                texes[active_sprite_idx] = sprite_tex;
+                active_sprite_idx++;
                 }
-                tex_load_trampoline(sprite_tex, file_path, param_3, width, height, format);
+            tex_load_trampoline(sprite_tex, file_path, param_3, width, height, format);
             });
         }
 
@@ -697,6 +701,7 @@ namespace relpatches
             if (mkb::sub_mode == mkb::SMD_GAME_SUGG_SAVE_INIT) {
                 chara_heap_cleared = false;
             }
+
             if (mkb::sub_mode == mkb::SMD_GAME_SUGG_SAVE_MAIN && !chara_heap_cleared) {
                 for (int i = 0; i < 10; i++) {
                     if (texes[i] != nullptr && texes[i]->tex_data != nullptr) {
@@ -708,6 +713,51 @@ namespace relpatches
             }
         }
 
-   }
+    }
+
+    // Allows for party games to be toggled with a config option.
+    namespace party_game_toggle {
+        u16 party_game_bitflag = 0;
+
+        // Variable-precision SWAR algorithm
+        // Source: https://stackoverflow.com/a/109025
+        u32 number_of_unlocked_party_games(u32 i)
+        {
+             i = i - ((i >> 1) & 0x55555555);        // add pairs of bits
+             i = (i & 0x33333333) + ((i >> 2) & 0x33333333);  // quads
+             i = (i + (i >> 4)) & 0x0F0F0F0F;        // groups of 8
+             return (i * 0x01010101) >> 24;          // horizontal sum of bytes
+        }
+
+        // Party game IDs do not match their menu positions, hence this ugly mess
+        u32 determine_party_game_unlock_status(int id) {
+            switch (id) {
+                case 0xa:
+                    return (party_game_bitflag & 0x40);
+                case 0x9:
+                    return (party_game_bitflag & 0x80);
+                case 0xd:
+                    return (party_game_bitflag & 0x100);
+                case 0xc:
+                    return (party_game_bitflag & 0x200);
+                case 0xf:
+                    return (party_game_bitflag & 0x400);
+                case 0x10:
+                    return (party_game_bitflag & 0x800);
+                default:
+                    return 0;
+            }
+
+        }
+
+        void sel_ngc_init() {
+            patch::hook_function(mkb::g_check_if_partygame_unlocked, determine_party_game_unlock_status);
+            patch::write_word(reinterpret_cast<void*>(0x808f9154), PPC_INSTR_LI(PPC_R0, (~party_game_bitflag & 0x3f)));
+
+            mkb::strcpy(mkb::CANNOT_SELECT_PARTY_GAME_STRING, "You cannot play this game\n in this custom pack.");
+            mkb::strcpy(mkb::CAN_PURCHASE_PARTY_GAME_STRING, "You cannot unlock this game\n in this custom pack.");
+            mkb::sprintf(mkb::CAN_PLAY_NUM_PARTY_GAMES_STRING, "You can play /bcff8000/%d/bcffff00/ party games!", number_of_unlocked_party_games(party_game_bitflag));
+        }
+    }
 
 }

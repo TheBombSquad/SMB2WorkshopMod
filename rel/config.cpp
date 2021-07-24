@@ -115,6 +115,42 @@ relpatches::Tickable apesphere_tickables[] = {
 
 const unsigned int APESPHERE_TICKABLE_COUNT = sizeof(apesphere_tickables)/sizeof(apesphere_tickables[0]);
 
+void parse_party_game_toggles(char* buf) {
+    buf = mkb::strchr(buf, '\n')+1;
+
+    char *end_of_section;
+    char key[64] = {0};
+    char value[64] = {0};
+    end_of_section = mkb::strchr(buf, '}');
+    do {
+        char *key_start, *key_end, *end_of_line;
+        key_start = mkb::strchr(buf, '\t')+1;
+        key_end = mkb::strchr(buf, ':');
+        end_of_line = mkb::strchr(buf, '\n');
+        mkb::strncpy(key, key_start, (key_end-key_start));
+        mkb::strncpy(value, key_end+2, (end_of_line-key_end)-2);
+
+        if KEY_ENABLED("monkey-race")           relpatches::party_game_toggle::party_game_bitflag |= 0x1;
+        else if KEY_ENABLED("monkey-fight")     relpatches::party_game_toggle::party_game_bitflag |= 0x2;
+        else if KEY_ENABLED("monkey-target")    relpatches::party_game_toggle::party_game_bitflag |= 0x4;
+        else if KEY_ENABLED("monkey-billiards") relpatches::party_game_toggle::party_game_bitflag |= 0x8;
+        else if KEY_ENABLED("monkey-bowling")   relpatches::party_game_toggle::party_game_bitflag |= 0x10;
+        else if KEY_ENABLED("monkey-golf")      relpatches::party_game_toggle::party_game_bitflag |= 0x20;
+        else if KEY_ENABLED("monkey-boat")      relpatches::party_game_toggle::party_game_bitflag |= 0x40;
+        else if KEY_ENABLED("monkey-shot")      relpatches::party_game_toggle::party_game_bitflag |= 0x80;
+        else if KEY_ENABLED("monkey-dogfight")  relpatches::party_game_toggle::party_game_bitflag |= 0x100;
+        else if KEY_ENABLED("monkey-soccer")    relpatches::party_game_toggle::party_game_bitflag |= 0x200;
+        else if KEY_ENABLED("monkey-baseball")  relpatches::party_game_toggle::party_game_bitflag |= 0x400;
+        else if KEY_ENABLED("monkey-tennis")    relpatches::party_game_toggle::party_game_bitflag |= 0x800;
+
+        mkb::OSReport("current party game bitflag: %d\n", relpatches::party_game_toggle::party_game_bitflag);
+        buf = end_of_line+1;
+        mkb::memset(key, '\0', 64);
+        mkb::memset(value, '\0', 64);
+    }
+    while (buf < end_of_section);
+}
+
 void parse_function_toggles(char* buf) {
     // Enters from section parsing, so skip to the next line
     buf = mkb::strchr(buf, '\n')+1;
@@ -208,6 +244,10 @@ void parse_config() {
                     // Parsing function toggles
                     if (STREQ(section, "REL Patches") || STREQ(section, "ApeSphere")) {
                         parse_function_toggles(section_end);
+                    }
+
+                    else if (STREQ(section, "Party Game Toggles")) {
+                        parse_party_game_toggles(section_end);
                     }
 
                     else if (STREQ(section, "Theme IDs")) {

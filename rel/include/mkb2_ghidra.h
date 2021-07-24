@@ -5197,7 +5197,10 @@ extern "C" {
     extern pointer switchdataD_805749f8;
     extern pointer switchdataD_80574bb0;
     extern struct MenuEntry main_menu_list;
+    extern char CAN_PLAY_NUM_PARTY_GAMES_STRING[49];
     extern undefined party_game_menu_list;
+    extern char CAN_PURCHASE_PARTY_GAME_STRING[93];
+    extern char CANNOT_SELECT_PARTY_GAME_STRING[84];
     extern undefined options_menu_list;
     extern struct MenuEntry main_game_menu_list[3];
     extern struct MenuScreen menu_screen_list[87];
