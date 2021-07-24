@@ -138,6 +138,11 @@ namespace relpatches
             .name = "party-game-toggle",
             .message = "[mod]  Party game toggle patch %s\n",
             .sel_ngc_init_func = party_game_toggle::sel_ngc_init,
+        },
+        {
+            .name = "enable-menu-reflections",
+            .message = "[mod]  Menu reflection patch %s\n",
+            .main_loop_init_func = enable_menu_reflections::init_main_loop,
         }
     };
 
@@ -760,4 +765,39 @@ namespace relpatches
         }
     }
 
+    // Enables reflective surfaces on the menu. Experimental and I don't really know why this works.
+    // Assumes the menu stage slot is 3 or 201.
+    // TODO: If/when I make a patch/toggle for changing the menu BG stage slots, don't hardcode the value.
+    namespace enable_menu_reflections {
+        static void (*load_stage_1_trampoline)(u32 id);
+        static void (*load_stage_2_trampoline)(u32 id);
+
+        void rendefc_handler(u32 stage_id) {
+            if (mkb::main_mode == mkb::MD_SEL) {
+                if (stage_id == 3 || stage_id == 201) {
+                    if (mkb::events[mkb::EVENT_REND_EFC].status == mkb::STAT_NULL) {
+                        mkb::OSReport("Created menu rendefc stage %d\n", stage_id);
+                    mkb::event_init(mkb::EVENT_REND_EFC);
+                    }
+                }
+                else {
+                    mkb::OSReport("Destroyed menu rendefc stage %d\n", stage_id);
+                    mkb::event_dest(mkb::EVENT_REND_EFC);
+                }
+            }
+        }
+
+        void init_main_loop() {
+            load_stage_1_trampoline = patch::hook_function(
+                mkb::g_load_stage, [](u32 stage_id) {
+                    rendefc_handler(stage_id);
+                    load_stage_1_trampoline(stage_id);
+                });
+            load_stage_2_trampoline = patch::hook_function(
+                mkb::g_load_stage_2, [](u32 stage_id) {
+                    rendefc_handler(stage_id);
+                    load_stage_2_trampoline(stage_id);
+                });
+        }
+    }
 }
