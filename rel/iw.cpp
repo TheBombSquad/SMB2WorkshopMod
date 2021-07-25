@@ -189,4 +189,9 @@ void disp()
     }
 }
 
+void init()
+{
+   set_visible(true);
+}
+
 }

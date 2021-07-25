@@ -71,7 +71,7 @@ void debug_text_palette()
     }
 }
 
-static void debug_text_buf(s32 x, s32 y, mkb::GXColor color, const char *buf)
+static void debug_text_buf(s32 x, s32 y, mkb::GXColor color, char *buf)
 {
     main::debug_text_color = color;
     for (s32 i = 0; buf[i] != '\0'; i++)
@@ -85,7 +85,7 @@ static void debug_text_buf(s32 x, s32 y, mkb::GXColor color, const char *buf)
     main::debug_text_color = {};
 }
 
-static void debug_text_v(s32 x, s32 y, mkb::GXColor color, const char *format, va_list args)
+static void debug_text_v(s32 x, s32 y, mkb::GXColor color, char *format, va_list args)
 {
     // Shouldn't be able to print a string to the screen longer than this
     // Be careful not to overflow! MKB2 doesn't have vsnprintf
@@ -94,7 +94,7 @@ static void debug_text_v(s32 x, s32 y, mkb::GXColor color, const char *format, v
     debug_text_buf(x, y, color, buf);
 }
 
-void debug_text(s32 x, s32 y, mkb::GXColor color, const char *format, ...)
+void debug_text(s32 x, s32 y, mkb::GXColor color, char *format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -119,7 +119,7 @@ void disp()
     if (s_notify_frame_counter > 60) s_notify_frame_counter = 60;
 }
 
-void notify(mkb::GXColor color, const char *format, ...)
+void notify(mkb::GXColor color, char *format, ...)
 {
     va_list args;
     va_start(args, format);

@@ -11,6 +11,8 @@
 #include "jump.h"
 #include "scratch.h"
 #include "assembly.h"
+#include "inputdisp.h"
+#include "gotostory.h"
 
 #define STREQ(x,y) (mkb::strcmp(const_cast<char*>(x),const_cast<char*>(y))==0)
 #define KEY_ENABLED(x) (STREQ(key, x) && STREQ(value, "enabled"))
@@ -95,7 +97,6 @@ relpatches::Tickable apesphere_tickables[] = {
         {
             .main_loop_init_func = timer::init,
             .disp_func = timer::disp,
-            .tick_func = timer::tick,
         },
         {
             .disp_func = menu::disp,
@@ -110,6 +111,13 @@ relpatches::Tickable apesphere_tickables[] = {
         },
         {
             .main_loop_init_func = misc_apesphere_init,
+        },
+        {
+            .main_loop_init_func = inputdisp::init,
+            .disp_func = inputdisp::disp,
+        },
+        {
+            .tick_func = gotostory::tick,
         }
 };
 

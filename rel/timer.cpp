@@ -13,12 +13,11 @@ static u32 s_retrace_count;
 static u32 s_prev_retrace_count;
 static s32 s_rta_timer;
 
-void init()
-{
-    s_retrace_count = mkb::VIGetRetraceCount();
+void set_visible(bool visible) {
+s_retrace_count = mkb::VIGetRetraceCount();
+s_visible = visible;
 }
 
-void set_visible(bool visible) { s_visible = visible; }
 bool is_visible() { return s_visible; }
 
 static void convert_frame_time(s32 frames, s32 *sec, s32 *centisec)
@@ -105,6 +104,11 @@ void save_state(memstore::MemStore *store)
         s_prev_retrace_count = count - 1;
         s_retrace_count = count - 1;
     }
+}
+
+void init()
+{
+   set_visible(true);
 }
 
 }
