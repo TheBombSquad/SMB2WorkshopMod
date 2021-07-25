@@ -1,8 +1,6 @@
 #include "relpatches.h"
 #include "patch.h"
 #include <mkb.h>
-#include <mkb.h>
-#include <mkb.h>
 #include "assembly.h"
 #include "ppcutil.h"
 #include "pad.h"
@@ -87,7 +85,6 @@ namespace relpatches
             .name = "skip-intro-movie",
             .message = "[mod]  Skip intro movie patch %s\n",
             .main_loop_init_func = skip_intro_movie::init_main_loop,
-            .tick_func = skip_intro_movie::tick,
         },
         {
             .name = "smb1-camera-toggle",
@@ -486,11 +483,11 @@ namespace relpatches
     }
     // Hooks into the smd_adv_first_logo_tick function, calling our own tick function
     void skip_intro_movie::init_main_loop() {
-        patch::write_branch_bl(reinterpret_cast<void*>(0x8027ec6c), reinterpret_cast<void*>(tick));
+        patch::hook_function(mkb::smd_adv_first_logo_tick, smd_adv_first_logo_tick_patch);
     }
 
     // Immediately goes to the title screen
-    void skip_intro_movie::tick() {
+    void skip_intro_movie::smd_adv_first_logo_tick_patch() {
         mkb::sub_mode_request = mkb::SMD_ADV_MOVIE_RETURN;
     }
 

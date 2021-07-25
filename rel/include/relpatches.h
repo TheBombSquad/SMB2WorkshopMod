@@ -107,7 +107,7 @@ void init_main_loop();
 
 namespace skip_intro_movie {
 void init_main_loop();
-void tick();
+void smd_adv_first_logo_tick_patch();
 
 }
 

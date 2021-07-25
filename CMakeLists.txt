@@ -37,12 +37,7 @@ add_executable(ApeSphere
         rel/assembly.cpp
         rel/timer.cpp
         rel/include/timer.h
-        rel/include/gc/vi.h
-        rel/include/mkb/story.h
         rel/include/iw.h
         rel/iw.cpp
-        rel/include/mkb/unlock.h
         rel/include/menu_impl.h
-        rel/menu_impl.cpp
-        rel/include/gc/mathtypes.h)
->>>>>>> fddf6d3542da45bd4af6ef17f0c7b463a862389e
+        rel/menu_impl.cpp)

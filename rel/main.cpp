@@ -35,9 +35,6 @@ static void perform_assembly_patches()
 
     // Nop the conditional that guards `draw_debugtext`, enabling it even when debug mode is disabled
     patch::write_nop(reinterpret_cast<void *>(0x80299f54));
-
-    /* Titlescreen patches
-    */
 }
 
 void init()
