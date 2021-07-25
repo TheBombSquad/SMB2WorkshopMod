@@ -168,9 +168,10 @@ static Widget help_widgets[] = {
     {.type = WidgetType::Separator},
 
     {.type = WidgetType::Header, .header = {"Updates"}},
-    {.type = WidgetType::Text, .text = {"  Current version: v0.3.0"}},
-    {.type = WidgetType::Text, .text = {"  For the latest version of this mod:"}},
-    {.type = WidgetType::Text, .text = {"  github.com/ComplexPlane/ApeSphere/releases"}},
+    {.type = WidgetType::Text, .text = {"  ApeSphere-Custom version: v0.3.1 (07/24/21)"}},
+    {.type = WidgetType::Text, .text = {"  Practice mod version: fddf6d35 (07/10/21)"}},
+    {.type = WidgetType::Text, .text = {"  For the latest version of this mod:"}}, //
+    {.type = WidgetType::Text, .text = {"  http://github.com/TheBombSquad/ApeSphere-Custom"}},
 };
 
 static Widget root_widgets[] = {

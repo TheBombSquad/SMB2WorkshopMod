@@ -42,7 +42,7 @@ static void perform_assembly_patches()
 
 void init()
 {
-    mkb::OSReport("[mod] ApeSphere-Custom version 0.3.0 loaded\n");
+    mkb::OSReport("[mod] ApeSphere-Custom version 0.3.1 loaded\n");
     heap::init();
     perform_assembly_patches();
 

@@ -63,6 +63,7 @@ u16* parse_stageid_list(char* buf, u16* array) {
         char *key_start, *key_end, *end_of_line;
         key_start = mkb::strchr(buf, 'E')+2;
         key_end = mkb::strchr(buf, ':');
+        MOD_ASSERT_MSG(key_start < key_end, "Key start after key end, did you start your key with a tab and not spaces?");
         end_of_line = mkb::strchr(buf, '\n');
         mkb::strncpy(key, key_start, (key_end-key_start));
         mkb::strncpy(value, key_end+2, (end_of_line-key_end)-2);
@@ -137,6 +138,7 @@ void parse_party_game_toggles(char* buf) {
         char *key_start, *key_end, *end_of_line;
         key_start = mkb::strchr(buf, '\t')+1;
         key_end = mkb::strchr(buf, ':');
+        MOD_ASSERT_MSG(key_start < key_end, "Key start after key end, did you start your key with a tab and not spaces?");
         end_of_line = mkb::strchr(buf, '\n');
         mkb::strncpy(key, key_start, (key_end-key_start));
         mkb::strncpy(value, key_end+2, (end_of_line-key_end)-2);
@@ -186,6 +188,7 @@ void parse_function_toggles(char* buf) {
         char *key_start, *key_end, *end_of_line;
         key_start = mkb::strchr(buf, '\t')+1;
         key_end = mkb::strchr(buf, ':');
+        MOD_ASSERT_MSG(key_start < key_end, "Key start after key end, did you start your key with a tab and not spaces?");
         end_of_line = mkb::strchr(buf, '\n');
         mkb::strncpy(key, key_start, (key_end-key_start));
         mkb::strncpy(value, key_end+2, (end_of_line-key_end)-2);
@@ -256,6 +259,7 @@ void parse_config() {
                 section_start = mkb::strchr(file, '#');
                 section_end = mkb::strchr(file, '{');
                 if (section_start != nullptr && section_end != nullptr) {
+                    MOD_ASSERT_MSG(section_start < section_end, "Section end before section start, are you sure you started/ended the section segment properly?");
                     // Strip out the '# ' at the start of string, strip out the ' ' at the end
                     section_start += 2;
                     section_end -= 1;
