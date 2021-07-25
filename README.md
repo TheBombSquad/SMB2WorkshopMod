@@ -6,7 +6,11 @@ Features include:
 
 * Easy-to-modify configuration file for tweaking and enabling or disabling patches
 * All REL patches included in the [smb2-rel-hacks repo](https://github.com/TheBombSquad/smb2-rel-hacks/)
-* New patch extending reflective stage objects
+* Patch extending reflective stage objects
+* Patch adding SMB1 camera toggle 
+* Patch adding the missing 'w' to the story mode data select
+* Patch that automatically skips story mode cutscenes
+* And more miscellaneous patches!
 
 Original ApeSphere features included:
 * Console savestates
@@ -22,11 +26,8 @@ Planned upcoming features:
 * Lighting modification in configuration file
 * Double 'Stage Select' REL patch
 * Ultimate mode patch
-* SMB1 camera toggle patch
-* Missing 'w' patch
 * Custom party game configuration (lap timer, course names, etc)
 * Custom stage timers
-* No story mode cutscene REL aptch
 * Custom UI element names (replacing Stage with Floor, etc)
 
 # Setup and Usage

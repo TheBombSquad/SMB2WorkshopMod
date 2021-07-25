@@ -91,6 +91,45 @@
 // Skips the AV logo and intro movie sequence on game start, immediately
 // skipping to the title screen.
 
+// smb1-camera-toggle
+//
+// Allows for the SMB1 camera to be toggled with the Z button mid-game.
+
+// fix-missing-w
+//
+// Replaces the misplaced 't' letter in the story mode data entry screen with
+// the correct letter, a lowercase 'w'.
+
+// skip-cutscenes
+//
+// Skips the cutscenes in story mode.
+
+// remove-playpoints
+//
+// Removes the playpoint screen upon returning from story or challenge mode,
+// and unlocks all party games. 
+
+// fix-storm-continue-platform
+//
+// Fixes an issue with the storm theme where rain droplet splashes would not appear
+// correctly on the continue platform.
+
+// fix-any-percent-crash
+//
+// Fixes an issue where skipping more than two or three stages in story mode with the
+// any% skip glitch would lead to the game crashing. Please note that this allows for
+// up to 99 skips to be performed. 
+
+// party-game-toggle
+//
+// Permanently enables or disables party games based off the Party Game Toggles
+// list, defined below.
+
+// enable-menu-reflections
+//
+// Allows for the stages that appear in the background of the menu, stages 3 and 201,
+// to have mirrors in the background. This is experimental and may cause issues.
+
 // ----------------------------------------------------------------------------
 
 // 'enabled' - Applies the patch
@@ -114,18 +153,52 @@
 	custom-theme-id: disabled
 	skip-intro-movie: disabled
 	smb1-camera-toggle: disabled
+	fix-missing-w: disabled
+	skip-cutscenes: disabled
+	remove-playpoints: disabled
+	fix-storm-continue-platform: disabled
+	fix-any-percent-crash: disabled
+	party-game-toggle: disabled
+	enable-menu-reflections: disabled
 }
 
-// apesphere-practice
+// apesphere-always-enabled
 // Whether or not to enable the ApeSphere practice mod.
+// Interchangable with the key 'apesphere-practice'.
+
+// apesphere-togglable
+// Whether or not to allow the ApeSphere practice mod to be toggled on
+// the title screen by pressing L and R at the same time.
 
 # ApeSphere {
-	apesphere-practice: disabled
+	apesphere-always-enabled: disabled
+	apesphere-togglable: disabled
+}
+
+// Toggles which party games are accessible from the party game menu.
+// Party games marked with 'disabled' will be permanently disabled, and
+// cannot be unlocked or accessed. 
+// Requires the patch 'party-game-toggle' to be enabled.
+
+# Party Game Toggles {
+	monkey-race: disabled
+	monkey-fight: disabled
+	monkey-target: disabled
+	monkey-billiards: disabled
+	monkey-bowling: disabled
+	monkey-golf: disabled
+	monkey-boat: disabled
+	monkey-shot: disabled
+	monkey-dogfight: disabled
+	monkey-soccer: disabled
+	monkey-baseball: disabled
+	monkey-tennis: disabled
 }
 
 // Stage ID to theme ID mapping. Theme IDs are in decimal.
 // The default, vanilla theme ID list is provided for your convenience.
 // A theme ID list is included with the download of this mod.
+// Requires the patch 'custom-theme-id' to be enabled.
 
 # Theme IDs {
 	STAGE 0: 0
@@ -560,6 +633,7 @@
 // Stage ID to music ID mapping. Music IDs are in decimal.
 // The default, vanilla music ID list is provided for your convenience.
 // A music ID list is included with the download of this mod.
+// Requires the patch 'custom-music-id' to be enabled.
 
 # Music IDs {
 	STAGE 0: 0
