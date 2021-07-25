@@ -24,6 +24,9 @@ static mkb::DVDFileInfo config_file_info;
 static char* config_file_buf;
 static char config_file_path[] = "/config.txt";
 
+bool tetris_enabled = false;
+bool apesphere_toggle_enabled = false;
+
 static void unlock_everything()
 {
     // Don't yet know how to unlock the staff credits game from a fresh save...
@@ -151,12 +154,24 @@ void parse_party_game_toggles(char* buf) {
         else if KEY_ENABLED("monkey-baseball")  relpatches::party_game_toggle::party_game_bitflag |= 0x400;
         else if KEY_ENABLED("monkey-tennis")    relpatches::party_game_toggle::party_game_bitflag |= 0x800;
 
-        mkb::OSReport("current party game bitflag: %d\n", relpatches::party_game_toggle::party_game_bitflag);
         buf = end_of_line+1;
         mkb::memset(key, '\0', 64);
         mkb::memset(value, '\0', 64);
     }
     while (buf < end_of_section);
+}
+
+void init_apesphere_tickables() {
+    mkb::OSReport("[mod]  Enabling ApeSphere practice mod!");
+    for (unsigned int i = 0; i < APESPHERE_TICKABLE_COUNT; i++) {
+        if (!apesphere_tickables[i].enabled) {
+            apesphere_tickables[i].enabled = true;
+            if (apesphere_tickables[i].main_loop_init_func != nullptr) {
+                apesphere_tickables[i].main_loop_init_func();
+            }
+        }
+
+    }
 }
 
 void parse_function_toggles(char* buf) {
@@ -175,14 +190,14 @@ void parse_function_toggles(char* buf) {
         mkb::strncpy(key, key_start, (key_end-key_start));
         mkb::strncpy(value, key_end+2, (end_of_line-key_end)-2);
 
-        if KEY_ENABLED("apesphere-practice") {
-            for (unsigned int i = 0; i < APESPHERE_TICKABLE_COUNT; i++) {
-                apesphere_tickables[i].enabled = true;
-                if (apesphere_tickables[i].main_loop_init_func != nullptr) {
-                    apesphere_tickables[i].main_loop_init_func();
-                }
+        if (KEY_ENABLED("apesphere-practice") || KEY_ENABLED("apesphere-always-enabled")) {
+            mkb::OSReport("[mod]  ApeSphere practice mod is always enabled!\n");
+            init_apesphere_tickables();
+        }
 
-            }
+        else if KEY_ENABLED("apesphere-togglable") {
+            mkb::OSReport("[mod]  ApeSphere practice mod can be enabled by pressing L+R on the title screen!\n");
+            apesphere_toggle_enabled = true;
         }
 
         else {

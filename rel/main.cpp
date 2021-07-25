@@ -17,7 +17,6 @@ static void (*s_draw_debug_text_trampoline)();
 static void (*s_process_inputs_trampoline)();
 static void (*load_additional_rel_trampoline)(char *rel_filepath, mkb::RelBufferInfo *rel_buffer_ptrs);
 
-// For dynamically choosing to run init/tick/disp functions based on a config file
 bool debug_mode_enabled = false;
 
 
@@ -85,6 +84,10 @@ void init()
 
             // These run after all controller inputs have been processed on the current frame,
             // to ensure lowest input delay
+
+            if (mkb::main_mode == mkb::MD_ADV && config::apesphere_toggle_enabled && pad::button_chord_pressed(mkb::PAD_TRIGGER_L, mkb::PAD_TRIGGER_R)) {
+                config::init_apesphere_tickables();
+            }
 
             // Tick functions (REL patches)
             for (unsigned int i = 0; i < relpatches::PATCH_COUNT; i++) {
