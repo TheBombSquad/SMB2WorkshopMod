@@ -74,7 +74,7 @@ namespace relpatches
         {
             .name = "perfect-bonus-completion",
             .message = "[mod]  Perfect bonus completion %s\n",
-            .tick_func = perfect_bonus::tick,
+            .main_loop_init_func = perfect_bonus::init,
         },
         {
             .name = "remove-desert-haze",
@@ -147,11 +147,19 @@ namespace relpatches
 
     // If the stage is a bonus stage (ball mode 0x40) and no bananas remain,
     // end the stage with a perfect (|= 0x228)
-    void relpatches::perfect_bonus::tick() {
-        if (mkb::mode_info.ball_mode & 0x40 && mkb::mode_info.bananas_remaining == 0) {
-            mkb::mode_info.ball_mode |= 0x228;
-        }
+
+    void relpatches::perfect_bonus::init() {
+        static void (*event_info_tick_trampoline)();
+
+        event_info_tick_trampoline = patch::hook_function(
+        mkb::event_info_tick, []() {
+            event_info_tick_trampoline();
+            if (mkb::mode_info.ball_mode == mkb::BALLMODE_ON_BONUS_STAGE && mkb::mode_info.bananas_remaining == 0) {
+                mkb::mode_info.ball_mode |= 0x228;
+            }
+        });
     }
+
 
     // TODO: Probably not the best way to implement this, will need to look into a
     // proper fix soon. In a function that sets a parameter that enables heat

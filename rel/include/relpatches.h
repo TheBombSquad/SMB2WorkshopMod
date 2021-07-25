@@ -22,7 +22,7 @@ extern const unsigned int PATCH_COUNT;
 extern Tickable patches[];
 
 namespace perfect_bonus {
-void tick();
+void init();
 
 }
 
