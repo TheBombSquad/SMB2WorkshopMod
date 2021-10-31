@@ -130,6 +130,12 @@
 // Allows for the stages that appear in the background of the menu, stages 3 and 201,
 // to have mirrors in the background. This is experimental and may cause issues.
 
+// custom-world-count
+//
+// Allows for the number of worlds in story mode to be modified. After the final world,
+// the end cutscene will play, or the credits sequence will start if the cutscene skip
+// patch is enabled. The minimum value is 1, and the maximum value is 10.
+
 // ----------------------------------------------------------------------------
 
 // 'enabled' - Applies the patch
@@ -160,6 +166,7 @@
 	fix-any-percent-crash: disabled
 	party-game-toggle: disabled
 	enable-menu-reflections: disabled
+	custom-world-count: 10
 }
 
 // apesphere-always-enabled

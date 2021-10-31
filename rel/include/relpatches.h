@@ -6,11 +6,15 @@ namespace relpatches
 {
 
 static constexpr u16 STAGE_COUNT = 421;
+extern u16 WORLD_COUNT;
 
 struct Tickable {
     char* name = nullptr;                       // Name of the patch, what the config parser checks for
     char* message = nullptr;                    // Message to be output to stdout by the config parser on load. Include %s for 'enabled/disabled'
-    bool enabled = false;                       // Whether or not the patch will be initialized and/or ticked
+    int status = false;                         // The status/value of the patch, generally whether or not it is enabled
+    int default_value = false;                  // The default status/value of the patch, to determine whether or not the patch should be run if the passed status value differs
+    int minimum_value = 0;                      // The minimum status/value of the patch
+    int maximum_value = 1;                      // The maximum status/value of the patch
     void(*main_loop_init_func)() = nullptr;     // Initialization function on load of mkb2.main_loop.rel
     void(*main_game_init_func)() = nullptr;     // Initialization function on load of mkb2.main_game.rel
     void(*sel_ngc_init_func)() = nullptr;       // Initialization function on load of mkb2.sel_ngc.rel
@@ -153,6 +157,12 @@ extern u16 party_game_bitflag;
 namespace enable_menu_reflections {
 void rendefc_handler(u32 stage_id);
 void init_main_loop();
+}
+
+namespace custom_world_count {
+void init_main_game();
+void init_sel_ngc();
+void dmd_scen_sceneplay_init_patch();
 }
 
 }

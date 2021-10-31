@@ -55,14 +55,14 @@ void init()
 
             // Disp functions (REL patches)
             for (unsigned int i = 0; i < relpatches::PATCH_COUNT; i++) {
-                if (relpatches::patches[i].enabled && relpatches::patches[i].disp_func != nullptr) {
+                if (relpatches::patches[i].status && relpatches::patches[i].disp_func != nullptr) {
                     relpatches::patches[i].disp_func();
                 }
             }
 
             // Disp functions (ApeSphere)
             for (unsigned int i = 0; i < config::APESPHERE_TICKABLE_COUNT; i++) {
-                if (config::apesphere_tickables[i].enabled && config::apesphere_tickables[i].disp_func != nullptr) {
+                if (config::apesphere_tickables[i].status && config::apesphere_tickables[i].disp_func != nullptr) {
                     config::apesphere_tickables[i].disp_func();
                 }
             }
@@ -88,14 +88,14 @@ void init()
 
             // Tick functions (REL patches)
             for (unsigned int i = 0; i < relpatches::PATCH_COUNT; i++) {
-                if (relpatches::patches[i].enabled && relpatches::patches[i].tick_func != nullptr) {
+                if (relpatches::patches[i].status && relpatches::patches[i].tick_func != nullptr) {
                     relpatches::patches[i].tick_func();
                 }
             }
 
             // Tick functions (ApeSphere)
             for (unsigned int i = 0; i < config::APESPHERE_TICKABLE_COUNT; i++) {
-                if (config::apesphere_tickables[i].enabled && config::apesphere_tickables[i].tick_func != nullptr) {
+                if (config::apesphere_tickables[i].status && config::apesphere_tickables[i].tick_func != nullptr) {
                     config::apesphere_tickables[i].tick_func();
                 }
             }
@@ -111,7 +111,7 @@ void init()
             // Main game init functions
             if (STREQ(rel_filepath, "mkb2.main_game.rel")) {
                 for (unsigned int i = 0; i < relpatches::PATCH_COUNT; i++) {
-                    if (relpatches::patches[i].enabled && relpatches::patches[i].main_game_init_func != nullptr) {
+                    if (relpatches::patches[i].status && relpatches::patches[i].main_game_init_func != nullptr) {
                         relpatches::patches[i].main_game_init_func();
                     }
                 }
@@ -120,7 +120,7 @@ void init()
             // Sel_ngc init functions
             else if (STREQ(rel_filepath, "mkb2.sel_ngc.rel")) {
                 for (unsigned int i = 0; i < relpatches::PATCH_COUNT; i++) {
-                    if (relpatches::patches[i].enabled && relpatches::patches[i].sel_ngc_init_func != nullptr) {
+                    if (relpatches::patches[i].status && relpatches::patches[i].sel_ngc_init_func != nullptr) {
                         relpatches::patches[i].sel_ngc_init_func();
                     }
                 }

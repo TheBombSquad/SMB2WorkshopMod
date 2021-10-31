@@ -166,8 +166,8 @@ void parse_party_game_toggles(char* buf) {
 void init_apesphere_tickables() {
     mkb::OSReport("[mod]  Enabling ApeSphere practice mod!");
     for (unsigned int i = 0; i < APESPHERE_TICKABLE_COUNT; i++) {
-        if (!apesphere_tickables[i].enabled) {
-            apesphere_tickables[i].enabled = true;
+        if (!apesphere_tickables[i].status) {
+            apesphere_tickables[i].status = true;
             if (apesphere_tickables[i].main_loop_init_func != nullptr) {
                 apesphere_tickables[i].main_loop_init_func();
             }
@@ -184,6 +184,8 @@ void parse_function_toggles(char* buf) {
     char key[64] = {0};
     char value[64] = {0};
     end_of_section = mkb::strchr(buf, '}');
+    int parsed_value;
+
     do {
         char *key_start, *key_end, *end_of_line;
         key_start = mkb::strchr(buf, '\t')+1;
@@ -207,8 +209,10 @@ void parse_function_toggles(char* buf) {
             // Iterate through all the REL patch tickables, looking for match of key name
             for (unsigned int i = 0; i < relpatches::PATCH_COUNT; i++) {
                 if (relpatches::patches[i].name != nullptr && STREQ(key, relpatches::patches[i].name)) {
+
+                    // 'value' is enabled, set the value to 1
                     if (STREQ(value, "enabled")) {
-                        relpatches::patches[i].enabled = true;
+                        relpatches::patches[i].status = true;
 
                         // Execute the main_loop init func, if it exists
                         if (relpatches::patches[i].main_loop_init_func != nullptr) {
@@ -222,11 +226,50 @@ void parse_function_toggles(char* buf) {
 
                         break;
                     }
-                    else {
+
+                    // 'value' is disabled, set value to 0
+                    else if (STREQ(value, "disabled")) {
                         if (relpatches::patches[i].message != nullptr) {
                             mkb::OSReport(relpatches::patches[i].message, "disabled!");
                         }
                         break;
+                    }
+
+                    // 'value' is some integer, set the value and initialize the patch if it differs from the default
+                    else {
+                        parsed_value = mkb::atoi(value);
+
+
+                        // Check to see if the passed value is within the defined bounds
+                        MOD_ASSERT_MSG(parsed_value >= relpatches:: patches[i].minimum_value, "Passed value for patch smaller than minimum value");
+                        MOD_ASSERT_MSG(parsed_value <= relpatches:: patches[i].maximum_value, "Passed value for patch larger than maximum value");
+
+                        // Set the status to the parsed value, if it differes from the default passed value
+                        if (parsed_value != relpatches::patches[i].default_value) {
+                            relpatches::patches[i].status = parsed_value;
+
+                            // Execute the main_loop init func, if it exists
+                            if (relpatches::patches[i].main_loop_init_func != nullptr) {
+                                relpatches::patches[i].main_loop_init_func();
+                            }
+
+                            // Print init message, if it exists
+                            if (relpatches::patches[i].message != nullptr) {
+                                mkb::OSReport(relpatches::patches[i].message, "ENABLED! (custom value passed)", parsed_value);
+                            }
+
+                            break;
+                        }
+
+                        // If the value is the default, do not enable the patch
+                        else {
+                            if (relpatches::patches[i].message != nullptr) {
+                                mkb::OSReport(relpatches::patches[i].message, "disabled! (default value passed)", parsed_value);
+                            }
+
+                            break;
+                        }
+
                     }
                 }
             }
