@@ -165,4 +165,8 @@ void init_sel_ngc();
 void dmd_scen_sceneplay_init_patch();
 }
 
+namespace goal_draw_fix {
+void init_main_loop();
+}
+
 }

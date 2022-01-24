@@ -4,7 +4,6 @@
 #include "assembly.h"
 #include "ppcutil.h"
 #include "pad.h"
-#include <cstring>
 #include <cstdio>
 
 namespace relpatches
@@ -35,6 +34,7 @@ namespace relpatches
         PARTY_GAME_TOGGLE,
         ENABLE_MENU_REFLECTIONS,
         CUSTOM_WORLD_COUNT,
+        GOAL_DRAW_FIX,
     };
 
     Tickable patches[] = {
@@ -197,6 +197,12 @@ namespace relpatches
             .maximum_value = 10,
             .main_game_init_func = custom_world_count::init_main_game,
             .sel_ngc_init_func = custom_world_count::init_sel_ngc,
+        },
+
+        {
+            .name = "goal-draw-fix",
+            .message = "[mod] Goal draw fix patch %s\n",
+            .main_loop_init_func = goal_draw_fix::init_main_loop,
         }
     };
 
@@ -503,7 +509,7 @@ namespace relpatches
         void set_nameentry_filename()
         {
             for (int i = 0; i < 6; i++) {
-                mkb::story_file_name[i] = reinterpret_cast<char*>(monkey_name_lookup[mkb::active_monkey_id][i]);
+                mkb::story_file_name[i] = reinterpret_cast<char*>(monkey_name_lookup[mkb::active_monkey_id[0]][i]);
             }
             mkb::g_some_nameentry_length = 0x6;
         }
@@ -523,7 +529,6 @@ namespace relpatches
             patch::write_nop(reinterpret_cast<void*>(0x80906370));
             patch::write_nop(reinterpret_cast<void*>(0x80906374));
             patch::write_nop(reinterpret_cast<void*>(0x80906378));
-
         }
 
         // Assign the correct 'next screen' variables to redirect Story Mode to the
@@ -853,7 +858,7 @@ namespace relpatches
 
         void init_main_loop() {
             load_stage_1_trampoline = patch::hook_function(
-                mkb::g_load_stage, [](u32 stage_id) {
+                mkb::queue_stage_load, [](u32 stage_id) {
                     rendefc_handler(stage_id);
                     load_stage_1_trampoline(stage_id);
                 });
@@ -899,5 +904,100 @@ namespace relpatches
             sceneplay_init_trampoline();
         }
 
+
+    }
+
+    namespace goal_draw_fix {
+        static f32 custom_zdist(f32 radius, Vec3f *origin) {
+            Vec3f origin_view;
+            mkb::mtxa_tf_point(origin, &origin_view);
+//            mkb::OSReport("Origin: %.2f, %.2f, %.2f\n", origin_view.x, origin_view.y, origin_view.z);
+            return mkb::g_get_sphere_camera_zdist_clamped(radius, origin);
+        }
+
+        static void print_mtx(Mtx *mtx) {
+            for (s32 row = 0; row < 3; row++) {
+                mkb::OSReport("%.02f  %.02f  %.02f  %.02f\n", (*mtx)[row][0], (*mtx)[row][1], (*mtx)[row][2], (*mtx)[row][3]);
+            }
+        }
+
+        static void draw_stage_models_hook() {
+            mkb::OSReport("view_T_world before stage:\n");
+            print_mtx(&mkb::mtxa[1]);
+            mkb::g_draw_stage_models();
+            mkb::OSReport("view_T_world after stage:\n");
+            print_mtx(&mkb::mtxa[1]);
+        }
+
+        static void draw_stobjs_hook() {
+            mkb::OSReport("view_T_world before stobjs:\n");
+            print_mtx(&mkb::mtxa[1]);
+            mkb::g_draw_stage_models();
+            mkb::OSReport("view_T_world after stobjs:\n");
+            print_mtx(&mkb::mtxa[1]);
+        }
+
+        void g_draw_stobjs() {
+            int iVar1;
+            mkb::Stobj *stobj;
+            u32 uVar2;
+            char last_stobj_itemgroup_idx;
+            u8 *status;
+            u32 stobj_idx;
+            Mtx view_T_world;
+
+            if (((mkb::monkey_flags & 8) != 0) && ((mkb::dip_switches & mkb::DIP_NO_STAGE) == mkb::DIP_NONE)) {
+                mkb::perf_init_timer(8);
+                iVar1 = mkb::g_smth_for_drawing;
+                if (mkb::g_smth_for_drawing != 0) {
+                    mkb::g_yet_another_unk_draw_func(mkb::g_smth_for_drawing);
+                }
+                mkb::mtx_copy(&mkb::mtxa[1],(Mtx *)view_T_world);
+                last_stobj_itemgroup_idx = '\0';
+                stobj = mkb::stobjs;
+                status = mkb::stobj_pool_info.status_list;
+                for (stobj_idx = mkb::stobj_pool_info.upper_bound; 0 < (int)stobj_idx; stobj_idx -= 1) {
+                    if (*status != '\0') {
+                        if (last_stobj_itemgroup_idx != stobj->itemgroup_idx) {
+                            mkb::mtxa_from_mtx((Mtx *)view_T_world);
+                            mkb::mtxa_mult_right((Mtx *)mkb::itemgroups[stobj->itemgroup_idx].transform);
+                            mkb::mtxa_to_mtx(&mkb::mtxa[1]);
+                            last_stobj_itemgroup_idx = stobj->itemgroup_idx;
+                        }
+                        (*mkb::stobj_disp_funcs[(short)stobj->type])(stobj);
+                    }
+                    status = status + 1;
+                    stobj = stobj + 1;
+                }
+                mkb::mtx_copy((Mtx *)view_T_world,&mkb::mtxa[1]);
+                if (iVar1 != 0) {
+                    mkb::g_yet_another_unk_draw_func(0);
+                }
+                uVar2 = mkb::perf_stop_timer(8);
+                mkb::g_some_draw_perf_var += uVar2;
+            }
+        }
+
+        static void (*tramp)(u32 stage_id);
+
+        void init_main_loop() {
+//            patch::write_branch_bl(reinterpret_cast<void*>(0x8031cd88), reinterpret_cast<void*>(custom_zdist));
+//            tramp = patch::hook_function(mkb::load_stagedef, [](u32 stage_id) {
+//                tramp(stage_id);
+//                // Swap the first and last itemgroup
+//                mkb::StagedefColiHeader tmp;
+//                u32 n = mkb::stagedef->coli_header_count;
+//                mkb::OSReport("Swapping itemgroups %d and %d for stage %d\n", 0, n - 1, stage_id);
+//                mkb::memcpy(&tmp, &mkb::stagedef->coli_header_list[n - 1], sizeof(mkb::StagedefColiHeader));
+//                mkb::memcpy(&mkb::stagedef->coli_header_list[n - 1], &mkb::stagedef->coli_header_list[0], sizeof(mkb::StagedefColiHeader));
+//                mkb::memcpy(&mkb::stagedef->coli_header_list[0], &tmp, sizeof(mkb::StagedefColiHeader));
+//            });
+
+//            patch::write_branch_bl(reinterpret_cast<void*>(0x80276a9c), reinterpret_cast<void*>(g_draw_stobjs));
+//            patch::write_branch_bl(reinterpret_cast<void*>(0x802ca5ac), reinterpret_cast<void*>(draw_stage_models_hook));
+//            patch::write_branch_bl(reinterpret_cast<void*>(0x80276a9c), reinterpret_cast<void*>(draw_stage_models_hook));
+
+            patch::write_nop(reinterpret_cast<void*>(0x80317f44));
+        }
     }
 }
