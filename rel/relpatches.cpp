@@ -200,9 +200,9 @@ namespace relpatches
         },
 
         {
-            .name = "goal-draw-fix",
-            .message = "[mod] Goal draw fix patch %s\n",
-            .main_loop_init_func = goal_draw_fix::init_main_loop,
+            .name = "stobj-draw-fix",
+            .message = "[mod] Stobj draw fix patch %s\n",
+            .main_loop_init_func = stobj_draw_fix::init_main_loop,
         }
     };
 
@@ -907,7 +907,7 @@ namespace relpatches
 
     }
 
-    namespace goal_draw_fix {
+    namespace stobj_draw_fix {
         /*
          * Stobjs (goaltapes, party balls, bumpers, etc) placed on itemgroups with index greater than 127 may get an
          * incorrect itemgroup transform, making them appear weirdly or not at all. This patch forces stobj itemgroup

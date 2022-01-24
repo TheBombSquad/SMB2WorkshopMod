@@ -136,6 +136,12 @@
 // the end cutscene will play, or the credits sequence will start if the cutscene skip
 // patch is enabled. The minimum value is 1, and the maximum value is 10.
 
+// stobj-draw-fix
+//
+// Stage objects (stobjs) like party balls and goaltapes may show up incorrectly
+// or not at all if they reside on an itemgroup whose index is >127. This patch
+// increases the limit to 256 total itemgroups.
+
 // ----------------------------------------------------------------------------
 
 // 'enabled' - Applies the patch
@@ -167,6 +173,7 @@
 	party-game-toggle: disabled
 	enable-menu-reflections: disabled
 	custom-world-count: 10
+	stobj-draw-fix: disabled
 }
 
 // apesphere-always-enabled
