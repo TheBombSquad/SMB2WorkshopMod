@@ -908,96 +908,47 @@ namespace relpatches
     }
 
     namespace goal_draw_fix {
-        static f32 custom_zdist(f32 radius, Vec3f *origin) {
-            Vec3f origin_view;
-            mkb::mtxa_tf_point(origin, &origin_view);
-//            mkb::OSReport("Origin: %.2f, %.2f, %.2f\n", origin_view.x, origin_view.y, origin_view.z);
-            return mkb::g_get_sphere_camera_zdist_clamped(radius, origin);
-        }
+        /*
+         * Stobjs (goaltapes, party balls, bumpers, etc) placed on itemgroups with index greater than 127 may get an
+         * incorrect itemgroup transform, making them appear weirdly or not at all. This patch forces stobj itemgroup
+         * indices to be treated as unsigned bytes instead, increasing the greatest itemgroup idx a stobj may reside on
+         * to 255.
+         */
 
-        static void print_mtx(Mtx *mtx) {
-            for (s32 row = 0; row < 3; row++) {
-                mkb::OSReport("%.02f  %.02f  %.02f  %.02f\n", (*mtx)[row][0], (*mtx)[row][1], (*mtx)[row][2], (*mtx)[row][3]);
-            }
-        }
-
-        static void draw_stage_models_hook() {
-            mkb::OSReport("view_T_world before stage:\n");
-            print_mtx(&mkb::mtxa[1]);
-            mkb::g_draw_stage_models();
-            mkb::OSReport("view_T_world after stage:\n");
-            print_mtx(&mkb::mtxa[1]);
-        }
-
-        static void draw_stobjs_hook() {
-            mkb::OSReport("view_T_world before stobjs:\n");
-            print_mtx(&mkb::mtxa[1]);
-            mkb::g_draw_stage_models();
-            mkb::OSReport("view_T_world after stobjs:\n");
-            print_mtx(&mkb::mtxa[1]);
-        }
-
-        void g_draw_stobjs() {
-            int iVar1;
-            mkb::Stobj *stobj;
-            u32 uVar2;
-            char last_stobj_itemgroup_idx;
-            u8 *status;
-            u32 stobj_idx;
-            Mtx view_T_world;
-
-            if (((mkb::monkey_flags & 8) != 0) && ((mkb::dip_switches & mkb::DIP_NO_STAGE) == mkb::DIP_NONE)) {
-                mkb::perf_init_timer(8);
-                iVar1 = mkb::g_smth_for_drawing;
-                if (mkb::g_smth_for_drawing != 0) {
-                    mkb::g_yet_another_unk_draw_func(mkb::g_smth_for_drawing);
-                }
-                mkb::mtx_copy(&mkb::mtxa[1],(Mtx *)view_T_world);
-                last_stobj_itemgroup_idx = '\0';
-                stobj = mkb::stobjs;
-                status = mkb::stobj_pool_info.status_list;
-                for (stobj_idx = mkb::stobj_pool_info.upper_bound; 0 < (int)stobj_idx; stobj_idx -= 1) {
-                    if (*status != '\0') {
-                        if (last_stobj_itemgroup_idx != stobj->itemgroup_idx) {
-                            mkb::mtxa_from_mtx((Mtx *)view_T_world);
-                            mkb::mtxa_mult_right((Mtx *)mkb::itemgroups[stobj->itemgroup_idx].transform);
-                            mkb::mtxa_to_mtx(&mkb::mtxa[1]);
-                            last_stobj_itemgroup_idx = stobj->itemgroup_idx;
-                        }
-                        (*mkb::stobj_disp_funcs[(short)stobj->type])(stobj);
-                    }
-                    status = status + 1;
-                    stobj = stobj + 1;
-                }
-                mkb::mtx_copy((Mtx *)view_T_world,&mkb::mtxa[1]);
-                if (iVar1 != 0) {
-                    mkb::g_yet_another_unk_draw_func(0);
-                }
-                uVar2 = mkb::perf_stop_timer(8);
-                mkb::g_some_draw_perf_var += uVar2;
-            }
-        }
-
-        static void (*tramp)(u32 stage_id);
+        // These are Ghidra addresses...
+        static const u16 lbz_addrs_lo[] = {
+            0x0fb8,
+            0x0fb8,
+            0x0fcc,
+            0x1aa0,
+            0x1aa0,
+            0x1abc,
+            0x1abc,
+            0x1ce4,
+            0x1ce4,
+            0x1d08,
+            0x1d08,
+            0x1d34,
+            0x1d34,
+            0x3cf0,
+            0x4ea4,
+            0x4ecc,
+            0x4f64,
+            0x6500,
+            0x6570,
+            0x6a64,
+            0x7208,
+            0x7c5c,
+            0x7c98,
+            0x7d34,
+        };
 
         void init_main_loop() {
-//            patch::write_branch_bl(reinterpret_cast<void*>(0x8031cd88), reinterpret_cast<void*>(custom_zdist));
-//            tramp = patch::hook_function(mkb::load_stagedef, [](u32 stage_id) {
-//                tramp(stage_id);
-//                // Swap the first and last itemgroup
-//                mkb::StagedefColiHeader tmp;
-//                u32 n = mkb::stagedef->coli_header_count;
-//                mkb::OSReport("Swapping itemgroups %d and %d for stage %d\n", 0, n - 1, stage_id);
-//                mkb::memcpy(&tmp, &mkb::stagedef->coli_header_list[n - 1], sizeof(mkb::StagedefColiHeader));
-//                mkb::memcpy(&mkb::stagedef->coli_header_list[n - 1], &mkb::stagedef->coli_header_list[0], sizeof(mkb::StagedefColiHeader));
-//                mkb::memcpy(&mkb::stagedef->coli_header_list[0], &tmp, sizeof(mkb::StagedefColiHeader));
-//            });
-
-//            patch::write_branch_bl(reinterpret_cast<void*>(0x80276a9c), reinterpret_cast<void*>(g_draw_stobjs));
-//            patch::write_branch_bl(reinterpret_cast<void*>(0x802ca5ac), reinterpret_cast<void*>(draw_stage_models_hook));
-//            patch::write_branch_bl(reinterpret_cast<void*>(0x80276a9c), reinterpret_cast<void*>(draw_stage_models_hook));
-
-            patch::write_nop(reinterpret_cast<void*>(0x80317f44));
+            for (u32 addr : lbz_addrs_lo) {
+                u32 ram_addr = addr + 0x80240000 - 0x80199fa0 + 0x802701d8;
+                // Nop `extsb` instr following lbz to prevent sign extension
+                patch::write_nop(reinterpret_cast<void*>(ram_addr + 4));
+            }
         }
     }
 }
