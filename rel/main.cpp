@@ -35,7 +35,7 @@ static void perform_assembly_patches()
 
 void init()
 {
-    mkb::OSReport("[mod] Workshop Mod version 0.3.1 loaded\n");
+    mkb::OSReport("[wsmod] Workshop Mod version 0.3.1 loaded\n");
     heap::init();
     perform_assembly_patches();
 

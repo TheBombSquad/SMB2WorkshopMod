@@ -40,106 +40,106 @@ namespace relpatches
     Tickable patches[] = {
         {
             .name = "challenge-mode-death-count",
-            .message = "[mod]  Challenge mode death count %s\n",
+            .message = "[wsmod]  Challenge mode death count %s\n",
             .main_game_init_func = challenge_death_count::init_main_game,
         },
 
         {
             .name = "disable-how-to-play-screen",
-            .message = "[mod]  Tutorial sequence removal %s\n",
+            .message = "[wsmod]  Tutorial sequence removal %s\n",
             .main_loop_init_func = disable_tutorial::init_main_loop,
         },
 
         {
             .name = "enhance-reflective-surfaces",
-            .message = "[mod]  Reflective surface enhancements %s\n",
+            .message = "[wsmod]  Reflective surface enhancements %s\n",
             .main_loop_init_func = extend_reflections::init_main_loop,
         },
 
         {
             .name = "fix-labyrinth-camera",
-            .message = "[mod]  Labyrinth stage slot fix %s\n",
+            .message = "[wsmod]  Labyrinth stage slot fix %s\n",
             .main_loop_init_func = fix_labyrinth_camera::init_main_loop,
         },
 
         {
             .name = "fix-missing-w",
-            .message = "[mod]  Missing 'w'  patch %s\n",
+            .message = "[wsmod]  Missing 'w'  patch %s\n",
             .main_game_init_func = fix_missing_w::init_main_game,
         },
 
         {
             .name = "fix-revolution-slot",
-            .message = "[mod]  Revolution stage slot fix %s\n",
+            .message = "[wsmod]  Revolution stage slot fix %s\n",
             .main_loop_init_func = fix_revolution_slot::init_main_loop,
         },
 
         {
             .name = "fix-stage-object-reflection",
-            .message = "[mod]  Stobj reflection flag support %s\n",
+            .message = "[wsmod]  Stobj reflection flag support %s\n",
             .main_loop_init_func = fix_stobj_reflection::init_main_loop,
             .main_game_init_func = fix_stobj_reflection::init_main_game,
         },
 
         {
             .name = "fix-wormhole-surfaces",
-            .message = "[mod]  Party game stage slot fix %s\n",
+            .message = "[wsmod]  Party game stage slot fix %s\n",
             .main_loop_init_func = fix_wormhole_surfaces::init_main_loop,
         },
 
         {
             .name = "custom-music-id",
-            .message = "[mod]  Custom music ID patch %s\n",
+            .message = "[wsmod]  Custom music ID patch %s\n",
             .main_loop_init_func = music_id_per_stage::init_main_loop,
         },
 
         {
             .name = "no-hurry-up-music",
-            .message = "[mod]  Hurry up music removal %s\n",
+            .message = "[wsmod]  Hurry up music removal %s\n",
             .main_game_init_func = no_hurry_up_music::init_main_game,
             .tick_func = no_hurry_up_music::tick,
         },
 
         {
             .name = "no-music-vol-decrease-on-pause",
-            .message = "[mod]  No music volume decrease on pause %s\n",
+            .message = "[wsmod]  No music volume decrease on pause %s\n",
             .main_loop_init_func = no_music_vol_decrease_on_pause::init_main_loop,
         },
 
         {
             .name = "perfect-bonus-completion",
-            .message = "[mod]  Perfect bonus completion %s\n",
+            .message = "[wsmod]  Perfect bonus completion %s\n",
             .main_loop_init_func = perfect_bonus::init,
         },
 
         {
             .name = "remove-desert-haze",
-            .message = "[mod]  Desert haze removal %s\n",
+            .message = "[wsmod]  Desert haze removal %s\n",
             .main_loop_init_func = remove_desert_haze::init_main_loop,
         },
 
         {
             .name = "skip-intro-movie",
-            .message = "[mod]  Skip intro movie patch %s\n",
+            .message = "[wsmod]  Skip intro movie patch %s\n",
             .main_loop_init_func = skip_intro_movie::init_main_loop,
         },
 
         {
             .name = "smb1-camera-toggle",
-            .message = "[mod]  SMB1 camera toggle %s\n",
+            .message = "[wsmod]  SMB1 camera toggle %s\n",
             .main_loop_init_func = smb1_camera_toggle::init_main_loop,
             .tick_func = smb1_camera_toggle::tick,
         },
 
         {
             .name = "story-mode-music-fix",
-            .message = "[mod]  Continuous story mode music %s\n",
+            .message = "[wsmod]  Continuous story mode music %s\n",
             .main_loop_init_func = story_continuous_music::init_main_loop,
         },
 
         {
             .name = "story-mode-char-select",
-            .message = "[mod]  Story mode character select %s\n",
+            .message = "[wsmod]  Story mode character select %s\n",
             .main_loop_init_func = story_mode_char_select::init_main_loop,
             .main_game_init_func = story_mode_char_select::init_main_game,
             .tick_func = story_mode_char_select::tick,
@@ -147,51 +147,51 @@ namespace relpatches
 
         {
             .name = "custom-theme-id",
-            .message = "[mod]  Custom theme ID patch %s\n",
+            .message = "[wsmod]  Custom theme ID patch %s\n",
             .main_loop_init_func = theme_id_per_stage::init_main_loop,
         },
 
         {
             .name = "skip-cutscenes",
-            .message = "[mod]  Cutscene skip patch %s\n",
+            .message = "[wsmod]  Cutscene skip patch %s\n",
             .main_game_init_func = skip_cutscenes::init_main_game,
         },
 
         {
             .name = "remove-playpoints",
-            .message = "[mod]  Playpoint removal patch %s\n",
+            .message = "[wsmod]  Playpoint removal patch %s\n",
             .main_game_init_func = remove_playpoints::init_main_game,
             .tick_func = remove_playpoints::tick,
         },
 
         {
             .name = "fix-storm-continue-platform",
-            .message = "[mod]  Storm continue platform patch %s\n",
+            .message = "[wsmod]  Storm continue platform patch %s\n",
             .main_loop_init_func = fix_storm_continue_platform::init_main_loop,
         },
 
         {
             .name = "fix-any-percent-crash",
-            .message = "[mod]  Story mode any-percent crash fix %s\n",
+            .message = "[wsmod]  Story mode any-percent crash fix %s\n",
             .main_loop_init_func = fix_any_percent_crash::init_main_loop,
             .tick_func = fix_any_percent_crash::tick,
         },
 
         {
             .name = "party-game-toggle",
-            .message = "[mod]  Party game toggle patch %s\n",
+            .message = "[wsmod]  Party game toggle patch %s\n",
             .sel_ngc_init_func = party_game_toggle::sel_ngc_init,
         },
 
         {
             .name = "enable-menu-reflections",
-            .message = "[mod]  Menu reflection patch %s\n",
+            .message = "[wsmod]  Menu reflection patch %s\n",
             .main_loop_init_func = enable_menu_reflections::init_main_loop,
         },
 
         {
             .name = "custom-world-count",
-            .message = "[mod] Custom world count patch %s\n",
+            .message = "[wsmod] Custom world count patch %s\n",
             .default_value = 10,
             .minimum_value = 1,
             .maximum_value = 10,
@@ -201,7 +201,7 @@ namespace relpatches
 
         {
             .name = "stobj-draw-fix",
-            .message = "[mod] Stobj draw fix patch %s\n",
+            .message = "[wsmod] Stobj draw fix patch %s\n",
             .main_loop_init_func = stobj_draw_fix::init_main_loop,
         }
     };
