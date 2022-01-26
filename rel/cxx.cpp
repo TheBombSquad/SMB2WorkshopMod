@@ -5,30 +5,30 @@
 
 void *operator new(u32 size)
 {
-    return heap::alloc_from_heap(size);
+    return heap::alloc(size);
 }
 
 void *operator new[](u32 size)
 {
-    return heap::alloc_from_heap(size);
+    return heap::alloc(size);
 }
 
 void operator delete(void *ptr)
 {
-    heap::free_to_heap(ptr);
+    heap::free(ptr);
 }
 
 void operator delete[](void *ptr)
 {
-    heap::free_to_heap(ptr);
+    heap::free(ptr);
 }
 
 void operator delete(void *ptr, u32 size)
 {
-    heap::free_to_heap(ptr);
+    heap::free(ptr);
 }
 
 void operator delete[](void *ptr, u32 size)
 {
-    heap::free_to_heap(ptr);
+    heap::free(ptr);
 }

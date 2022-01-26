@@ -287,7 +287,7 @@ void parse_config() {
     if (config_file_length != 0) {
         // Round the length of the config file to a multiple of 32, necessary for DVDReadAsyncPrio
         config_file_length = (config_file_info.length + 0x1f) & 0xffffffe0;
-        config_file_buf = static_cast<char*>(heap::alloc_from_heap(config_file_length));
+        config_file_buf = static_cast<char*>(heap::alloc(config_file_length));
         config_file_length = mkb::read_entire_file_using_dvdread_prio_async(&config_file_info, config_file_buf, config_file_length, 0);
         char* eof = config_file_buf + config_file_info.length;
 
@@ -349,7 +349,7 @@ void parse_config() {
 
         }
         mkb::DVDClose(&config_file_info);
-        heap::free_to_heap(config_file_buf);
+        heap::free(config_file_buf);
     }
 }
 

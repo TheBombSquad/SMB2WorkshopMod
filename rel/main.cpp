@@ -21,11 +21,11 @@ bool debug_mode_enabled = false;
 
 static void perform_assembly_patches()
 {
-    constexpr u32 offset = 0x600;
+    const u32 MAIN_LOOP_REL_LOCATION = *reinterpret_cast<u32*>(0x80004524);
+    constexpr u32 OFFSET = 0x600;
     // Inject the run function at the start of the main game loop
-    patch::write_branch_bl(reinterpret_cast<void *>(reinterpret_cast<u32>(
-                                                        heap::heap_data.main_loop_rel_location) + offset),
-                           reinterpret_cast<void *>(start_main_loop_assembly));
+    patch::write_branch_bl(reinterpret_cast<void*>(MAIN_LOOP_REL_LOCATION + OFFSET),
+                           reinterpret_cast<void*>(start_main_loop_assembly));
 
     /* Remove OSReport call ``PERF : event is still open for CPU!``
     since it reports every frame, and thus clutters the console */

@@ -22,7 +22,7 @@ void MemStore::enter_prealloc_mode()
 {
     if (m_save_buf)
     {
-        heap::free_to_heap(m_save_buf);
+        heap::free(m_save_buf);
         m_save_buf = nullptr;
     }
 
@@ -35,7 +35,7 @@ bool MemStore::enter_save_mode()
 {
     // Allocate directly so a failed allocation (nullptr) can be detected
     // C++ new operator never returns nullptr
-    m_save_buf = static_cast<u8 *>(heap::alloc_from_heap(m_save_buf_idx));
+    m_save_buf = static_cast<u8 *>(heap::alloc(m_save_buf_idx));
     if (!m_save_buf) return false;
 
     m_mode = Mode::SAVE;
