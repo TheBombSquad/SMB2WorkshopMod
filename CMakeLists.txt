@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(ApeSphere)
+project(SMB2WorkshopMod)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -13,7 +13,7 @@ include_directories(rel/include)
 include_directories(rel/include/gc)
 include_directories(rel/include/mkb)
 
-add_executable(ApeSphere
+add_executable(SMB2WorkshopMod
         rel/assembly/main_loop_assembly.s
         rel/runtime/restfpr_x.s
         rel/runtime/restgpr_x.s
@@ -23,21 +23,10 @@ add_executable(ApeSphere
         rel/pad.cpp
         rel/patch.cpp
         rel/rel.cpp
-        rel/tetris.cpp
-        rel/memstore.cpp
-        rel/savestate.cpp
         rel/draw.cpp
-        rel/jump.cpp
-        rel/menu_defn.cpp
         rel/relpatches.cpp
         rel/assembly/story_mode_music_fix.s
-        rel/inputdisp.cpp
-        rel/gotostory.cpp
         rel/scratch.cpp
         rel/assembly.cpp
-        rel/timer.cpp
-        rel/include/timer.h
-        rel/include/iw.h
-        rel/iw.cpp
-        rel/include/menu_impl.h
-        rel/menu_impl.cpp)
+        rel/config.cpp
+        rel/relutil.cpp)

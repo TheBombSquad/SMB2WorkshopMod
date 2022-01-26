@@ -1,12 +1,9 @@
 #include "patch.h"
 #include "assembly.h"
 #include "heap.h"
-#include "tetris.h"
 #include "pad.h"
 #include "config.h"
 #include <mkb.h>
-
-#include <cstring>
 
 #define STREQ(x,y) (mkb::strcmp(const_cast<char*>(x),const_cast<char*>(y))==0)
 
@@ -38,7 +35,7 @@ static void perform_assembly_patches()
 
 void init()
 {
-    mkb::OSReport("[mod] ApeSphere-Custom version 0.3.1 loaded\n");
+    mkb::OSReport("[mod] Workshop Mod version 0.3.1 loaded\n");
     heap::init();
     perform_assembly_patches();
 
@@ -59,17 +56,6 @@ void init()
                 }
             }
 
-            // Disp functions (ApeSphere)
-            for (unsigned int i = 0; i < config::APESPHERE_TICKABLE_COUNT; i++) {
-                if (config::apesphere_tickables[i].status && config::apesphere_tickables[i].disp_func != nullptr) {
-                    config::apesphere_tickables[i].disp_func();
-                }
-            }
-
-            if (config::tetris_enabled) {
-                Tetris::get_instance().disp();
-            }
-
             s_draw_debug_text_trampoline();
         });
 
@@ -81,21 +67,10 @@ void init()
             // These run after all controller inputs have been processed on the current frame,
             // to ensure lowest input delay
 
-            if (mkb::main_mode == mkb::MD_ADV && config::apesphere_toggle_enabled && pad::button_chord_pressed(mkb::PAD_TRIGGER_L, mkb::PAD_TRIGGER_R)) {
-                config::init_apesphere_tickables();
-            }
-
             // Tick functions (REL patches)
             for (unsigned int i = 0; i < relpatches::PATCH_COUNT; i++) {
                 if (relpatches::patches[i].status && relpatches::patches[i].tick_func != nullptr) {
                     relpatches::patches[i].tick_func();
-                }
-            }
-
-            // Tick functions (ApeSphere)
-            for (unsigned int i = 0; i < config::APESPHERE_TICKABLE_COUNT; i++) {
-                if (config::apesphere_tickables[i].status && config::apesphere_tickables[i].tick_func != nullptr) {
-                    config::apesphere_tickables[i].tick_func();
                 }
             }
 

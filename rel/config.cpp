@@ -1,18 +1,7 @@
 #include "config.h"
 #include "relpatches.h"
 #include "patch.h"
-#include "savestate.h"
-#include "tetris.h"
-#include "draw.h"
-#include "timer.h"
-#include "iw.h"
-#include "pad.h"
-#include "menu_impl.h"
-#include "jump.h"
-#include "scratch.h"
 #include "assembly.h"
-#include "inputdisp.h"
-#include "gotostory.h"
 
 #define STREQ(x,y) (mkb::strcmp(const_cast<char*>(x),const_cast<char*>(y))==0)
 #define KEY_ENABLED(x) (STREQ(key, x) && STREQ(value, "enabled"))
@@ -23,34 +12,6 @@ static int config_file_length;
 static mkb::DVDFileInfo config_file_info;
 static char* config_file_buf;
 static char config_file_path[] = "/config.txt";
-
-bool tetris_enabled = false;
-bool apesphere_toggle_enabled = false;
-
-static void unlock_everything()
-{
-    // Don't yet know how to unlock the staff credits game from a fresh save...
-    mkb::unlock_info.master_unlocked = true;
-    mkb::unlock_info.monkeys = 99;
-    mkb::unlock_info.staff_credits_game_unlocked = true;
-    mkb::unlock_info.play_points = 99999;
-    mkb::unlock_info.newest_play_point_record = 99999;
-    mkb::unlock_info.movies = 0x0fff;
-    mkb::unlock_info.party_games = 0x0001b600;
-    mkb::unlock_info.g_movies_watched = 0x0fff;
-    mkb::memset(mkb::cm_unlock_entries, 0xff, sizeof(mkb::cm_unlock_entries));
-    mkb::memset(mkb::storymode_unlock_entries, 0xff, sizeof(mkb::storymode_unlock_entries));
-}
-
-static void misc_apesphere_init()
-{
-    mkb::strcpy(reinterpret_cast<char *>(0x8047f4ec), "APESPHERE PRACTICE MOD");
-    patch::write_branch(reinterpret_cast<void *>(0x8032ad0c),
-                        reinterpret_cast<void *>(main::custom_titlescreen_text_color));
-
-    Tetris::get_instance().init();
-    tetris_enabled = true;
-}
 
 u16* parse_stageid_list(char* buf, u16* array) {
     buf = mkb::strchr(buf, '\n')+1;
@@ -78,54 +39,6 @@ u16* parse_stageid_list(char* buf, u16* array) {
     while (buf < end_of_section);
     return array;
 }
-
-relpatches::Tickable apesphere_tickables[] = {
-        {
-            .tick_func = unlock_everything,
-        },
-        {
-            .main_loop_init_func = draw::init,
-            .disp_func = draw::predraw,
-        },
-        {
-            .disp_func = draw::disp,
-        },
-        {   .main_loop_init_func = iw::init,
-            .disp_func = iw::disp,
-            .tick_func = iw::tick,
-        },
-        {
-            .main_loop_init_func = savestate::init,
-            .tick_func = savestate::tick,
-        },
-        {
-            .main_loop_init_func = timer::init,
-            .disp_func = timer::disp,
-        },
-        {
-            .disp_func = menu::disp,
-            .tick_func = menu::tick,
-        },
-        {
-            .tick_func = jump::tick,
-        },
-        {
-            .main_loop_init_func = scratch::init,
-            .tick_func = scratch::tick,
-        },
-        {
-            .main_loop_init_func = misc_apesphere_init,
-        },
-        {
-            .main_loop_init_func = inputdisp::init,
-            .disp_func = inputdisp::disp,
-        },
-        {
-            .tick_func = gotostory::tick,
-        }
-};
-
-const unsigned int APESPHERE_TICKABLE_COUNT = sizeof(apesphere_tickables)/sizeof(apesphere_tickables[0]);
 
 void parse_party_game_toggles(char* buf) {
     buf = mkb::strchr(buf, '\n')+1;
@@ -163,19 +76,6 @@ void parse_party_game_toggles(char* buf) {
     while (buf < end_of_section);
 }
 
-void init_apesphere_tickables() {
-    mkb::OSReport("[mod]  Enabling ApeSphere practice mod!");
-    for (unsigned int i = 0; i < APESPHERE_TICKABLE_COUNT; i++) {
-        if (!apesphere_tickables[i].status) {
-            apesphere_tickables[i].status = true;
-            if (apesphere_tickables[i].main_loop_init_func != nullptr) {
-                apesphere_tickables[i].main_loop_init_func();
-            }
-        }
-
-    }
-}
-
 void parse_function_toggles(char* buf) {
     // Enters from section parsing, so skip to the next line
     buf = mkb::strchr(buf, '\n')+1;
@@ -195,24 +95,47 @@ void parse_function_toggles(char* buf) {
         mkb::strncpy(key, key_start, (key_end-key_start));
         mkb::strncpy(value, key_end+2, (end_of_line-key_end)-2);
 
-        if (KEY_ENABLED("apesphere-practice") || KEY_ENABLED("apesphere-always-enabled")) {
-            mkb::OSReport("[mod]  ApeSphere practice mod is always enabled!\n");
-            init_apesphere_tickables();
-        }
+        // Iterate through all the REL patch tickables, looking for match of key name
+        for (unsigned int i = 0; i < relpatches::PATCH_COUNT; i++) {
+            if (relpatches::patches[i].name != nullptr && STREQ(key, relpatches::patches[i].name)) {
 
-        else if KEY_ENABLED("apesphere-togglable") {
-            mkb::OSReport("[mod]  ApeSphere practice mod can be enabled by pressing L+R on the title screen!\n");
-            apesphere_toggle_enabled = true;
-        }
+                // 'value' is enabled, set the value to 1
+                if (STREQ(value, "enabled")) {
+                    relpatches::patches[i].status = true;
 
-        else {
-            // Iterate through all the REL patch tickables, looking for match of key name
-            for (unsigned int i = 0; i < relpatches::PATCH_COUNT; i++) {
-                if (relpatches::patches[i].name != nullptr && STREQ(key, relpatches::patches[i].name)) {
+                    // Execute the main_loop init func, if it exists
+                    if (relpatches::patches[i].main_loop_init_func != nullptr) {
+                        relpatches::patches[i].main_loop_init_func();
+                    }
 
-                    // 'value' is enabled, set the value to 1
-                    if (STREQ(value, "enabled")) {
-                        relpatches::patches[i].status = true;
+                    // Print init message, if it exists
+                    if (relpatches::patches[i].message != nullptr) {
+                        mkb::OSReport(relpatches::patches[i].message, "ENABLED!");
+                    }
+
+                    break;
+                }
+
+                // 'value' is disabled, set value to 0
+                else if (STREQ(value, "disabled")) {
+                    if (relpatches::patches[i].message != nullptr) {
+                        mkb::OSReport(relpatches::patches[i].message, "disabled!");
+                    }
+                    break;
+                }
+
+                // 'value' is some integer, set the value and initialize the patch if it differs from the default
+                else {
+                    parsed_value = mkb::atoi(value);
+
+
+                    // Check to see if the passed value is within the defined bounds
+                    MOD_ASSERT_MSG(parsed_value >= relpatches:: patches[i].minimum_value, "Passed value for patch smaller than minimum value");
+                    MOD_ASSERT_MSG(parsed_value <= relpatches:: patches[i].maximum_value, "Passed value for patch larger than maximum value");
+
+                    // Set the status to the parsed value, if it differes from the default passed value
+                    if (parsed_value != relpatches::patches[i].default_value) {
+                        relpatches::patches[i].status = parsed_value;
 
                         // Execute the main_loop init func, if it exists
                         if (relpatches::patches[i].main_loop_init_func != nullptr) {
@@ -221,56 +144,21 @@ void parse_function_toggles(char* buf) {
 
                         // Print init message, if it exists
                         if (relpatches::patches[i].message != nullptr) {
-                            mkb::OSReport(relpatches::patches[i].message, "ENABLED!");
+                            mkb::OSReport(relpatches::patches[i].message, "ENABLED! (custom value passed)", parsed_value);
                         }
 
                         break;
                     }
 
-                    // 'value' is disabled, set value to 0
-                    else if (STREQ(value, "disabled")) {
-                        if (relpatches::patches[i].message != nullptr) {
-                            mkb::OSReport(relpatches::patches[i].message, "disabled!");
-                        }
-                        break;
-                    }
-
-                    // 'value' is some integer, set the value and initialize the patch if it differs from the default
+                    // If the value is the default, do not enable the patch
                     else {
-                        parsed_value = mkb::atoi(value);
-
-
-                        // Check to see if the passed value is within the defined bounds
-                        MOD_ASSERT_MSG(parsed_value >= relpatches:: patches[i].minimum_value, "Passed value for patch smaller than minimum value");
-                        MOD_ASSERT_MSG(parsed_value <= relpatches:: patches[i].maximum_value, "Passed value for patch larger than maximum value");
-
-                        // Set the status to the parsed value, if it differes from the default passed value
-                        if (parsed_value != relpatches::patches[i].default_value) {
-                            relpatches::patches[i].status = parsed_value;
-
-                            // Execute the main_loop init func, if it exists
-                            if (relpatches::patches[i].main_loop_init_func != nullptr) {
-                                relpatches::patches[i].main_loop_init_func();
-                            }
-
-                            // Print init message, if it exists
-                            if (relpatches::patches[i].message != nullptr) {
-                                mkb::OSReport(relpatches::patches[i].message, "ENABLED! (custom value passed)", parsed_value);
-                            }
-
-                            break;
+                        if (relpatches::patches[i].message != nullptr) {
+                            mkb::OSReport(relpatches::patches[i].message, "disabled! (default value passed)", parsed_value);
                         }
 
-                        // If the value is the default, do not enable the patch
-                        else {
-                            if (relpatches::patches[i].message != nullptr) {
-                                mkb::OSReport(relpatches::patches[i].message, "disabled! (default value passed)", parsed_value);
-                            }
-
-                            break;
-                        }
-
+                        break;
                     }
+
                 }
             }
         }
@@ -312,7 +200,7 @@ void parse_config() {
                     mkb::OSReport("[mod] Now parsing category %s...\n", section);
 
                     // Parsing function toggles
-                    if (STREQ(section, "REL Patches") || STREQ(section, "ApeSphere")) {
+                    if (STREQ(section, "REL Patches")) {
                         parse_function_toggles(section_end);
                     }
 
