@@ -6,6 +6,22 @@
 
 namespace heap {
 
+// Struct read by additional SMB2 mods like the Practice Mod, to load themselves after Workshop Mod
+struct ModLink {
+    u32 magic;  // 0xFEEDC0DE
+
+    // ModLink format version, shouldn't change much if ever
+    u16 semver_major;
+    u16 semver_minor;
+    u16 semver_patch;
+
+    // Other mods share the Workshop Mod's heap.
+    // The other mod calls `malloc_func` from assembly during bootstrapping to load itself, then uses `heap_info` and
+    // its own heap functions for other heap usage at runtime.
+    void* (*malloc_func)(u32 size);
+    mkb::HeapInfo* heap_info;
+};
+
 static mkb::HeapInfo s_heap_info;
 
 mkb::ChunkInfo* extract_chunk(mkb::ChunkInfo* list, mkb::ChunkInfo* chunk) {
@@ -189,6 +205,19 @@ void check_integrity() {
     }
 }
 
-void init() { make_heap(); }
+static void setup_mod_link() {
+    ModLink* link = reinterpret_cast<ModLink*>(0x800a9cb4);
+    link->magic = 0xFEEDC0DE;
+    link->semver_major = 1;
+    link->semver_minor = 0;
+    link->semver_patch = 0;
+    link->malloc_func = alloc;
+    link->heap_info = &s_heap_info;
+}
+
+void init() {
+    make_heap();
+    setup_mod_link();
+}
 
 }  // namespace heap
