@@ -24,11 +24,6 @@ struct ModLink {
 } __attribute__((__packed__));
 
 /**
- * Returns shared ModLink struct, or nullptr if not loaded (magic doesn't match)
- */
-ModLink* get();
-
-/**
  * Write a new shared ModLink struct out to memory
  */
 void write();

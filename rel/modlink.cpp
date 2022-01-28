@@ -17,12 +17,4 @@ void write() {
     link->heap_info = &heap::get_heap_info();
 }
 
-ModLink* get() {
-    ModLink* link = reinterpret_cast<ModLink*>(MODLINK_ADDR);
-    if (link->magic != MAGIC) {
-        return nullptr;
-    }
-    return link;
-}
-
 }

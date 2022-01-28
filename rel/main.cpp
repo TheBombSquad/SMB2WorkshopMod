@@ -38,7 +38,7 @@ static void perform_assembly_patches()
 
 void init()
 {
-    mkb::OSReport("[wsmod] SMB2 Workshop Mod version %d.%d.%d loaded\n",
+    mkb::OSReport("[wsmod] SMB2 Workshop Mod v%d.%d.%d loaded\n",
                   version::WSMOD_VERSION.major,
                   version::WSMOD_VERSION.minor,
                   version::WSMOD_VERSION.patch);

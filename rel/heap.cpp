@@ -189,7 +189,6 @@ void check_integrity() {
     }
 }
 
-
 void init(mkb::HeapInfo* heap_info) {
     if (heap_info != nullptr) {
         s_heap_info = *heap_info;
