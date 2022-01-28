@@ -3,6 +3,8 @@
 #include "heap.h"
 #include "pad.h"
 #include "config.h"
+#include "version.h"
+#include "modlink.h"
 #include <mkb.h>
 
 #define STREQ(x,y) (mkb::strcmp(const_cast<char*>(x),const_cast<char*>(y))==0)
@@ -33,10 +35,19 @@ static void perform_assembly_patches()
     patch::write_nop(reinterpret_cast<void *>(0x80299f54));
 }
 
+
 void init()
 {
-    mkb::OSReport("[wsmod] Workshop Mod version 0.3.1 loaded\n");
-    heap::init();
+    mkb::OSReport("[wsmod] SMB2 Workshop Mod version %d.%d.%d loaded\n",
+                  version::WSMOD_VERSION.major,
+                  version::WSMOD_VERSION.minor,
+                  version::WSMOD_VERSION.patch);
+
+    heap::init(nullptr);
+    modlink::write();
+
+    return;
+
     perform_assembly_patches();
 
     // Load our config file

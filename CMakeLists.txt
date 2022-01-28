@@ -29,4 +29,5 @@ add_executable(SMB2WorkshopMod
         rel/scratch.cpp
         rel/assembly.cpp
         rel/config.cpp
-        rel/relutil.cpp)
+        rel/relutil.cpp rel/modlink.cpp
+        rel/version.cpp)
