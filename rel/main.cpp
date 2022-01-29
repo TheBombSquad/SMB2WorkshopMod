@@ -33,7 +33,6 @@ static void perform_assembly_patches()
     patch::write_nop(reinterpret_cast<void *>(0x80299f54));
 }
 
-
 void init()
 {
     mkb::OSReport("[wsmod] SMB2 Workshop Mod v%d.%d.%d loaded\n",
@@ -127,7 +126,6 @@ void tick()
         mkb::dip_switches &= ~(mkb::DIP_DEBUG | mkb::DIP_DISP);
     }*/
     pad::on_frame_start();
-    mkb::OSReport("[wsmod] DEBUG: tick()\n");
 }
 
 }
