@@ -12,4 +12,6 @@ struct SemVer {
 
 extern const SemVer WSMOD_VERSION;
 
+s32 compare(const SemVer& v1, const SemVer& v2);
+
 }

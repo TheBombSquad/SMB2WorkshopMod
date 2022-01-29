@@ -43,12 +43,12 @@ void init()
                   version::WSMOD_VERSION.minor,
                   version::WSMOD_VERSION.patch);
 
-    heap::init(nullptr);
+    heap::init();
     modlink::write();
 
-    return;
-
     perform_assembly_patches();
+
+    return;
 
     // Load our config file
     config::parse_config();
@@ -129,6 +129,7 @@ void tick()
         mkb::dip_switches &= ~(mkb::DIP_DEBUG | mkb::DIP_DISP);
     }*/
     pad::on_frame_start();
+    mkb::OSReport("[wsmod] DEBUG: tick()\n");
 }
 
 }
