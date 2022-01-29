@@ -45,8 +45,6 @@ void init()
 
     perform_assembly_patches();
 
-    return;
-
     // Load our config file
     config::parse_config();
 
