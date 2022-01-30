@@ -24,12 +24,6 @@ extern mkb::GXColor debug_text_color;
 
 extern bool debug_mode_enabled;
 
-// IwMenu
-extern u32 currently_playing_iw;
-void stage_select_menu_hook();
-void pause_menu_text_hook();
-bool is_iw_complete();
-
 // story_mode_music_fix
 void story_mode_music_hook();
 
