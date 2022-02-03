@@ -4,7 +4,6 @@
 #include "assembly.h"
 #include "ppcutil.h"
 #include "pad.h"
-#include <cstring>
 #include <cstdio>
 
 namespace relpatches
@@ -35,6 +34,7 @@ namespace relpatches
         PARTY_GAME_TOGGLE,
         ENABLE_MENU_REFLECTIONS,
         CUSTOM_WORLD_COUNT,
+        GOAL_DRAW_FIX,
     };
 
     Tickable patches[] = {
@@ -197,6 +197,12 @@ namespace relpatches
             .maximum_value = 10,
             .main_game_init_func = custom_world_count::init_main_game,
             .sel_ngc_init_func = custom_world_count::init_sel_ngc,
+        },
+
+        {
+            .name = "stobj-draw-fix",
+            .message = "[mod] Stobj draw fix patch %s\n",
+            .main_loop_init_func = stobj_draw_fix::init_main_loop,
         }
     };
 
@@ -503,7 +509,7 @@ namespace relpatches
         void set_nameentry_filename()
         {
             for (int i = 0; i < 6; i++) {
-                mkb::story_file_name[i] = reinterpret_cast<char*>(monkey_name_lookup[mkb::active_monkey_id][i]);
+                mkb::story_file_name[i] = reinterpret_cast<char*>(monkey_name_lookup[mkb::active_monkey_id[0]][i]);
             }
             mkb::g_some_nameentry_length = 0x6;
         }
@@ -523,7 +529,6 @@ namespace relpatches
             patch::write_nop(reinterpret_cast<void*>(0x80906370));
             patch::write_nop(reinterpret_cast<void*>(0x80906374));
             patch::write_nop(reinterpret_cast<void*>(0x80906378));
-
         }
 
         // Assign the correct 'next screen' variables to redirect Story Mode to the
@@ -853,7 +858,7 @@ namespace relpatches
 
         void init_main_loop() {
             load_stage_1_trampoline = patch::hook_function(
-                mkb::g_load_stage, [](u32 stage_id) {
+                mkb::queue_stage_load, [](u32 stage_id) {
                     rendefc_handler(stage_id);
                     load_stage_1_trampoline(stage_id);
                 });
@@ -899,5 +904,51 @@ namespace relpatches
             sceneplay_init_trampoline();
         }
 
+
+    }
+
+    namespace stobj_draw_fix {
+        /*
+         * Stobjs (goaltapes, party balls, bumpers, etc) placed on itemgroups with index greater than 127 may get an
+         * incorrect itemgroup transform, making them appear weirdly or not at all. This patch forces stobj itemgroup
+         * indices to be treated as unsigned bytes instead, increasing the greatest itemgroup idx a stobj may reside on
+         * to 255.
+         */
+
+        // These are Ghidra addresses...
+        static const u16 lbz_addrs_lo[] = {
+            0x0fb8,
+            0x0fb8,
+            0x0fcc,
+            0x1aa0,
+            0x1aa0,
+            0x1abc,
+            0x1abc,
+            0x1ce4,
+            0x1ce4,
+            0x1d08,
+            0x1d08,
+            0x1d34,
+            0x1d34,
+            0x3cf0,
+            0x4ea4,
+            0x4ecc,
+            0x4f64,
+            0x6500,
+            0x6570,
+            0x6a64,
+            0x7208,
+            0x7c5c,
+            0x7c98,
+            0x7d34,
+        };
+
+        void init_main_loop() {
+            for (u32 addr : lbz_addrs_lo) {
+                u32 ram_addr = addr + 0x80240000 - 0x80199fa0 + 0x802701d8;
+                // Nop `extsb` instr following lbz to prevent sign extension
+                patch::write_nop(reinterpret_cast<void*>(ram_addr + 4));
+            }
+        }
     }
 }

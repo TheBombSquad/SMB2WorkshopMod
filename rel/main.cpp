@@ -19,7 +19,6 @@ static void (*load_additional_rel_trampoline)(char *rel_filepath, mkb::RelBuffer
 
 bool debug_mode_enabled = false;
 
-
 static void perform_assembly_patches()
 {
     constexpr u32 offset = 0x600;

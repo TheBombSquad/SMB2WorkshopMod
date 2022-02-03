@@ -280,3 +280,9 @@ __pycache__/
 /CMakeFiles/
 /cmake_install.cmake
 /build/
+/*.elf
+/*.gci
+/*.rel
+/.clangd/
+/build.*/
+/compile_commands.json

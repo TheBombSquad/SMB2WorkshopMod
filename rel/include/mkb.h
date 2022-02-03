@@ -41,6 +41,7 @@ using mkb::Vec2i;
 using mkb::Vec3f;
 using mkb::Vec3s;
 using mkb::Quat;
+using mkb::Mtx;
 
 // Necessary to use macros here so file information is accurate
 // Note that these macros won't necessarily halt the game in Dolphin as Dolphin lets you ignore assertions
