@@ -10,7 +10,7 @@
     if (!(exp)) \
     { \
         mkb::OSPanic(__FILE__, __LINE__, "Failed assertion " #exp); \
-        mkb::OSReport("[mod] Failed assertion in %s line %d: %s\n", __FILE__, __LINE__, #exp); \
+        mkb::OSReport("[wsmod] Failed assertion in %s line %d: %s\n", __FILE__, __LINE__, #exp); \
         while (true); \
     } \
 })
@@ -20,7 +20,7 @@
     if (!(exp)) \
     { \
         mkb::OSPanic(__FILE__, __LINE__, msg); \
-        mkb::OSReport("[mod] Failed assertion in %s line %d: %s\n", __FILE__, __LINE__, (msg)); \
+        mkb::OSReport("[wsmod] Failed assertion in %s line %d: %s\n", __FILE__, __LINE__, (msg)); \
         while (true); \
     } \
 })
