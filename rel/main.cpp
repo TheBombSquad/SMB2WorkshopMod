@@ -1,31 +1,28 @@
 #include "patch.h"
 #include "assembly.h"
 #include "heap.h"
-#include "tetris.h"
 #include "pad.h"
 #include "config.h"
+#include "version.h"
+#include "modlink.h"
 #include <mkb.h>
-
-#include <cstring>
 
 #define STREQ(x,y) (mkb::strcmp(const_cast<char*>(x),const_cast<char*>(y))==0)
 
 namespace main
 {
 
-static void (*s_draw_debug_text_trampoline)();
-static void (*s_process_inputs_trampoline)();
-static void (*load_additional_rel_trampoline)(char *rel_filepath, mkb::RelBufferInfo *rel_buffer_ptrs);
+static patch::Tramp<decltype(&mkb::draw_debugtext)> s_draw_debugtext_tramp;
+static patch::Tramp<decltype(&mkb::process_inputs)> s_process_inputs_tramp;
+static patch::Tramp<decltype(&mkb::load_additional_rel)> s_load_additional_rel_tramp;
 
 bool debug_mode_enabled = false;
 
 static void perform_assembly_patches()
 {
-    constexpr u32 offset = 0x600;
     // Inject the run function at the start of the main game loop
-    patch::write_branch_bl(reinterpret_cast<void *>(reinterpret_cast<u32>(
-                                                        heap::heap_data.main_loop_rel_location) + offset),
-                           reinterpret_cast<void *>(start_main_loop_assembly));
+    patch::write_branch_bl(reinterpret_cast<void*>(0x80270700),
+                           reinterpret_cast<void*>(start_main_loop_assembly));
 
     /* Remove OSReport call ``PERF : event is still open for CPU!``
     since it reports every frame, and thus clutters the console */
@@ -38,15 +35,20 @@ static void perform_assembly_patches()
 
 void init()
 {
-    mkb::OSReport("[mod] ApeSphere-Custom version 0.3.1 loaded\n");
+    mkb::OSReport("[wsmod] SMB2 Workshop Mod v%d.%d.%d loaded\n",
+                  version::WSMOD_VERSION.major,
+                  version::WSMOD_VERSION.minor,
+                  version::WSMOD_VERSION.patch);
+
     heap::init();
+    modlink::write();
+
     perform_assembly_patches();
 
     // Load our config file
     config::parse_config();
 
-    s_draw_debug_text_trampoline = patch::hook_function(
-        mkb::draw_debugtext, []()
+    patch::hook_function(s_draw_debugtext_tramp, mkb::draw_debugtext, []()
         {
             // Drawing hook for UI elements.
             // Gets run at the start of smb2's function which draws debug text windows,
@@ -59,31 +61,16 @@ void init()
                 }
             }
 
-            // Disp functions (ApeSphere)
-            for (unsigned int i = 0; i < config::APESPHERE_TICKABLE_COUNT; i++) {
-                if (config::apesphere_tickables[i].status && config::apesphere_tickables[i].disp_func != nullptr) {
-                    config::apesphere_tickables[i].disp_func();
-                }
-            }
-
-            if (config::tetris_enabled) {
-                Tetris::get_instance().disp();
-            }
-
-            s_draw_debug_text_trampoline();
+            s_draw_debugtext_tramp.dest();
         });
 
-    s_process_inputs_trampoline = patch::hook_function(
-        mkb::process_inputs, []()
+    patch::hook_function(
+        s_process_inputs_tramp, mkb::process_inputs, []()
         {
-            s_process_inputs_trampoline();
+            s_process_inputs_tramp.dest();
 
             // These run after all controller inputs have been processed on the current frame,
             // to ensure lowest input delay
-
-            if (mkb::main_mode == mkb::MD_ADV && config::apesphere_toggle_enabled && pad::button_chord_pressed(mkb::PAD_TRIGGER_L, mkb::PAD_TRIGGER_R)) {
-                config::init_apesphere_tickables();
-            }
 
             // Tick functions (REL patches)
             for (unsigned int i = 0; i < relpatches::PATCH_COUNT; i++) {
@@ -92,20 +79,14 @@ void init()
                 }
             }
 
-            // Tick functions (ApeSphere)
-            for (unsigned int i = 0; i < config::APESPHERE_TICKABLE_COUNT; i++) {
-                if (config::apesphere_tickables[i].status && config::apesphere_tickables[i].tick_func != nullptr) {
-                    config::apesphere_tickables[i].tick_func();
-                }
-            }
-
             pad::tick();
         });
 
-    load_additional_rel_trampoline = patch::hook_function(
+    patch::hook_function(
+        s_load_additional_rel_tramp,
         mkb::load_additional_rel, [](char *rel_filepath, mkb::RelBufferInfo *rel_buffer_ptrs)
         {
-            load_additional_rel_trampoline(rel_filepath, rel_buffer_ptrs);
+            s_load_additional_rel_tramp.dest(rel_filepath, rel_buffer_ptrs);
 
             // Main game init functions
             if (STREQ(rel_filepath, "mkb2.main_game.rel")) {

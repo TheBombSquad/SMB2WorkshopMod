@@ -1,4 +1,4 @@
-# :confetti_ball: ApeSphere-Custom 
+# :confetti_ball: SMB2 Workshop Mod
 
 An extension of ComplexPlane's [Super Monkey Ball 2 mod, ApeSphere](htps://github.com/ComplexPlane/ApeSphere), adding features useful to custom pack creators. Includes the original practice mod, as well as quality-of-life and feature-adding patches, and easier options for tweaking in-game variables.
 

@@ -29,38 +29,6 @@ void init()
                         reinterpret_cast<void *>(main::full_debug_text_color));
 }
 
-void predraw()
-{
-    mkb::GXSetZMode_cached(mkb::GX_TRUE, mkb::GX_ALWAYS, mkb::GX_FALSE);
-
-    // Seems necessary to avoid discoloration / lighting interference when using debugtext-drawing-related funcs
-    mkb::GXColor tev1_color = {0, 0, 0, 0};
-    mkb::GXSetTevColor(mkb::GX_TEVREG1, tev1_color);
-}
-
-// Based on `draw_debugtext_window_bg()` and assumes some GX setup around this point
-void rect(float x1, float y1, float x2, float y2, mkb::GXColor color)
-{
-    // "Blank" texture object which seems to let us set a color and draw a poly with it idk??
-    mkb::GXTexObj *texobj = reinterpret_cast<mkb::GXTexObj *>(0x807ad0e0);
-    mkb::GXLoadTexObj_cached(texobj, mkb::GX_TEXMAP0);
-
-    // Specify the color of the rectangle
-    mkb::GXSetTevColor(mkb::GX_TEVREG0, color);
-
-    float z = -1.0f / 128.0f;
-
-    mkb::GXBegin(mkb::GX_QUADS, mkb::GX_VTXFMT7, 4);
-    mkb::GXPosition3f32(x1, y1, z);
-    mkb::GXTexCoord2f32(0, 0);
-    mkb::GXPosition3f32(x2, y1, z);
-    mkb::GXTexCoord2f32(1, 0);
-    mkb::GXPosition3f32(x2, y2, z);
-    mkb::GXTexCoord2f32(1, 1);
-    mkb::GXPosition3f32(x1, y2, z);
-    mkb::GXTexCoord2f32(0, 1);
-}
-
 void debug_text_palette()
 {
     for (char c = 0; c != 0x80; c++)

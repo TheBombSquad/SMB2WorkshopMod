@@ -1,4 +1,4 @@
-// This is the config file for ApeSphere-Custom 0.3.0!
+// This is the config file for Workshop Mod 0.3.0!
 // Place this in the root of your game directory, and name it config.txt
 // It should be in the same folder as the included REL file, mkb2.rel_sample.rel
 //
@@ -174,19 +174,6 @@
 	enable-menu-reflections: disabled
 	custom-world-count: 10
 	stobj-draw-fix: disabled
-}
-
-// apesphere-always-enabled
-// Whether or not to enable the ApeSphere practice mod.
-// Interchangable with the key 'apesphere-practice'.
-
-// apesphere-togglable
-// Whether or not to allow the ApeSphere practice mod to be toggled on
-// the title screen by pressing L and R at the same time.
-
-# ApeSphere {
-	apesphere-always-enabled: disabled
-	apesphere-togglable: disabled
 }
 
 // Toggles which party games are accessible from the party game menu.
