@@ -286,3 +286,5 @@ __pycache__/
 /.clangd/
 /build.*/
 /compile_commands.json
+/ApeSphere.*
+/.qtc_clangd
