@@ -35,6 +35,7 @@ namespace relpatches
         ENABLE_MENU_REFLECTIONS,
         CUSTOM_WORLD_COUNT,
         GOAL_DRAW_FIX,
+        STAGE_AUTHOR_NAMES,
     };
 
     Tickable patches[] = {
@@ -203,6 +204,11 @@ namespace relpatches
             .name = "stobj-draw-fix",
             .message = "[mod] Stobj draw fix patch %s\n",
             .main_loop_init_func = stobj_draw_fix::init_main_loop,
+        },
+        {
+            .name = "stage-author-names",
+            .message = "[mod] Stage author name display %s\n",
+            .main_loop_init_func = stage_author_names::init_main_loop,
         }
     };
 
@@ -219,8 +225,8 @@ namespace relpatches
         event_info_tick_trampoline = patch::hook_function(
         mkb::event_info_tick, []() {
             event_info_tick_trampoline();
-            if (mkb::mode_info.ball_mode == mkb::BALLMODE_ON_BONUS_STAGE && mkb::mode_info.bananas_remaining == 0) {
-                mkb::mode_info.ball_mode |= 0x228;
+            if (mkb::mode_info.g_ball_mode == mkb::BALLMODE_ON_BONUS_STAGE && mkb::mode_info.bananas_remaining == 0) {
+                mkb::mode_info.g_ball_mode |= 0x228;
             }
         });
     }
@@ -353,26 +359,26 @@ namespace relpatches
             u32 display = death_count[mkb::curr_player_idx];
 
             if (display == 0) {
-                sprite->blue = 0;
+                sprite->mult_color.blue = 0;
             }
             else {
-                sprite->blue = 0xff;
+                sprite->mult_color.blue = 0xff;
             }
 
             if (display > 9999) {
-                sprite->g_width = 0.3;
+                sprite->width = 0.3;
             }
             else if (display > 999) {
-                sprite->g_width = 0.4;
+                sprite->width = 0.4;
             }
             else if (display > 99) {
-                sprite->g_width = 0.5;
+                sprite->width = 0.5;
             }
             else if (display > 9) {
-                sprite->g_width = 0.6;
+                sprite->width = 0.6;
             }
             else {
-                sprite->g_width = 1;
+                sprite->width = 1;
             }
 
             mkb::sprintf(sprite->text, "%u", display);
@@ -420,7 +426,7 @@ namespace relpatches
 
     namespace extend_reflections {
         float nearest_dist_to_mir, distance_to_mirror;
-        Vec3f current_ball_position, mirror_origin, ig_init_pos, translation_factor;
+        Vec current_ball_position, mirror_origin, ig_init_pos, translation_factor;
         mkb::Itemgroup* active_ig;
 
         // Hooks into the reflection-handling function, calling our function instead
@@ -478,7 +484,7 @@ namespace relpatches
             return;
         }
 
-        float get_distance(Vec3f& vec1, Vec3f& vec2)
+        float get_distance(Vec & vec1, Vec & vec2)
         {
             float xcmp = (vec1.x-vec2.x)*(vec1.x-vec2.x);
             float ycmp = (vec1.y-vec2.y)*(vec1.y-vec2.y);
@@ -950,5 +956,29 @@ namespace relpatches
                 patch::write_nop(reinterpret_cast<void*>(ram_addr + 4));
             }
         }
+    }
+
+    namespace stage_author_names {
+        void init_main_loop() {
+            /*
+            static void (*create_hud_stage_name_sprites_trampoline)(float x, float y);
+
+            create_hud_stage_name_sprites_trampoline = patch::hook_function(
+            mkb::create_hud_stage_name_sprites, [](float x, float y) {
+                create_hud_stage_name_sprites_trampoline(x, y);
+                sprite_init(x, y);
+            });*/
+        }
+        void sprite_init(float x, float y) {
+        /*
+            mkb::Sprite* sprite = mkb::create_sprite();
+            float offset = (mkb::curr_difficulty == mkb::DIFF_BEGINNER) ? 38.0 : 34.0;
+            if (sprite != nullptr) {
+                sprite->pos.x = x+offset;
+                sprite->pos.y = y+10.0;
+                sprite->font = mkb::FONT_ASC_24x24;
+*/
+        }
+
     }
 }

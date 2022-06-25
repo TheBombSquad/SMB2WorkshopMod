@@ -19,7 +19,7 @@ static u32 (*s_PADRead_tramp)(mkb::PADStatus *statuses);
 
 static mkb::PADStatus s_raw_inputs[4];
 
-static void draw_ring(u32 pts, Vec2f center, f32 inner_radius, f32 outer_radius, mkb::GXColor color)
+static void draw_ring(u32 pts, Vec2d center, f32 inner_radius, f32 outer_radius, mkb::GXColor color)
 {
     // "Blank" texture object which seems to let us set a color and draw a poly with it idk??
     mkb::GXTexObj *texobj = reinterpret_cast<mkb::GXTexObj *>(0x807ad0e0);
@@ -59,7 +59,7 @@ static void draw_ring(u32 pts, Vec2f center, f32 inner_radius, f32 outer_radius,
     }
 }
 
-static void draw_circle(u32 pts, Vec2f center, f32 radius, mkb::GXColor color)
+static void draw_circle(u32 pts, Vec2d center, f32 radius, mkb::GXColor color)
 {
     // "Blank" texture object which seems to let us set a color and draw a poly with it idk??
     mkb::GXTexObj *texobj = reinterpret_cast<mkb::GXTexObj *>(0x807ad0e0);
@@ -94,19 +94,19 @@ static void set_sprite_visible(bool visible)
 
         // TODO set visibility based on whether input display is enabled
         mkb::Sprite &sprite = mkb::sprites[i];
-        if (sprite.g_texture_id == 0x503 ||
+        if (sprite.bmp == 0x503 ||
             sprite.tick_func == mkb::sprite_monkey_counter_tick ||
             sprite.disp_func == mkb::sprite_monkey_counter_icon_disp ||
-            sprite.g_texture_id == 0x502 ||
+            sprite.bmp == 0x502 ||
             sprite.tick_func == mkb::sprite_banana_icon_tick ||
             sprite.tick_func == mkb::sprite_banana_icon_shadow_tick ||
             sprite.tick_func == mkb::sprite_banana_count_tick ||
             strcmp(sprite.text, ":") == 0 ||
             sprite.disp_func == mkb::sprite_hud_player_num_disp)
         {
-            if ((visible && sprite.g_depth < 0.f) || (!visible && sprite.g_depth >= 0.f))
+            if ((visible && sprite.depth < 0.f) || (!visible && sprite.depth >= 0.f))
             {
-                sprite.g_depth = -sprite.g_depth;
+                sprite.depth = -sprite.depth;
             }
         }
     }
@@ -137,7 +137,7 @@ void set_visible(bool visible)
 
 bool is_visible() { return s_visible; }
 
-static bool get_notch_pos(Vec2f *out_pos)
+static bool get_notch_pos(Vec2d *out_pos)
 {
     constexpr f32 DIAG = 0.7071067811865476f; // sin(pi/4) or sqrt(2)/2
     bool notch_found = false;
@@ -196,7 +196,7 @@ void disp()
 {
     if (!s_visible) return;
 
-    Vec2f center = s_center_loc ? Vec2f{430, 60} : Vec2f{534, 60};
+    Vec2d center = s_center_loc ? Vec2d{430, 60} : Vec2d{534, 60};
     f32 scale = 0.6f;
 
     mkb::GXColor chosen_color = {};
@@ -232,7 +232,7 @@ void disp()
         }
     }
 
-    Vec2f scaled_input = {
+    Vec2d scaled_input = {
         center.x + static_cast<f32>(x) / 2.7f * scale,
         center.y - static_cast<f32>(y) / 2.7f * scale,
     };
@@ -274,10 +274,10 @@ void disp()
     }
 
     // Show notch indicators
-    Vec2f notch_norm = {};
+    Vec2d notch_norm = {};
     if (get_notch_pos(&notch_norm))
     {
-        Vec2f notch_pos = {
+        Vec2d notch_pos = {
             .x = notch_norm.x * 60 * scale + center.x,
             .y = -notch_norm.y * 60 * scale + center.y,
         };

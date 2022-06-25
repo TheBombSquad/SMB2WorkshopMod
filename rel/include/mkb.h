@@ -36,10 +36,10 @@ using mkb::s16;
 using mkb::s32;
 using mkb::f32;
 using mkb::f64;
-using mkb::Vec2f;
-using mkb::Vec2i;
-using mkb::Vec3f;
-using mkb::Vec3s;
+using mkb::Vec2d;
+using mkb::S32Vec;
+using mkb::Vec;
+using mkb::S16Vec;
 using mkb::Quat;
 using mkb::Mtx;
 

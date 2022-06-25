@@ -61,7 +61,7 @@ void disp()
     }
     // This flag seems to correspond to when the timer should be running...
     // See 0x802974bc in memory
-    else if ((mkb::mode_info.ball_mode & 0x8u) == 0)
+    else if ((mkb::mode_info.g_ball_mode & 0x8u) == 0)
     {
         s_rta_timer -= s_retrace_count - s_prev_retrace_count;
 //        if (s_rtaTimer < 0) s_rtaTimer = 0;
