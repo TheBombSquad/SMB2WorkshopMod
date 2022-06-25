@@ -39,15 +39,15 @@ static_assert(ARRAY_LEN(inputdisp_colors) == inputdisp::NUM_COLORS);
 static Widget inputdisp_widgets[] = {
     {
         .type = WidgetType::Checkbox,
-        .checkbox = {"Show Input Display", inputdisp::is_visible, inputdisp::set_visible},
+        .checkbox = CheckboxWidget {"Show Input Display", inputdisp::is_visible, inputdisp::set_visible},
     },
     {
         .type = WidgetType::Checkbox,
-        .checkbox = {"Use Center Location", inputdisp::is_in_center_loc, inputdisp::set_in_center_loc},
+        .checkbox = CheckboxWidget {"Use Center Location", inputdisp::is_in_center_loc, inputdisp::set_in_center_loc},
     },
     {
         .type = WidgetType::Choose,
-        .choose = {
+        .choose = ChooseWidget {
             .label = "Color",
             .choices = inputdisp_colors,
             .num_choices = ARRAY_LEN(inputdisp_colors),
@@ -63,7 +63,7 @@ static Widget inputdisp_widgets[] = {
 static Widget rumble_widgets[] = {
     {
         .type = WidgetType::Checkbox,
-        .checkbox = {
+        .checkbox = CheckboxWidget {
             .label = "Controller 1 Rumble",
             .get = []() { return static_cast<bool>(mkb::rumble_enabled_bitflag & (1 << 0)); },
             .set = [](bool enable) { mkb::rumble_enabled_bitflag ^= (1 << 0); },
@@ -71,7 +71,7 @@ static Widget rumble_widgets[] = {
     },
     {
         .type = WidgetType::Checkbox,
-        .checkbox = {
+        .checkbox = CheckboxWidget {
             .label = "Controller 2 Rumble",
             .get = []() { return static_cast<bool>(mkb::rumble_enabled_bitflag & (1 << 1)); },
             .set = [](bool enable) { mkb::rumble_enabled_bitflag ^= (1 << 1); },
@@ -79,7 +79,7 @@ static Widget rumble_widgets[] = {
     },
     {
         .type = WidgetType::Checkbox,
-        .checkbox = {
+        .checkbox = CheckboxWidget {
             .label = "Controller 3 Rumble",
             .get = []() { return static_cast<bool>(mkb::rumble_enabled_bitflag & (1 << 2)); },
             .set = [](bool enable) { mkb::rumble_enabled_bitflag ^= (1 << 2); },
@@ -87,7 +87,7 @@ static Widget rumble_widgets[] = {
     },
     {
         .type = WidgetType::Checkbox,
-        .checkbox = {
+        .checkbox = CheckboxWidget {
             .label = "Controller 4 Rumble",
             .get = []() { return static_cast<bool>(mkb::rumble_enabled_bitflag & (1 << 3)); },
             .set = [](bool enable) { mkb::rumble_enabled_bitflag ^= (1 << 3); },
@@ -98,7 +98,7 @@ static Widget rumble_widgets[] = {
 static Widget dev_tools_widgets[] = {
     {
         .type = WidgetType::Checkbox,
-        .checkbox = {
+        .checkbox = CheckboxWidget {
             .label = "Debug Mode",
             .get = []() { return main::debug_mode_enabled; },
             .set = [](bool enable) { main::debug_mode_enabled = enable; },
@@ -108,21 +108,21 @@ static Widget dev_tools_widgets[] = {
 
     {
         .type = WidgetType::FloatView,
-        .float_view = {
+        .float_view = FloatViewWidget {
             .label = "Ball Pos X",
             .get = []() { return mkb::balls[0].pos.x; },
         },
     },
     {
         .type = WidgetType::FloatView,
-        .float_view = {
+        .float_view = FloatViewWidget {
             .label = "Ball Pos Y",
             .get = []() { return mkb::balls[0].pos.y; },
         },
     },
     {
         .type = WidgetType::FloatView,
-        .float_view = {
+        .float_view = FloatViewWidget {
             .label = "Ball Pos Z",
             .get = []() { return mkb::balls[0].pos.z; },
         },
@@ -131,21 +131,21 @@ static Widget dev_tools_widgets[] = {
 
     {
         .type = WidgetType::FloatView,
-        .float_view = {
+        .float_view = FloatViewWidget {
             .label = "Ball Vel X",
             .get = []() { return mkb::balls[0].vel.x; },
         },
     },
     {
         .type = WidgetType::FloatView,
-        .float_view = {
+        .float_view = FloatViewWidget {
             .label = "Ball Vel Y",
             .get = []() { return mkb::balls[0].vel.y; },
         },
     },
     {
         .type = WidgetType::FloatView,
-        .float_view = {
+        .float_view = FloatViewWidget {
             .label = "Ball Vel Z",
             .get = []() { return mkb::balls[0].vel.z; },
         },
@@ -176,11 +176,11 @@ static Widget help_widgets[] = {
 
 static Widget root_widgets[] = {
     {
-        .type = WidgetType::Menu, .menu = {"Input Display", inputdisp_widgets, ARRAY_LEN(inputdisp_widgets)},
+        .type = WidgetType::Menu, .menu = MenuWidget {"Input Display", inputdisp_widgets, ARRAY_LEN(inputdisp_widgets)},
     },
     {
         .type = WidgetType::Checkbox,
-        .checkbox = {
+        .checkbox = CheckboxWidget {
             .label = "Jump Mod",
             .get = jump::is_enabled,
             .set = [](bool enable) { if (enable) jump::init(); else jump::dest(); },
@@ -188,19 +188,19 @@ static Widget root_widgets[] = {
     },
     {
         .type = WidgetType::Checkbox,
-        .checkbox = {"RTA Timer", timer::is_visible, timer::set_visible},
+        .checkbox = CheckboxWidget {"RTA Timer", timer::is_visible, timer::set_visible},
     },
     {
         .type = WidgetType::Checkbox,
-        .checkbox = {"Savestates", savestate::is_visible, savestate::set_visible},
+        .checkbox = CheckboxWidget {"Savestates", savestate::is_visible, savestate::set_visible},
     },
     {
         .type = WidgetType::Button,
-        .button = {"Go To Story Mode", gotostory::load_storymode},
+        .button = ButtonWidget {"Go To Story Mode", gotostory::load_storymode},
     },
-    {.type = WidgetType::Menu, .menu = {"Rumble", rumble_widgets, ARRAY_LEN(rumble_widgets)}},
-    {.type = WidgetType::Menu, .menu = {"Help", help_widgets, ARRAY_LEN(help_widgets)}},
-    {.type = WidgetType::Menu, .menu = {"Developer Tools", dev_tools_widgets, ARRAY_LEN(dev_tools_widgets)}},
+    {.type = WidgetType::Menu, .menu = MenuWidget {"Rumble", rumble_widgets, ARRAY_LEN(rumble_widgets)}},
+    {.type = WidgetType::Menu, .menu = MenuWidget {"Help", help_widgets, ARRAY_LEN(help_widgets)}},
+    {.type = WidgetType::Menu, .menu = MenuWidget {"Developer Tools", dev_tools_widgets, ARRAY_LEN(dev_tools_widgets)}},
 };
 
 MenuWidget root_menu = {
