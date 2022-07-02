@@ -284,6 +284,7 @@ void parse_function_toggles(char* buf) {
 
 void parse_config() {
     config_file_length = mkb::DVDOpen(config_file_path, &config_file_info);
+
     if (config_file_length != 0) {
         // Round the length of the config file to a multiple of 32, necessary for DVDReadAsyncPrio
         config_file_length = (config_file_info.length + 0x1f) & 0xffffffe0;
