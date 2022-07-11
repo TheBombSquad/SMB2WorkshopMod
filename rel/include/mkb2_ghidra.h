@@ -1348,7 +1348,41 @@ enum {
 };
 typedef undefined1 Font8;
 
+enum {
+    ALIGN_LOWER_RIGHT=0,
+    ALIGN_CENTER_RIGHT=1,
+    ALIGN_UPPER_RIGHT=2,
+    ALIGN_LOWER_CENTER=3,
+    ALIGN_CENTER=4,
+    ALIGN_UPPER_CENTER=5,
+    ALIGN_LOWER_LEFT=6,
+    ALIGN_CENTER_LEFT=7,
+    ALIGN_UPPER_LEFT=8
+};
+typedef undefined1 SpriteAlignment;
+
 typedef struct Rgb24 Rgb24, *PRgb24;
+
+enum {
+    SPRITE_PRESS_START=1,
+    SPRITE_LOGO=3,
+    SPRITE_PAUSE_MENU=4,
+    SPRITE_HOW_TO=10,
+    SPRITE_SPECIAL_STAGE=14,
+    SPRITE_LOADIN_STAGE_NAME=15,
+    SPRITE_1UP=16,
+    SPRITE_SARU_CONTROL_DESCRIPTION=17,
+    SPRITE_BANANA_ICON=21,
+    SPRITE_HUD_STAGE_NAME=34,
+    SPRITE_HUD_STAGE_NUMBER=35,
+    SPRITE_COPYRIGHT_TEXT_1=37,
+    SPRITE_COPYRIGHT_TEXT_2=38,
+    SPRITE_COPYRIGHT_TEXT_3=39,
+    SPRITE_DEMO_MES=58,
+    SPRITE_HUD_KIWAKU_WORLD=112,
+    SPRITE_TITLE=113
+};
+typedef undefined1 SpriteUniqueID;
 
 typedef struct SpriteTex SpriteTex, *PSpriteTex;
 
@@ -1368,13 +1402,16 @@ struct Sprite {
     SpriteType  type; /* Whether it's visible or not? */
     Font8  font; /* Seems to affect the font size/type on the pause menu? */
     u8 index;
-    undefined1 field3_0x3;
+    SpriteAlignment  alignment; /* Alignment of the sprite relative to the origin */
     struct Vec2d pos;
     struct Rgb24 mult_color;
-    Font8  g_probably_not_font; /* Is this actually a font? Or is it some kind of ID? On the pause menu sprite, the monkey head won't track the menu selection unless it's "4" */
+    SpriteUniqueID  unique_id; /* Some sort of identifier for specific sprites */
     s16 g_counter; /* At least in the press start/select text sprites, this is used as some kind of counter when ticking */
-    s16 field8_0x12;
-    undefined field_0x14[0xc];
+    s16 widescreen_translation_x; /* When widescreen mode is enabled, the sprite is scaled down and then translated to be aligned properly. This value indicates the X amount by which this sprite is translated. */
+    undefined field_0x14[0x6];
+    u8 horizontal_spacing; /* Used for adding horizontal spaces between letters when drawing a text sprite */
+    u8 vertical_spacing; /* Same as horizontal_spacing, but vertical (for newlines). Appears to be supported, but is never used. */
+    undefined field_0x1c[0x4];
     float field21_0x20;
     undefined4 field22_0x24;
     undefined field_0x28[0x4];
@@ -1395,8 +1432,8 @@ struct Sprite {
     f32 fpara3; /* Arbitrary float param 3 */
     struct Sprite * prev_sprite;
     struct Sprite * next_sprite;
-    undefined4 field45_0x6c;
-    undefined4 field46_0x70;
+    undefined4 g_maybe_pos_x;
+    undefined4 g_maybe_pos_y;
     undefined4 field47_0x74;
     undefined4 field48_0x78;
     undefined field_0x7c[0x4];
@@ -1910,6 +1947,16 @@ enum { /* Background music tracks by ID */
 };
 typedef undefined2 BgmTrack;
 
+enum {
+    STYLE_ORIGINAL=0,
+    STYLE_REGULAR=1,
+    STYLE_BOLD=2,
+    STYLE_ITALIC=3,
+    STYLE_BOLD_ITALIC=4,
+    STYLE_TEGAKI=5
+};
+typedef undefined1 FontStyle;
+
 typedef struct RelBufferInfo RelBufferInfo, *PRelBufferInfo;
 
 struct RelBufferInfo {
@@ -2343,6 +2390,155 @@ enum {
 };
 typedef undefined2 StoryModeFunc;
 
+enum {
+    FONT16_ASCII=0,
+    FONT16_ASC_8x16=1,
+    FONT16_ASC_12x12=2,
+    FONT16_ASC_24x24=3,
+    FONT16_ASC_16x16P=4,
+    FONT16_ASC_16x16=5,
+    FONT16_DMY03=6,
+    FONT16_DMY04=7,
+    FONT16_DMY05=8,
+    FONT16_ASC_72x64=9,
+    FONT16_DMY06=10,
+    FONT16_DMY07=11,
+    FONT16_DMY08=12,
+    FONT16_DMY09=13,
+    FONT16_DMY10=14,
+    FONT16_DMY11=15,
+    FONT16_DMY12=16,
+    FONT16_DMY13=17,
+    FONT16_DMY14=18,
+    FONT16_DMY15=19,
+    FONT16_DMY16=20,
+    FONT16_ICON_SD=21,
+    FONT16_ICON_SD2=22,
+    FONT16_DMY20=23,
+    FONT16_DMY21=24,
+    FONT16_DMY22=25,
+    FONT16_DMY23=26,
+    FONT16_DMY_RNK00=27,
+    FONT16_DMY_RNK01=28,
+    FONT16_DMY_RNK02=29,
+    FONT16_DMY_RNK03=30,
+    FONT16_DMY_RNK04=31,
+    FONT16_RNK_32x32=32,
+    FONT16_RNK_NUM=33,
+    FONT16_MINI_RNK=34,
+    FONT16_SCORE_NUM=35,
+    FONT16_DMY_RNK0=36,
+    FONT16_DMY_RNK1=37,
+    FONT16_DMY_RNK2=38,
+    FONT16_DMY_RNK3=39,
+    FONT16_DMY_RNK4=40,
+    FONT16_DMY_RNK5=41,
+    FONT16_DMY_RNK6=42,
+    FONT16_DMY_RNK7=43,
+    FONT16_DMY_RNK8=44,
+    FONT16_DMY_RNK9=45,
+    FONT16_DMY_RNKa=46,
+    FONT16_DMY_RNKb=47,
+    FONT16_DMY_RNKc=48,
+    FONT16_DMY_RNKd=49,
+    FONT16_DMY_RNKe=50,
+    FONT16_DMY_RNKf=51,
+    FONT16_SEL_CTRL_PORT=52,
+    FONT16_SEL_CTRL_R=53,
+    FONT16_SEL_CTRL_B=54,
+    FONT16_SEL_CTRL_Y=55,
+    FONT16_SEL_CTRL_G=56,
+    FONT16_SEL_CTRL_SDW=57,
+    FONT16_DMY42=58,
+    FONT16_DMY43=59,
+    FONT16_BWL_SCORE=60,
+    FONT16_DMY50=61,
+    FONT16_DMY51=62,
+    FONT16_DMY52=63,
+    FONT16_DMY53=64,
+    FONT16_DMY54=65,
+    FONT16_DMY55=66,
+    FONT16_DMY56=67,
+    FONT16_DMY57=68,
+    FONT16_RAC_DMY01=69,
+    FONT16_RAC_PLAYER=70,
+    FONT16_RAC_RANK=71,
+    FONT16_RAC_LAP_MARK_NUM=72,
+    FONT16_RAC_LAP_NUM=73,
+    FONT16_RAC_TIME_NUM=74,
+    FONT16_RAC_LAP_MARK_NUM_S=75,
+    FONT16_RAC_DMY08=76,
+    FONT16_RAC_DMY09=77,
+    FONT16_RAC_DMY10=78,
+    FONT16_RAC_SPD_NUM=79,
+    FONT16_RAC_DMY12=80,
+    FONT16_RAC_DMY13=81,
+    FONT16_TGT_PLAYER=82,
+    FONT16_TGT_MSCORE=83,
+    FONT16_TGT_SCORE=84,
+    FONT16_TGT_SCORE_S=85,
+    FONT16_TGT_SPEED=86,
+    FONT16_TGT_ROUND=87,
+    FONT16_TGT_ALT=88,
+    FONT16_TGT_WIND=89,
+    FONT16_DMY71=90,
+    FONT16_DMY72=91,
+    FONT16_DMY73=92,
+    FONT16_NUM_NML_SCORE=93,
+    FONT16_NUM_NML_TIME=94,
+    FONT16_NUM_NML_TIME_S=95,
+    FONT16_NUM_NML_SPEED=96,
+    FONT16_NUM_NML_SARU=97,
+    FONT16_ASC_NML_D5=98,
+    FONT16_ASC_NML_D6=99,
+    FONT16_ASC_NML_D7=100,
+    FONT16_ASC_NML_D8=101,
+    FONT16_ASC_NML_D9=102,
+    FONT16_DMY79=103,
+    FONT16_DMY7a=104,
+    FONT16_DMY7b=105,
+    FONT16_DMY7c=106,
+    FONT16_DMY7d=107,
+    FONT16_DMY7e=108,
+    FONT16_DMY7f=109,
+    FONT16_BOA_TIME_NUM=110,
+    FONT16_BOA_DMY02=111,
+    FONT16_BOA_RANK=112,
+    FONT16_BOA_PLAYER=113,
+    FONT16_BOA_SPD_NUM=114,
+    FONT16_BOA_LAP_MARK_NUM=115,
+    FONT16_BOA_LAP_MARK_NUM_S=116,
+    FONT16_BOA_DMY08=117,
+    FONT16_BOA_DMY09=118,
+    FONT16_BOA_DMY10=119,
+    FONT16_BOA_LAP_NUM=120,
+    FONT16_BOA_DMY12=121,
+    FONT16_BOA_DMY13=122,
+    FONT16_BOA_DMY14=123,
+    FONT16_BOA_DMY15=124,
+    FONT16_BOA_DMY16=125,
+    FONT16_DOG_SPEED=126,
+    FONT16_DOG_SPEED_S=127,
+    FONT16_DOG_MSCORE=128,
+    FONT16_DOG_SCORE=129,
+    FONT16_DOG_SCORE_M=130,
+    FONT16_DOG_SCORE_S=131,
+    FONT16_DOG_ROUND=132,
+    FONT16_DOG_ALT=133,
+    FONT16_DOG_RESULT=134,
+    FONT16_DOG_TIME=135,
+    FONT16_DOG_DMY02=136,
+    FONT16_DOG_DMY03=137,
+    FONT16_DOG_DMY04=138,
+    FONT16_DOG_DMY05=139,
+    FONT16_JAP_TAG=140,
+    FONT16_JAP_DMY=141,
+    FONT16_JAP_24x24_2=142,
+    FONT16_JAP_24x24_2P=143,
+    FONT16_JAP_24x24_I=144
+};
+typedef undefined2 Font16;
+
 typedef struct MemCardInfo MemCardInfo, *PMemCardInfo;
 
 struct MemCardInfo { /* Some struct that seems to hold per-memcard info; there are two statically allocated, one for each memory card slot (I think) */
@@ -2466,6 +2662,13 @@ struct CARDStat {
     u32 offsetIconTlut;
     u32 offsetData;
 } __attribute__((__packed__));
+
+enum {
+    NORMAL=0,
+    WIDESCREEN=1,
+    LETTERBOX=2
+};
+typedef undefined1 WidescreenMode;
 
 typedef struct MemCardFile MemCardFile, *PMemCardFile;
 
@@ -4837,6 +5040,7 @@ extern "C" {
     extern undefined thermal_management_interrupt_exception_handler;
     extern undefined4 osStringTablePtr;
     extern pointer switchdataD_80081a8c;
+    extern undefined2 g_some_font_array;
     extern undefined g_some_texture_data;
     extern pointer switchdataD_80110c1c;
     extern undefined * switchdataD_80111e20;
@@ -5114,7 +5318,7 @@ extern "C" {
     extern struct BmpInfo bmp_infos[25];
     extern undefined * bmp_tex_names;
     extern pointer switchdataD_803809d0;
-    extern struct SpriteDrawRequest g_some_sprite_related_obj;
+    extern struct SpriteDrawRequest ui_box_sprite_draw_req;
     extern undefined4 monkey_flags;
     extern undefined * switchdataD_80391aa0;
     extern undefined * switchdataD_80391ad8;
@@ -5291,6 +5495,7 @@ extern "C" {
     extern undefined4 g_loaded_rel_count;
     extern struct RelBufferInfo * g_loaded_rel_infos[10];
     extern undefined4 frame_counter;
+    extern undefined4 g_font_char_var_3;
     extern StoryModeFunc  g_storymode_mode;
     extern StoryModeFunc  active_story_mode_func;
     extern undefined2 curr_world;
@@ -5327,7 +5532,7 @@ extern "C" {
     extern undefined2 g_set_when_enter_cm2;
     extern undefined1 g_3player_camera_setting;
     extern bool stage_complete;
-    extern undefined1 g_related_to_fov1;
+    extern WidescreenMode  widescreen_mode;
     extern char * g_curr_main_mode_name;
     extern char * g_curr_sub_mode_name;
     extern undefined4 g_some_func_ptr_related_to_sub_mode2;
@@ -5477,7 +5682,8 @@ extern "C" {
     extern undefined2 g_some_stage_id;
     extern undefined2 g_another_stage_id;
     extern s32 LOCALE_STGNAME_DVD_ENTRYNUMS[6];
-    extern undefined4 g_some_dvd_entry_num;
+    extern undefined4 g_current_stagename_dvd_entry_number;
+    extern undefined4 stage_name_list_file_size;
     extern undefined4 g_something_with_stgname4_maybe;
     extern u8 g_some_32byte_lz_buffer[32];
     extern undefined4 g_some_replay_data4;
@@ -5514,28 +5720,31 @@ extern "C" {
     extern undefined4 g_screenfading1;
     extern undefined4 g_screenfading2;
     extern undefined4 g_something_with_fonts3[512];
-    extern undefined2 g_font_type;
-    extern undefined4 g_some_data_with_font_drawing2;
-    extern undefined4 g_some_data_with_font_drawing3;
-    extern undefined2 g_some_data_with_font_drawing4;
-    extern float g_some_data_with_font_drawing_depth;
-    extern float g_some_data_with_font_drawing_6;
-    extern float g_some_data_with_font_drawing_7;
-    extern undefined4 g_some_data_with_font_drawing_8;
-    extern undefined4 g_some_data_with_font_drawing_9;
-    extern undefined1 g_some_data_with_font_drawing_10;
-    extern undefined2 g_some_data_with_font_drawing_11;
+    extern float g_global_font_sprite_pos_x;
+    extern struct Vec2d g_global_font_sprite_pos;
+    extern Font16  global_font_sprite_type;
+    extern undefined4 g_global_font_sprite_mult_color;
+    extern undefined4 g_global_font_sprite_add_color;
+    extern undefined2 global_font_sprite_rot_z;
+    extern float global_font_sprite_depth;
+    extern float global_font_sprite_width;
+    extern float global_font_sprite_height;
+    extern undefined4 global_font_sprite_alpha;
+    extern undefined4 g_global_font_sprite_flags;
+    extern undefined1 global_font_sprite_alignment;
+    extern undefined2 g_smth_with_letter_spacing_and_alignment;
     extern undefined2 g_some_data_with_font_drawing_12;
     extern undefined2 g_some_data_with_font_drawing_13;
     extern undefined4 g_some_data_with_font_drawing_14;
     extern undefined4 g_some_data_with_font_drawing_15;
     extern undefined4 g_some_data_with_font_drawing_16;
     extern undefined4 g_some_data_with_font_drawing_17;
-    extern undefined1 g_some_data_with_font_drawing_18;
-    extern undefined4 g_some_data_with_font_drawing_19;
-    extern undefined4 g_some_data_with_font_drawing_20;
-    extern undefined2 g_some_data_with_font_drawing_21;
+    extern undefined1 g_global_font_style;
+    extern struct Vec2d global_font_spacing;
+    extern undefined2 g_global_font_sprite_counter;
     extern undefined4 g_some_data_with_font_drawing_22;
+    extern undefined4 g_font_char_var_1;
+    extern undefined4 g_font_char_var_2;
     extern u8 g_banana_disp_efc_req_count;
     extern undefined g_banana_disp_efc_stack[10];
     extern undefined4 global_ape_lod;
@@ -7572,7 +7781,7 @@ extern "C" {
     undefined4 adv_demo_tick_function(void);
     void g_camera_func30_child(struct Camera * camera);
     void create_demo_mes_sprite(void);
-    void sprite_demo_mes_tick(undefined4 param_1, int param_2);
+    void sprite_demo_mes_tick(u8 * status, struct Sprite * sprite);
     void sprite_demo_mes_disp(struct Sprite * param_1);
     void create_demo_mask_sprites(void);
     void sprite_demo_mask_banana_tick(u8 * status, struct Sprite * sprite);
@@ -7722,7 +7931,21 @@ extern "C" {
     void g_zero_some_sprite_related_state(void);
     void draw_ui(void);
     void g_draw_sprite_requests_from_buffer(void);
-    void g_init_some_sprite_related_obj(void);
+    void init_ui_box_sprite_with_defaults(void);
+    void set_ui_box_sprite_pos(double x, double y);
+    void set_ui_box_sprite_depth(double depth);
+    void g_set_ui_box_sprite_flags(SpriteDrawReqFlags  param_1);
+    void set_ui_box_sprite_scale(double x, double y);
+    void g_set_ui_box_sprite_mult_color(u32 param_1);
+    void g_set_some_sprite_related_obj_mult_color(int param_1, uint param_2, uint param_3, uint param_4);
+    void g_set_ui_box_sprite_add_color(u32 param_1);
+    void g_set_ui_box_sprite_add_color_2(int param_1, uint param_2, uint param_3, uint param_4);
+    void set_ui_box_sprite_alpha(double alpha);
+    void set_ui_box_sprite_rot_z(s32 param_1);
+    void g_set_some_ui_box_sprite_flag(SpriteDrawReqFlags  param_1);
+    void g_set_ui_box_sprite_id_and_draw(s32 id);
+    void draw_ui_box(uint g_texture_id);
+    void draw_ui_box_only_borders(uint param_1);
     void perf_init_timer(int timer_id);
     uint perf_stop_timer(int timer_id);
     void g_init_perf_profiling(void);
@@ -7955,9 +8178,9 @@ extern "C" {
     void g_smth_with_viewstage_and_whs(void);
     int g_something_with_shadow_cast(void);
     void g_something_with_stgname(int locale_index);
-    undefined4 g_something_with_stgname2(s32 stgname_dvd_entrynum);
-    void g_queue_some_load(void);
-    char * g_something_with_strings_and_dvd_file_reading(int param_1, char * param_2, int param_3);
+    undefined4 g_read_stage_names_from_name_list_file(s32 stgname_dvd_entrynum);
+    void g_queue_stage_name_load(void);
+    char * g_read_stage_name_from_file(int stage_id, char * stage_name_buf, int param_3);
     void load_stage_models(void);
     void init_seesaws(void);
     void load_stagedef(u32 stage_id);
@@ -8430,43 +8653,55 @@ extern "C" {
     void g_something_with_iteratively_freeing_memory(void);
     Sprite * create_sprite(void);
     Sprite * create_linked_sprite(struct Sprite * sprite);
-    void g_dest_sprite_with_font(int font);
+    void destroy_sprite_with_unique_id(SpriteUniqueID  unique_id);
     void dest_all_sprites(void);
-    Sprite * g_find_sprite_with_probably_not_font(int probably_not_font);
-    void g_reset_font_drawing_settings(void);
-    void g_set_font_type(Font32  param_1);
-    void g_mask_smth_with_font_drawing(uint param_1);
-    void g_set_smth_with_font_drawing6(undefined4 param_1);
-    void g_set_smth_with_font_drawing_depth(float param_1);
-    void g_set_smth_with_font_drawing4(float param_1, float param_2);
-    void g_set_smth_with_font_drawing9(double param_1);
-    void g_set_smth_with_font_drawing8(uint param_1);
-    void g_set_smth_with_font_drawing7(undefined param_1);
-    void g_set_something_else_with_font_drawing(double param_1, double param_2);
-    void g_set_smth_with_font_drawing1(float param_1, float param_2);
-    void g_draw_str_with_font(byte * param_1);
+    Sprite * get_sprite_with_unique_id(SpriteUniqueID  unique_id);
+    void init_global_font_sprite_vars_with_defaults(void);
+    void set_global_font_sprite_type(Font32  font_type);
+    void g_set_global_font_sprite_mult_color(uint param_1);
+    void set_global_font_sprite_add_color(undefined4 param_1);
+    void set_global_font_sprite_rot_z(undefined2 param_1);
+    void set_global_font_sprite_depth(float param_1);
+    void set_global_font_sprite_dimensions(float width, float height);
+    void set_global_font_sprite_alpha(double alpha);
+    void set_global_font_sprite_flags(uint param_1);
+    void set_global_font_sprite_alignment(SpriteAlignment  alignment);
+    void g_set_global_font_sprite_drop_shadow_flag(void);
+    void g_set_some_global_font_sprite_flag_2(void);
+    void g_set_some_global_font_sprite_flag(void);
+    void g_set_global_font_style(FontStyle  style);
+    void set_global_font_spacing(double x, double y);
+    void g_set_global_font_sprite_counter(undefined2 param_1);
+    void set_global_font_sprite_pos(float x, float y);
+    void draw_text_sprite_string(byte * string);
     void g_printf_draw_with_font(double param_1, double param_2, double param_3, double param_4, double param_5, double param_6, double param_7, double param_8, char * g_format, undefined4 param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
     void draw_text_sprite(struct Sprite * sprite);
     void draw_bmp_sprite(struct Sprite * sprite);
     void draw_texture_sprite(struct Sprite * sprite);
+    void g_draw_text_sprite_string_within_width(double width, byte * string);
     void g_some_printf_function_3(double param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, char * param_9, undefined4 param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
-    void g_get_string_sprite_width(int param_1);
+    void g_get_string_sprite_width_2(int param_1);
+    void g_call_call_smth_with_fonts_chara_load_w_defaults(byte * param_1);
+    void g_call_get_string_sprite_width(byte * string);
     void fade_screen_to_color(uint flags, u32 color, uint frames);
     undefined4 draw_sprite_draw_request(struct SpriteDrawRequest * request);
-    void g_smth_calls_GXLoadPosMtxImm(uint param_1);
+    void g_scale_sprite_for_widescreen(uint param_1);
     void g_smth_calls_GXLoadPosMtxImm2(void);
     void g_something_with_fonts2(void);
     void g_something_with_load_fonts(int param_1);
     void g_smth_with_sprite_draw_request(struct SpriteDrawRequest * request);
     int g_get_tex_id(undefined4 param_1, ushort param_2, ushort * param_3, int param_4);
-    void g_smth_with_font_drawing(byte * param_1);
-    double g_something_with_fonts4(int param_1, int param_2, char param_3);
+    void g_smth_with_font_drawing(byte * string);
+    double g_smth_with_fonts_chara_load(byte * string, int param_2, char param_3);
+    void g_call_smth_with_fonts_chara_load_w_defaults(byte * string);
+    double g_get_string_sprite_width(byte * string);
     void g_some_printf_function_4(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, int param_9, char * param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
     void create_pausemenu_sprite(void);
     void g_smth_creates_gameover_sprite(undefined4 param_1, struct Sprite * sprite);
     void sprite_pausemenu_disp(struct Sprite * sprite);
     void create_titlescreen_press_start_sprites(int param_1);
     void sprite_titlescreen_press_start_tick(u8 * status, struct Sprite * sprite);
+    void g_sprite_copyright_text_disp(struct Sprite * param_1);
     void g_create_smd_adv_logo_sprites(void);
     void sprite_logo_tick(u8 * status, struct Sprite * sprite);
     void create_copyright_text_sprites(int param_1);
@@ -8477,7 +8712,7 @@ extern "C" {
     void g_create_some_controls_description_sprite(void);
     void create_stage_loadin_text_sprites(void);
     void sprite_loadin_stage_name_tick(u8 * status, struct Sprite * sprite);
-    void sprite_loadin_stage_name_disp(int param_1);
+    void sprite_loadin_stage_name_disp(struct Sprite * sprite);
     void sprite_player_num_tick(u8 * status, struct Sprite * sprite);
     void create_player_num_and_ready_sprites(s32 param_1);
     void sprite_ready_tick(u8 * status, struct Sprite * sprite);
@@ -8543,7 +8778,7 @@ extern "C" {
     void sprite_current_stage_display_tick(u8 * status, struct Sprite * sprite);
     void sprite_current_stage_display_disp(struct Sprite * sprite);
     void sprite_hud_stage_name_tick(u8 * status, struct Sprite * sprite);
-    void sprite_banana_icon_tick(u8 * param_1, struct Sprite * param_2);
+    void sprite_banana_icon_tick(u8 * status, struct Sprite * sprite);
     void sprite_banana_icon_shadow_tick(u8 * status, struct Sprite * sprite);
     void sprite_banana_count_tick(u8 * status, struct Sprite * sprite);
     void g_banana_disp_efc_req(char bananas_collected);
@@ -9020,18 +9255,18 @@ extern "C" {
     void sprite_info_str_tick(u8 * status, struct Sprite * sprite);
     void sprite_info_str_disp(struct Sprite * sprite);
     void sprite_start_mask_tick(u8 * status, struct Sprite * sprite);
-    void sprite_menu_basic_tick(u8 * param_1, struct Sprite * param_2);
+    void sprite_menu_basic_tick(u8 * status, struct Sprite * sprite);
     void sprite_menu_basic_disp(struct Sprite * sprite);
     void sprite_menu_basic_stack_tick(u8 * status, struct Sprite * sprite);
-    void sprite_menu_basic_title_tick(u8 * status, struct Sprite * param_2);
+    void sprite_menu_basic_title_tick(u8 * status, struct Sprite * sprite);
     void sprite_menu_basic_title_disp(struct Sprite * sprite);
-    void sprite_game_settings_tick(undefined * param_1, int param_2);
-    void sprite_game_settings_disp(int param_1);
-    void sprite_practice_stage_select_tick(undefined * param_1, int param_2);
+    void sprite_game_settings_tick(u8 * status, struct Sprite * sprite);
+    void sprite_game_settings_disp(struct Sprite * param_1);
+    void sprite_practice_stage_select_tick(u8 * status, struct Sprite * sprite);
     void sprite_practice_stage_select_disp(undefined8 param_1, undefined8 param_2, double param_3, double param_4, double param_5, double param_6, double param_7, double param_8, int param_9, undefined4 param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
-    void sprite_fight_stage_select_tick(undefined * param_1, int param_2);
-    void sprite_fight_stage_select_disp(int param_1);
-    void sprite_button_tick(undefined4 param_1, int param_2);
+    void sprite_fight_stage_select_tick(u8 * status, struct Sprite * sprite);
+    void sprite_fight_stage_select_disp(struct Sprite * param_1);
+    void sprite_button_tick(u8 * status, struct Sprite * sprite);
     void sprite_button_disp(struct Sprite * param_1);
     void g_blink_selected_menu_item(void);
     void g_something_with_menus5(void);

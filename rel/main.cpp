@@ -4,6 +4,7 @@
 #include "tetris.h"
 #include "pad.h"
 #include "config.h"
+#include "scratch.h"
 #include <mkb.h>
 
 #include <cstring>
@@ -40,6 +41,8 @@ void init()
 {
     mkb::OSReport("[mod] ApeSphere-Custom version 0.3.1 loaded\n");
     heap::init();
+
+    scratch::init();
     perform_assembly_patches();
 
     // Load our config file
@@ -99,6 +102,7 @@ void init()
                 }
             }
 
+            scratch::tick();
             pad::tick();
         });
 

@@ -1039,7 +1039,7 @@ namespace relpatches
                 sprite->field21_0x20 = 1.0;
                 sprite->field22_0x24 = 1.0;
                 sprite->g_flags1 = sprite->g_flags1 | 0xa1000000;
-                sprite->field8_0x12 = 0x60;
+                sprite->widescreen_translation_x = 0x60;
                 mkb::sprintf(sprite->text, author_name);
                 sprite->tick_func = mkb::sprite_hud_stage_name_tick;
             }
@@ -1061,7 +1061,7 @@ namespace relpatches
                 sprite_shadow->field21_0x20 = 0.45;
                 sprite_shadow->field22_0x24 = 0;
                 sprite_shadow->g_flags1 = sprite->g_flags1 | 0xa1000000;
-                sprite_shadow->field8_0x12 = 0x60;
+                sprite_shadow->widescreen_translation_x = 0x60;
                 mkb::sprintf(sprite_shadow->text, author_name);
                 sprite_shadow->tick_func = mkb::sprite_hud_stage_name_tick;
             }
