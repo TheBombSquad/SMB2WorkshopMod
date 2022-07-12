@@ -1,5 +1,6 @@
 #include "scratch.h"
 #include "pad.h"
+#include "ui_box.h"
 
 namespace scratch
 {
@@ -12,9 +13,12 @@ u32 flash_color;
 u8 fc;
 mkb::Sprite* sprite_banana = nullptr;
 bool sent = false;
+bool sent2 = false;
+float mystery = 0.0;
 
 void sprite_disp(mkb::Sprite* sprite) {
 
+    /*
     mkb::sprintf(msg2, msg2_f, mkb::balls[0].banana_count);
 
     fc = static_cast<u8>((mkb::math_sin(sprite->para1)+1.0)*127.0);
@@ -76,42 +80,34 @@ void sprite_disp(mkb::Sprite* sprite) {
 
     if (sprite_banana != nullptr) {
         sprite_banana->pos.x = sprite->pos.x-60;
-    }
-}
-
-void sprite_init() {
-    mkb::Sprite* sprite = mkb::create_sprite();
-    if (sprite != nullptr) {
-        sprite_banana->unique_id = 0x421;
-        (sprite->pos).x = 0;
-        (sprite->pos).y = 0;
-        sprite->alignment = mkb::ALIGN_CENTER;
-        sprite->font = mkb::FONT32_ASC_24x24;
-        sprite->disp_func = sprite_disp;
-    }
-
-    sprite_banana = mkb::create_sprite();
-    if (sprite_banana != nullptr) {
-        sprite_banana->unique_id = 0x420;
-        sprite_banana->type = mkb::SPRT_BMP;
-        sprite_banana->bmp = 0x501;
-        sprite_banana->g_flags1 = sprite_banana->g_flags1 | 0x1000000;
-        (sprite_banana->pos).x = 0;
-        (sprite_banana->pos).y = 100;
-        sprite_banana->alignment = mkb::ALIGN_CENTER;
-    }
-
+    }*/
 }
 
 void init() {
-
 }
 
 void tick() {
-    if (!sent && mkb::balls[0].banana_count >= 15) {
+    if (pad::button_down(mkb::PAD_TRIGGER_R)) {
+        mystery += 1.0;
+        mkb::OSReport("x: %f\n", mystery);
+    }
+
+    if (pad::button_down(mkb::PAD_TRIGGER_L)) {
+        mystery -= 1.0;
+        mkb::OSReport("x: %f\n", mystery);
+    }
+
+    if (pad::button_down(mkb::PAD_TRIGGER_Z) && !sent) {
+        ui_box::push(new ui_box::UIBox(220, 190, 200, 100));
+        mkb::OSReport("num %d\n", ui_box::ui_box_count);
+        //mkb::call_SoundReqID_arg_2(10);
         sent = true;
-        mkb::call_SoundReqID_arg_2(10);
-        sprite_init();
+
+    }
+
+    if (pad::button_down(mkb::PAD_BUTTON_Y) && !sent2) {
+        ui_box::pop();
+        sent2 = true;
     }
 }
 

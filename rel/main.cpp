@@ -6,6 +6,7 @@
 #include "config.h"
 #include "scratch.h"
 #include <mkb.h>
+#include "ui_box.h"
 
 #include <cstring>
 
@@ -41,6 +42,7 @@ void init()
 {
     mkb::OSReport("[mod] ApeSphere-Custom version 0.3.1 loaded\n");
     heap::init();
+    ui_box::init();
 
     scratch::init();
     perform_assembly_patches();
@@ -73,6 +75,7 @@ void init()
                 Tetris::get_instance().disp();
             }
 
+            ui_box::disp();
             s_draw_debug_text_trampoline();
         });
 

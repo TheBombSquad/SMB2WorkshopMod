@@ -1405,7 +1405,7 @@ struct Sprite {
     SpriteAlignment  alignment; /* Alignment of the sprite relative to the origin */
     struct Vec2d pos;
     struct Rgb24 mult_color;
-    SpriteUniqueID  unique_id; /* Some sort of identifier for specific sprites */
+    SpriteUniqueID  unique_id; /* Some sort of unique ID for sprites. The ID is mostly unique, there are only a few exceptions where sprites share the same unique ID, and when they do, they're usually related. Seems to be used to find or destroy specific sprites. */
     s16 g_counter; /* At least in the press start/select text sprites, this is used as some kind of counter when ticking */
     s16 widescreen_translation_x; /* When widescreen mode is enabled, the sprite is scaled down and then translated to be aligned properly. This value indicates the X amount by which this sprite is translated. */
     undefined field_0x14[0x6];
@@ -5318,7 +5318,7 @@ extern "C" {
     extern struct BmpInfo bmp_infos[25];
     extern undefined * bmp_tex_names;
     extern pointer switchdataD_803809d0;
-    extern struct SpriteDrawRequest ui_box_sprite_draw_req;
+    extern struct SpriteDrawRequest ui_sprite_draw_req;
     extern undefined4 monkey_flags;
     extern undefined * switchdataD_80391aa0;
     extern undefined * switchdataD_80391ad8;
@@ -5589,7 +5589,7 @@ extern "C" {
     extern struct ModeInfo mode_info;
     extern struct GmaBuffer * g_bg_gma;
     extern struct TplBuffer * g_bg_tpl;
-    extern undefined4 g_something_related_to_sprites_probably;
+    extern undefined4 g_related_to_sprite_draw_req;
     extern undefined g_some_buf_related_to_sprites;
     extern u32 g_profile_timer_start_times[9];
     extern undefined4 g_something_with_perf_profiling;
@@ -5730,7 +5730,7 @@ extern "C" {
     extern float global_font_sprite_width;
     extern float global_font_sprite_height;
     extern undefined4 global_font_sprite_alpha;
-    extern undefined4 g_global_font_sprite_flags;
+    extern undefined4 global_font_sprite_flags;
     extern undefined1 global_font_sprite_alignment;
     extern undefined2 g_smth_with_letter_spacing_and_alignment;
     extern undefined2 g_some_data_with_font_drawing_12;
@@ -7931,19 +7931,19 @@ extern "C" {
     void g_zero_some_sprite_related_state(void);
     void draw_ui(void);
     void g_draw_sprite_requests_from_buffer(void);
-    void init_ui_box_sprite_with_defaults(void);
-    void set_ui_box_sprite_pos(double x, double y);
-    void set_ui_box_sprite_depth(double depth);
-    void g_set_ui_box_sprite_flags(SpriteDrawReqFlags  param_1);
-    void set_ui_box_sprite_scale(double x, double y);
-    void g_set_ui_box_sprite_mult_color(u32 param_1);
-    void g_set_some_sprite_related_obj_mult_color(int param_1, uint param_2, uint param_3, uint param_4);
-    void g_set_ui_box_sprite_add_color(u32 param_1);
-    void g_set_ui_box_sprite_add_color_2(int param_1, uint param_2, uint param_3, uint param_4);
-    void set_ui_box_sprite_alpha(double alpha);
-    void set_ui_box_sprite_rot_z(s32 param_1);
-    void g_set_some_ui_box_sprite_flag(SpriteDrawReqFlags  param_1);
-    void g_set_ui_box_sprite_id_and_draw(s32 id);
+    void init_ui_element_sprite_with_defaults(void);
+    void set_ui_element_sprite_pos(double x, double y);
+    void set_ui_element_sprite_depth(double depth);
+    void g_set_ui_element_sprite_flags(SpriteDrawReqFlags  param_1);
+    void set_ui_element_sprite_scale(double x, double y);
+    void set_ui_element_sprite_mult_color_from_u32(u32 param_1);
+    void set_ui_element_sprite_mult_color(int param_1, uint param_2, uint param_3, uint param_4);
+    void set_ui_element_sprite_add_color_from_u32(u32 param_1);
+    void set_ui_element_sprite_add_color(int param_1, uint param_2, uint param_3, uint param_4);
+    void set_ui_element_sprite_alpha(double alpha);
+    void set_ui_element_sprite_rot_z(s32 param_1);
+    void g_set_some_ui_element_sprite_flag(SpriteDrawReqFlags  param_1);
+    void draw_ui_element(s32 texture_id);
     void draw_ui_box(uint g_texture_id);
     void draw_ui_box_only_borders(uint param_1);
     void perf_init_timer(int timer_id);
@@ -8662,11 +8662,11 @@ extern "C" {
     void set_global_font_sprite_add_color(undefined4 param_1);
     void set_global_font_sprite_rot_z(undefined2 param_1);
     void set_global_font_sprite_depth(float param_1);
-    void set_global_font_sprite_dimensions(float width, float height);
+    void set_global_font_sprite_scale(float width, float height);
     void set_global_font_sprite_alpha(double alpha);
     void set_global_font_sprite_flags(uint param_1);
     void set_global_font_sprite_alignment(SpriteAlignment  alignment);
-    void g_set_global_font_sprite_drop_shadow_flag(void);
+    void set_global_font_sprite_drop_shadow_flag(void);
     void g_set_some_global_font_sprite_flag_2(void);
     void g_set_some_global_font_sprite_flag(void);
     void g_set_global_font_style(FontStyle  style);
