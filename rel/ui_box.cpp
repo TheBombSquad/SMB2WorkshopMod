@@ -2,6 +2,9 @@
 #include "mkb.h"
 #include "log.h"
 #include "heap.h"
+#include "vecutil.h"
+#define SIN(x) mkb::math_sin(x)
+#define COS(x) SIN(16384-x)
 
 namespace ui_box {
     UIBox* ui_box_list[UI_BOX_LEN];
@@ -30,7 +33,7 @@ namespace ui_box {
         m_pos.y = y;
         m_dimensions.x = width;
         m_dimensions.y = height;
-        m_anim_type_1 = AnimType::ANIM_NONE;
+        m_anim_type_1 = AnimType::ANIM_WIGGLE;
     }
 
     // Display a UIBox
@@ -67,10 +70,14 @@ namespace ui_box {
     // This will not function properly without draw_ui_box_ext.
     void UIBox::anim_wiggle()
     {
+
         if (m_counter_1 >= 32767) m_counter_1 = 0;
+
 
         m_rot_z = static_cast<s32>(1024*mkb::math_sin(1024*m_counter_1));
         m_counter_1++;
+
+        //m_rot_z = 0;
         mkb::OSReport("wiggle val %d, ctr %d\n", m_rot_z, m_counter_1);
     }
 
@@ -156,7 +163,11 @@ namespace ui_box {
       mkb::ui_sprite_draw_req.flags = (mkb::ui_sprite_draw_req.flags & 0xffffff00) | 10;
 
       mkb::SpriteDrawRequest req;
+      Vec orig_pos = mkb::ui_sprite_draw_req.pos;
+      float dist_from_orig;
+      Vec corner_pos;
 
+      // Fill
       mkb::ui_sprite_draw_req.id = texture_id;
       req = mkb::ui_sprite_draw_req;
 
@@ -168,9 +179,14 @@ namespace ui_box {
       req.scale.y = (scale_y - 12.0) / fill_height;
       mkb::draw_sprite_draw_request(&req);
 
+
+      // Top
       req = mkb::ui_sprite_draw_req;
 
-      req.pos.y = (mkb::ui_sprite_draw_req.pos.y - scale_y * 0.5) + 3.0;
+      dist_from_orig = orig_pos.y - ((orig_pos.y - scale_y * 0.5) + 3.0);
+      req.pos.x -= dist_from_orig*SIN(req.rot_z);
+      req.pos.y -= dist_from_orig*COS(req.rot_z);
+
       req.u1 = (6.0 / fill_width);
       req.v1 = 0.0;
       req.u2 = (1.0 - 6.0 / fill_width);
@@ -179,9 +195,14 @@ namespace ui_box {
       req.scale.y = (6.0 / fill_height);
       mkb::draw_sprite_draw_request(&req);
 
+
+      // Bottom
       req = mkb::ui_sprite_draw_req;
 
-      req.pos.y = (mkb::ui_sprite_draw_req.pos.y + scale_y * 0.5) - 3.0;
+      dist_from_orig = orig_pos.y - ((orig_pos.y + scale_y * 0.5) - 3.0);
+      req.pos.x -= dist_from_orig*SIN(req.rot_z);
+      req.pos.y -= dist_from_orig*COS(req.rot_z);
+
       req.u1 = (6.0 / fill_width);
       req.v1 = (1.0 - 6.0 / fill_height);
       req.u2 = (1.0 - 6.0 / fill_width);
@@ -190,9 +211,14 @@ namespace ui_box {
       req.scale.y = (6.0 / fill_height);
       mkb::draw_sprite_draw_request(&req);
 
+
+      // Left
       req = mkb::ui_sprite_draw_req;
 
-      req.pos.x = (mkb::ui_sprite_draw_req.pos.x - scale_x * 0.5) + 3.0;
+      dist_from_orig = orig_pos.x - ((orig_pos.x - scale_x * 0.5) + 3.0);
+      req.pos.x -= dist_from_orig*COS(req.rot_z);
+      req.pos.y += dist_from_orig*SIN(req.rot_z);
+
       req.u1 = 0.0;
       req.v1 = (6.0 / fill_height);
       req.u2 = (6.0 / fill_width);
@@ -201,9 +227,15 @@ namespace ui_box {
       req.scale.y = (scale_y - 12.0) / fill_height;
       mkb::draw_sprite_draw_request(&req);
 
+
+
+      // Right
       req = mkb::ui_sprite_draw_req;
 
-      req.pos.x = (mkb::ui_sprite_draw_req.pos.x + scale_x * 0.5) - 3.0;
+      dist_from_orig = orig_pos.x - ((orig_pos.x + scale_x * 0.5) - 3.0);
+      req.pos.x -= dist_from_orig*COS(req.rot_z);
+      req.pos.y += dist_from_orig*SIN(req.rot_z);
+
       req.u1 = (1.0 - 6.0 / fill_width);
       req.v1 = (6.0 / fill_height);
       req.u2 = 1.0;
@@ -212,10 +244,19 @@ namespace ui_box {
       req.scale.y = (scale_y - 12.0) / fill_height;
       mkb::draw_sprite_draw_request(&req);
 
+
+      // Top Left
       req = mkb::ui_sprite_draw_req;
 
       req.pos.x = (mkb::ui_sprite_draw_req.pos.x - scale_x * 0.5) + 3.0;
       req.pos.y = (mkb::ui_sprite_draw_req.pos.y - scale_y * 0.5) + 3.0;
+
+      corner_pos = req.pos;
+      corner_pos = VEC_SUB(corner_pos, orig_pos);
+
+      req.pos.x = orig_pos.x + (corner_pos.x*COS(req.rot_z) + corner_pos.y*SIN(req.rot_z));
+      req.pos.y = orig_pos.y + (corner_pos.y*COS(req.rot_z) - corner_pos.x*SIN(req.rot_z));
+
       req.u1 = 0.0;
       req.v1 = 0.0;
       req.u2 = (6.0 / fill_width);
@@ -224,10 +265,18 @@ namespace ui_box {
       req.scale.y = (6.0 / fill_height);
       mkb::draw_sprite_draw_request(&req);
 
+      // Top Right
       req = mkb::ui_sprite_draw_req;
 
       req.pos.x = (mkb::ui_sprite_draw_req.pos.x + scale_x * 0.5) - 3.0;
       req.pos.y = (mkb::ui_sprite_draw_req.pos.y - scale_y * 0.5) + 3.0;
+
+      corner_pos = req.pos;
+      corner_pos = VEC_SUB(corner_pos, orig_pos);
+
+      req.pos.x = orig_pos.x + (corner_pos.x*COS(req.rot_z) + corner_pos.y*SIN(req.rot_z));
+      req.pos.y = orig_pos.y + (corner_pos.y*COS(req.rot_z) - corner_pos.x*SIN(req.rot_z));
+
       req.u1 = (1.0 - 6.0 / fill_width);
       req.v1 = 0.0;
       req.u2 = 1.0;
@@ -236,10 +285,18 @@ namespace ui_box {
       req.scale.y = (6.0 / fill_height);
       mkb::draw_sprite_draw_request(&req);
 
+      // Bottom Left
       req = mkb::ui_sprite_draw_req;
 
       req.pos.x = (mkb::ui_sprite_draw_req.pos.x - scale_x * 0.5) + 3.0;
       req.pos.y = (mkb::ui_sprite_draw_req.pos.y + scale_y * 0.5) - 3.0;
+
+      corner_pos = req.pos;
+      corner_pos = VEC_SUB(corner_pos, orig_pos);
+
+      req.pos.x = orig_pos.x + (corner_pos.x*COS(req.rot_z) + corner_pos.y*SIN(req.rot_z));
+      req.pos.y = orig_pos.y + (corner_pos.y*COS(req.rot_z) - corner_pos.x*SIN(req.rot_z));
+
       req.u1 = 0.0;
       req.v1 = (1.0 - 6.0 / fill_height);
       req.u2 = (6.0 / fill_width);
@@ -248,10 +305,18 @@ namespace ui_box {
       req.scale.y = (6.0 / fill_height);
       mkb::draw_sprite_draw_request(&req);
 
+      // Bottom Right
       req = mkb::ui_sprite_draw_req;
 
       req.pos.x = (mkb::ui_sprite_draw_req.pos.x + scale_x * 0.5) - 3.0;
       req.pos.y = (mkb::ui_sprite_draw_req.pos.y + scale_y * 0.5) - 3.0;
+
+      corner_pos = req.pos;
+      corner_pos = VEC_SUB(corner_pos, orig_pos);
+
+      req.pos.x = orig_pos.x + (corner_pos.x*COS(req.rot_z) + corner_pos.y*SIN(req.rot_z));
+      req.pos.y = orig_pos.y + (corner_pos.y*COS(req.rot_z) - corner_pos.x*SIN(req.rot_z));
+
       req.u1 = (1.0 - 6.0 / fill_width);
       req.v1 = (1.0 - 6.0 / fill_height);
       req.u2 = 1.0;
