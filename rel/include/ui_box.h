@@ -4,42 +4,57 @@
 
 namespace ui_box {
 
+    // Number of UI boxes that can be rendered at once. Arbitrarily set to 16
     static constexpr u8 UI_BOX_LEN = 16;
 
-    class UIBox {
 
     enum class AnimType {
-        ANIM_NONE,
-        ANIM_WIGGLE,
+        MODIFIER_NONE,
+        MODIFIER_WIGGLE,
     };
+
+    enum class UIBoxState {
+        STATE_VISIBLE,
+        STATE_VISIBLE_NO_TICK,
+        STATE_INVISIBLE,
+        STATE_INVISIBLE_NO_TICK,
+        STATE_DESTROY,
+    };
+
+    struct UIBoxModifier {
+        AnimType type = AnimType::MODIFIER_NONE;
+        s32 int_param = 0;
+        float float_param = 0.0;
+        char* str_param_1 = nullptr;
+        char* str_param_2 = nullptr;
+        char* str_param_3 = nullptr;
+        s32 counter;
+    };
+
+    class UIBox {
 
     public:
         UIBox(float x, float y, float width, float height);
         void disp();
-        void tick(AnimType type);
+        void set_state(UIBoxState state);
+        void set_wiggle_attribute(u16 angle);
+        UIBoxState getState() const;
 
-    private:
+        private:
+        UIBoxState state;
         Vec2d m_pos;
         Vec2d m_dimensions;
         s32 m_rot_z = 0;
-        char* m_title = nullptr;
-        char* m_subtitle = nullptr;
-        char* m_msg = nullptr;
-        s32 m_counter_1 = 0;
-        s32 m_counter_2 = 0;
-        s32 m_counter_3 = 0;
-        AnimType m_anim_type_1 = AnimType::ANIM_NONE;
-        AnimType m_anim_type_2 = AnimType::ANIM_NONE;
-        AnimType m_anim_type_3 = AnimType::ANIM_NONE;
+        UIBoxModifier* modifiers[8] = {nullptr};
 
-        void anim_wiggle();
+        void modifier_wiggle(UIBoxModifier* modifier);
     };
 
-    extern UIBox* ui_box_list[UI_BOX_LEN];
+    extern UIBox* ui_box_stack[UI_BOX_LEN];
     extern u8 ui_box_count;
 
     void init();
-    void disp();
+    void disp_all();
 
     void push(UIBox* box);
     void pop();

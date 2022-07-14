@@ -75,7 +75,7 @@ void init()
                 Tetris::get_instance().disp();
             }
 
-            ui_box::disp();
+            ui_box::disp_all();
             s_draw_debug_text_trampoline();
         });
 

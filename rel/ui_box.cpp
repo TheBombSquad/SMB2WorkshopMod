@@ -7,22 +7,22 @@
 #define COS(x) SIN(16384-x)
 
 namespace ui_box {
-    UIBox* ui_box_list[UI_BOX_LEN];
+    UIBox* ui_box_stack[UI_BOX_LEN];
     u8 ui_box_count = 0;
 
-    // Init the ui_box_list as empty.
+    // Init the ui_box_stack as empty.
     void init()
     {
         for (int i = 0; i < UI_BOX_LEN; i++) {
-            ui_box_list[i] = nullptr;
+            ui_box_stack[i] = nullptr;
         }
     }
 
-    // Iterate through the ui_box_list to find any UIBox elements, display if they exist. TODO: Add 'visible', 'invisible', 'to be destroyed', etc states
-    void disp()
+    // Iterate through the ui_box_stack to find any UIBox elements, display if they exist. TODO: Handle 'visible', 'invisible', 'to be destroyed', etc states
+    void disp_all()
     {
         for (int i = 0; i < ui_box_count; i++) {
-            if (ui_box_list[i] != nullptr) ui_box_list[i]->disp();
+            if (ui_box_stack[i] != nullptr && ui_box_stack[i]->getState() != UIBoxState::STATE_INVISIBLE) ui_box_stack[i]->disp();
         }
     }
 
@@ -33,15 +33,25 @@ namespace ui_box {
         m_pos.y = y;
         m_dimensions.x = width;
         m_dimensions.y = height;
-        m_anim_type_1 = AnimType::ANIM_WIGGLE;
     }
 
-    // Display a UIBox
+    // Display a UIBox, also run all modifiers
     void UIBox::disp()
     {
-        tick(m_anim_type_1);
-        tick(m_anim_type_2);
-        tick(m_anim_type_3);
+        if (state != UIBoxState::STATE_VISIBLE_NO_TICK && state != UIBoxState::STATE_INVISIBLE_NO_TICK) {
+            for (u32 i = 0; i < sizeof(modifiers)/sizeof(modifiers[0]); i++) {
+                if (modifiers[i] != nullptr) {
+                    switch (modifiers[i]->type) {
+                        case AnimType::MODIFIER_WIGGLE:
+                            modifier_wiggle(modifiers[i]);
+                            break;
+                        case AnimType::MODIFIER_NONE:
+                        default:
+                        break;
+                    }
+                }
+            }
+        }
 
         mkb::init_ui_element_sprite_with_defaults();
         mkb::set_ui_element_sprite_pos(m_pos.x+(m_dimensions.x/2), m_pos.y+(m_dimensions.y/2));
@@ -53,32 +63,35 @@ namespace ui_box {
         draw_ui_box_ext(0x5);
     }
 
-    // Run a particular tick function (or several) based off the UIBox animation type.
-    void UIBox::tick(AnimType type)
+    void UIBox::set_state(UIBoxState state)
     {
-        switch (type) {
-            case AnimType::ANIM_WIGGLE:
-                anim_wiggle();
-                break;
-            case AnimType::ANIM_NONE:
-            default:
-            break;
-        }
+        this->state = state;
+    }
+
+    void UIBox::set_wiggle_attribute(u16 angle)
+    {
+        // TODO: fix
+        modifiers[0] = new UIBoxModifier {
+            .type = AnimType::MODIFIER_WIGGLE,
+            .int_param = angle,
+        };
+    }
+
+    UIBoxState UIBox::getState() const
+    {
+        return state;
     }
 
     // Animation that rotates the UIBox back and forth along its center.
     // This will not function properly without draw_ui_box_ext.
-    void UIBox::anim_wiggle()
+    void UIBox::modifier_wiggle(UIBoxModifier* modifier)
     {
+        if (modifier->counter >= 65535) modifier->counter = 0;
 
-        if (m_counter_1 >= 32767) m_counter_1 = 0;
+        m_rot_z = static_cast<s32>(modifier->int_param*mkb::math_sin(1024*modifier->counter));
+        modifier->counter++;
 
-
-        m_rot_z = static_cast<s32>(1024*mkb::math_sin(1024*m_counter_1));
-        m_counter_1++;
-
-        //m_rot_z = 0;
-        mkb::OSReport("wiggle val %d, ctr %d\n", m_rot_z, m_counter_1);
+        //mkb::OSReport("wiggle val %d, ctr %d\n", m_rot_z, modifier->counter);
     }
 
     // Pushes a new UIBox to the list. It's really a stack I shouldn't call it a list
@@ -86,7 +99,7 @@ namespace ui_box {
     {
         if (ui_box_count < UI_BOX_LEN) {
             mkb::OSReport("creating test uibox %d\n", ui_box_count);
-            ui_box_list[ui_box_count] = box;
+            ui_box_stack[ui_box_count] = box;
             ui_box_count++;
         }
     }
@@ -96,8 +109,8 @@ namespace ui_box {
     {
         if (ui_box_count > 0) {
             mkb::OSReport("destroying test uibox %d\n", ui_box_count-1);
-            UIBox* test = ui_box_list[ui_box_count-1];
-            ui_box_list[ui_box_count-1] = nullptr;
+            UIBox* test = ui_box_stack[ui_box_count-1];
+            ui_box_stack[ui_box_count-1] = nullptr;
             ui_box_count--;
             heap::free_to_heap(test);
         }
@@ -228,7 +241,6 @@ namespace ui_box {
       mkb::draw_sprite_draw_request(&req);
 
 
-
       // Right
       req = mkb::ui_sprite_draw_req;
 
@@ -251,8 +263,7 @@ namespace ui_box {
       req.pos.x = (mkb::ui_sprite_draw_req.pos.x - scale_x * 0.5) + 3.0;
       req.pos.y = (mkb::ui_sprite_draw_req.pos.y - scale_y * 0.5) + 3.0;
 
-      corner_pos = req.pos;
-      corner_pos = VEC_SUB(corner_pos, orig_pos);
+      corner_pos = VEC_SUB(req.pos, orig_pos);
 
       req.pos.x = orig_pos.x + (corner_pos.x*COS(req.rot_z) + corner_pos.y*SIN(req.rot_z));
       req.pos.y = orig_pos.y + (corner_pos.y*COS(req.rot_z) - corner_pos.x*SIN(req.rot_z));
@@ -271,8 +282,7 @@ namespace ui_box {
       req.pos.x = (mkb::ui_sprite_draw_req.pos.x + scale_x * 0.5) - 3.0;
       req.pos.y = (mkb::ui_sprite_draw_req.pos.y - scale_y * 0.5) + 3.0;
 
-      corner_pos = req.pos;
-      corner_pos = VEC_SUB(corner_pos, orig_pos);
+      corner_pos = VEC_SUB(req.pos, orig_pos);
 
       req.pos.x = orig_pos.x + (corner_pos.x*COS(req.rot_z) + corner_pos.y*SIN(req.rot_z));
       req.pos.y = orig_pos.y + (corner_pos.y*COS(req.rot_z) - corner_pos.x*SIN(req.rot_z));
@@ -291,8 +301,7 @@ namespace ui_box {
       req.pos.x = (mkb::ui_sprite_draw_req.pos.x - scale_x * 0.5) + 3.0;
       req.pos.y = (mkb::ui_sprite_draw_req.pos.y + scale_y * 0.5) - 3.0;
 
-      corner_pos = req.pos;
-      corner_pos = VEC_SUB(corner_pos, orig_pos);
+      corner_pos = VEC_SUB(req.pos, orig_pos);
 
       req.pos.x = orig_pos.x + (corner_pos.x*COS(req.rot_z) + corner_pos.y*SIN(req.rot_z));
       req.pos.y = orig_pos.y + (corner_pos.y*COS(req.rot_z) - corner_pos.x*SIN(req.rot_z));
@@ -311,8 +320,7 @@ namespace ui_box {
       req.pos.x = (mkb::ui_sprite_draw_req.pos.x + scale_x * 0.5) - 3.0;
       req.pos.y = (mkb::ui_sprite_draw_req.pos.y + scale_y * 0.5) - 3.0;
 
-      corner_pos = req.pos;
-      corner_pos = VEC_SUB(corner_pos, orig_pos);
+      corner_pos = VEC_SUB(req.pos, orig_pos);
 
       req.pos.x = orig_pos.x + (corner_pos.x*COS(req.rot_z) + corner_pos.y*SIN(req.rot_z));
       req.pos.y = orig_pos.y + (corner_pos.y*COS(req.rot_z) - corner_pos.x*SIN(req.rot_z));

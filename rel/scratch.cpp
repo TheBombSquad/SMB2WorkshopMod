@@ -98,7 +98,9 @@ void tick() {
     }
 
     if (pad::button_down(mkb::PAD_TRIGGER_Z) && !sent) {
-        ui_box::push(new ui_box::UIBox(220, 190, 200, 100));
+        ui_box::UIBox* box = new ui_box::UIBox(220, 190, 200, 100);
+        box->set_wiggle_attribute(16384);
+        ui_box::push(box);
         mkb::OSReport("num %d\n", ui_box::ui_box_count);
         //mkb::call_SoundReqID_arg_2(10);
         sent = true;
