@@ -1,16 +1,13 @@
 #pragma once
 
 #include <mkb.h>
+#include "list.h"
 
 namespace ui_box {
-
-    // Number of UI boxes that can be rendered at once. Arbitrarily set to 16
-    static constexpr u8 UI_BOX_LEN = 16;
-
-
     enum class AnimType {
         MODIFIER_NONE,
         MODIFIER_WIGGLE,
+        MODIFIER_FADE_IN_ZOOM,
     };
 
     enum class UIBoxState {
@@ -23,11 +20,12 @@ namespace ui_box {
 
     struct UIBoxModifier {
         AnimType type = AnimType::MODIFIER_NONE;
-        s32 int_param = 0;
-        float float_param = 0.0;
-        char* str_param_1 = nullptr;
-        char* str_param_2 = nullptr;
-        char* str_param_3 = nullptr;
+        s32 int_param_1 = 0;
+        s32 int_param_2 = 0;
+        s32 int_param_3 = 0;
+        float float_param_1 = 0.0;
+        float float_param_2 = 0.0;
+        float float_param_3 = 0.0;
         s32 counter;
     };
 
@@ -37,28 +35,31 @@ namespace ui_box {
         UIBox(float x, float y, float width, float height);
         void disp();
         void set_state(UIBoxState state);
-        void set_wiggle_attribute(u16 angle);
+        void set_wiggle_modifier(u16 angle, float period);
+        void set_fade_in_zoom_modifier(float time);
         UIBoxState getState() const;
 
-        private:
+    private:
         UIBoxState state;
         Vec2d m_pos;
         Vec2d m_dimensions;
         s32 m_rot_z = 0;
-        UIBoxModifier* modifiers[8] = {nullptr};
+        char* title = nullptr;
+        char* subtitle = nullptr;
+        char* message = nullptr;
+        List<UIBoxModifier> modifiers = List<UIBoxModifier>();
+        u8 modifier_count;
 
         void modifier_wiggle(UIBoxModifier* modifier);
+        void modifier_fade_in_zoom(UIBoxModifier* modifier);
     };
-
-    extern UIBox* ui_box_stack[UI_BOX_LEN];
-    extern u8 ui_box_count;
 
     void init();
     void disp_all();
 
-    void push(UIBox* box);
-    void pop();
-
+    extern List<UIBox> ui_boxes;
     void draw_ui_box_ext(u32 texture_id);
+
+    float lerp(float f1, float f2, float t);
 }
 

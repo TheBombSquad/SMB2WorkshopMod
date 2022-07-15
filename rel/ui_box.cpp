@@ -3,26 +3,27 @@
 #include "log.h"
 #include "heap.h"
 #include "vecutil.h"
+#include "list.h"
 #define SIN(x) mkb::math_sin(x)
 #define COS(x) SIN(16384-x)
 
 namespace ui_box {
-    UIBox* ui_box_stack[UI_BOX_LEN];
-    u8 ui_box_count = 0;
-
+    List<UIBox> ui_boxes = List<UIBox>();
     // Init the ui_box_stack as empty.
     void init()
     {
-        for (int i = 0; i < UI_BOX_LEN; i++) {
-            ui_box_stack[i] = nullptr;
-        }
     }
 
     // Iterate through the ui_box_stack to find any UIBox elements, display if they exist. TODO: Handle 'visible', 'invisible', 'to be destroyed', etc states
     void disp_all()
     {
-        for (int i = 0; i < ui_box_count; i++) {
-            if (ui_box_stack[i] != nullptr && ui_box_stack[i]->getState() != UIBoxState::STATE_INVISIBLE) ui_box_stack[i]->disp();
+        if (!ui_boxes.empty()) {
+            Element<UIBox>* e = ui_boxes.first;
+            do {
+                e->val->disp();
+                e = e->next;
+            }
+            while (e != nullptr);
         }
     }
 
@@ -39,28 +40,33 @@ namespace ui_box {
     void UIBox::disp()
     {
         if (state != UIBoxState::STATE_VISIBLE_NO_TICK && state != UIBoxState::STATE_INVISIBLE_NO_TICK) {
-            for (u32 i = 0; i < sizeof(modifiers)/sizeof(modifiers[0]); i++) {
-                if (modifiers[i] != nullptr) {
-                    switch (modifiers[i]->type) {
+            if (!modifiers.empty()) {
+                Element<UIBoxModifier>* e = modifiers.first;
+                do {
+                    UIBoxModifier* mod = e->val;
+                    switch (mod->type) {
                         case AnimType::MODIFIER_WIGGLE:
-                            modifier_wiggle(modifiers[i]);
+                            modifier_wiggle(mod);
                             break;
                         case AnimType::MODIFIER_NONE:
                         default:
                         break;
                     }
+                    e = e->next;
                 }
+                while (e != nullptr);
             }
         }
 
-        mkb::init_ui_element_sprite_with_defaults();
-        mkb::set_ui_element_sprite_pos(m_pos.x+(m_dimensions.x/2), m_pos.y+(m_dimensions.y/2));
-        mkb::set_ui_element_sprite_scale(1, 1);
-        mkb::set_ui_element_sprite_scale(m_dimensions.x/416, m_dimensions.y/176);
-        mkb::set_ui_element_sprite_depth(0.10);
-        mkb::set_ui_element_sprite_rot_z(m_rot_z);
-        //mkb::draw_ui_box(0x5);
-        draw_ui_box_ext(0x5);
+        if (state != UIBoxState::STATE_INVISIBLE && state != UIBoxState::STATE_INVISIBLE_NO_TICK) {
+            mkb::init_ui_element_sprite_with_defaults();
+            mkb::set_ui_element_sprite_pos(m_pos.x+(m_dimensions.x/2), m_pos.y+(m_dimensions.y/2));
+            mkb::set_ui_element_sprite_scale(1, 1);
+            mkb::set_ui_element_sprite_scale(m_dimensions.x/416, m_dimensions.y/176);
+            mkb::set_ui_element_sprite_depth(0.10);
+            mkb::set_ui_element_sprite_rot_z(m_rot_z);
+            draw_ui_box_ext(0x5);
+        }
     }
 
     void UIBox::set_state(UIBoxState state)
@@ -68,13 +74,24 @@ namespace ui_box {
         this->state = state;
     }
 
-    void UIBox::set_wiggle_attribute(u16 angle)
+    // Make the UI box rotate around its centerpoint. Angle is in standard mkb s16 angle format, period is in seconds
+    // Max period is 60 seconds
+    void UIBox::set_wiggle_modifier(u16 angle, float period)
     {
         // TODO: fix
-        modifiers[0] = new UIBoxModifier {
+        modifiers.append(new UIBoxModifier {
             .type = AnimType::MODIFIER_WIGGLE,
-            .int_param = angle,
-        };
+            .int_param_1 = angle,
+            .int_param_2 = static_cast<u16>(1092*period),
+        });
+    }
+
+    void UIBox::set_fade_in_zoom_modifier(float time)
+    {
+        modifiers.append(new UIBoxModifier {
+            .type = AnimType::MODIFIER_FADE_IN_ZOOM,
+            .int_param_1 = static_cast<u16>(1092*time),
+        });
     }
 
     UIBoxState UIBox::getState() const
@@ -88,32 +105,13 @@ namespace ui_box {
     {
         if (modifier->counter >= 65535) modifier->counter = 0;
 
-        m_rot_z = static_cast<s32>(modifier->int_param*mkb::math_sin(1024*modifier->counter));
+        m_rot_z = static_cast<s32>(modifier->int_param_1*mkb::math_sin(modifier->int_param_2*modifier->counter));
         modifier->counter++;
-
-        //mkb::OSReport("wiggle val %d, ctr %d\n", m_rot_z, modifier->counter);
     }
 
-    // Pushes a new UIBox to the list. It's really a stack I shouldn't call it a list
-    void push(UIBox* box)
+    void UIBox::modifier_fade_in_zoom(UIBoxModifier* modifier)
     {
-        if (ui_box_count < UI_BOX_LEN) {
-            mkb::OSReport("creating test uibox %d\n", ui_box_count);
-            ui_box_stack[ui_box_count] = box;
-            ui_box_count++;
-        }
-    }
 
-    // Pops a UIBox from the stack and also frees up the memory used by it.
-    void pop()
-    {
-        if (ui_box_count > 0) {
-            mkb::OSReport("destroying test uibox %d\n", ui_box_count-1);
-            UIBox* test = ui_box_stack[ui_box_count-1];
-            ui_box_stack[ui_box_count-1] = nullptr;
-            ui_box_count--;
-            heap::free_to_heap(test);
-        }
     }
 
     // A re-implementation and extension of mkb::draw_ui_box.
@@ -332,6 +330,11 @@ namespace ui_box {
       req.scale.x = (6.0 / fill_width);
       req.scale.y = (6.0 / fill_height);
       mkb::draw_sprite_draw_request(&req);
+    }
+
+    float lerp(float f1, float f2, float t)
+    {
+        return (1-t)*f1+t*f2;
     }
 
 }
