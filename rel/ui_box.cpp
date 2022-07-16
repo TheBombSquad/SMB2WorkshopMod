@@ -59,12 +59,17 @@ namespace ui_box {
         }
 
         if (state != UIBoxState::STATE_INVISIBLE && state != UIBoxState::STATE_INVISIBLE_NO_TICK) {
+
+            mkb::mtxa_from_identity();
+            mkb::mtxa_translate_xyz(m_pos.x+(m_dimensions.x/2), m_pos.y+(m_dimensions.y/2), 0.0);
+            mkb::mtxa_rotate_z(m_rot_z);
+            mkb::mtxa_translate_neg_xyz(m_pos.x+(m_dimensions.x/2), m_pos.y+(m_dimensions.y/2), 0.0);
+            mkb::GXLoadPosMtxImm(reinterpret_cast<float(*)[4]>(mkb::mtxa), 0);
             mkb::init_ui_element_sprite_with_defaults();
             mkb::set_ui_element_sprite_pos(m_pos.x+(m_dimensions.x/2), m_pos.y+(m_dimensions.y/2));
             mkb::set_ui_element_sprite_scale(1, 1);
             mkb::set_ui_element_sprite_scale(m_dimensions.x/416, m_dimensions.y/176);
             mkb::set_ui_element_sprite_depth(0.10);
-            mkb::set_ui_element_sprite_rot_z(m_rot_z);
             draw_ui_box_ext(0x5);
         }
     }
@@ -114,10 +119,11 @@ namespace ui_box {
 
     }
 
-    // A re-implementation and extension of mkb::draw_ui_box.
-    // This re-implementation allows for a box to rotate about its center.
-    // The original implementation would rotate the box's slice sprites about their own centers,
-    // rather than the center of the entire box.
+    // A re-implementation ~~and extension of~~ mkb::draw_ui_box.
+    // The commented parts rotate the individual slices about the center of the fill.
+    // However, it turns out you can just use GPU matrix stuff to do this so this ended up being pointless...
+    // I'm keeping this around because it's more readable than the decomp which has compiler optimization stuff included,
+    // in the event that I or someone might want to make changes or extensions to this later.
     void draw_ui_box_ext(u32 texture_id)
     {
       u32 tex_id_shifted = texture_id >> 8;
@@ -174,9 +180,12 @@ namespace ui_box {
       mkb::ui_sprite_draw_req.flags = (mkb::ui_sprite_draw_req.flags & 0xffffff00) | 10;
 
       mkb::SpriteDrawRequest req;
+
       Vec orig_pos = mkb::ui_sprite_draw_req.pos;
+      /*
       float dist_from_orig;
       Vec corner_pos;
+      */
 
       // Fill
       mkb::ui_sprite_draw_req.id = texture_id;
@@ -194,9 +203,13 @@ namespace ui_box {
       // Top
       req = mkb::ui_sprite_draw_req;
 
+      req.pos.y = ((orig_pos.y - scale_y * 0.5) + 3.0);
+
+      /*
       dist_from_orig = orig_pos.y - ((orig_pos.y - scale_y * 0.5) + 3.0);
       req.pos.x -= dist_from_orig*SIN(req.rot_z);
       req.pos.y -= dist_from_orig*COS(req.rot_z);
+      */
 
       req.u1 = (6.0 / fill_width);
       req.v1 = 0.0;
@@ -210,9 +223,12 @@ namespace ui_box {
       // Bottom
       req = mkb::ui_sprite_draw_req;
 
+      req.pos.y = ((orig_pos.y + scale_y * 0.5) - 3.0);
+      /*
       dist_from_orig = orig_pos.y - ((orig_pos.y + scale_y * 0.5) - 3.0);
       req.pos.x -= dist_from_orig*SIN(req.rot_z);
       req.pos.y -= dist_from_orig*COS(req.rot_z);
+      */
 
       req.u1 = (6.0 / fill_width);
       req.v1 = (1.0 - 6.0 / fill_height);
@@ -226,9 +242,12 @@ namespace ui_box {
       // Left
       req = mkb::ui_sprite_draw_req;
 
+      req.pos.x = ((orig_pos.x - scale_x * 0.5) + 3.0);
+      /*
       dist_from_orig = orig_pos.x - ((orig_pos.x - scale_x * 0.5) + 3.0);
       req.pos.x -= dist_from_orig*COS(req.rot_z);
       req.pos.y += dist_from_orig*SIN(req.rot_z);
+      */
 
       req.u1 = 0.0;
       req.v1 = (6.0 / fill_height);
@@ -242,9 +261,12 @@ namespace ui_box {
       // Right
       req = mkb::ui_sprite_draw_req;
 
+      req.pos.x = ((orig_pos.x + scale_x * 0.5) - 3.0);
+      /*
       dist_from_orig = orig_pos.x - ((orig_pos.x + scale_x * 0.5) - 3.0);
       req.pos.x -= dist_from_orig*COS(req.rot_z);
       req.pos.y += dist_from_orig*SIN(req.rot_z);
+      */
 
       req.u1 = (1.0 - 6.0 / fill_width);
       req.v1 = (6.0 / fill_height);
@@ -261,10 +283,12 @@ namespace ui_box {
       req.pos.x = (mkb::ui_sprite_draw_req.pos.x - scale_x * 0.5) + 3.0;
       req.pos.y = (mkb::ui_sprite_draw_req.pos.y - scale_y * 0.5) + 3.0;
 
+      /*
       corner_pos = VEC_SUB(req.pos, orig_pos);
 
       req.pos.x = orig_pos.x + (corner_pos.x*COS(req.rot_z) + corner_pos.y*SIN(req.rot_z));
       req.pos.y = orig_pos.y + (corner_pos.y*COS(req.rot_z) - corner_pos.x*SIN(req.rot_z));
+      */
 
       req.u1 = 0.0;
       req.v1 = 0.0;
@@ -280,10 +304,12 @@ namespace ui_box {
       req.pos.x = (mkb::ui_sprite_draw_req.pos.x + scale_x * 0.5) - 3.0;
       req.pos.y = (mkb::ui_sprite_draw_req.pos.y - scale_y * 0.5) + 3.0;
 
+      /*
       corner_pos = VEC_SUB(req.pos, orig_pos);
 
       req.pos.x = orig_pos.x + (corner_pos.x*COS(req.rot_z) + corner_pos.y*SIN(req.rot_z));
       req.pos.y = orig_pos.y + (corner_pos.y*COS(req.rot_z) - corner_pos.x*SIN(req.rot_z));
+      */
 
       req.u1 = (1.0 - 6.0 / fill_width);
       req.v1 = 0.0;
@@ -299,10 +325,12 @@ namespace ui_box {
       req.pos.x = (mkb::ui_sprite_draw_req.pos.x - scale_x * 0.5) + 3.0;
       req.pos.y = (mkb::ui_sprite_draw_req.pos.y + scale_y * 0.5) - 3.0;
 
+      /*
       corner_pos = VEC_SUB(req.pos, orig_pos);
 
       req.pos.x = orig_pos.x + (corner_pos.x*COS(req.rot_z) + corner_pos.y*SIN(req.rot_z));
       req.pos.y = orig_pos.y + (corner_pos.y*COS(req.rot_z) - corner_pos.x*SIN(req.rot_z));
+      */
 
       req.u1 = 0.0;
       req.v1 = (1.0 - 6.0 / fill_height);
@@ -318,10 +346,12 @@ namespace ui_box {
       req.pos.x = (mkb::ui_sprite_draw_req.pos.x + scale_x * 0.5) - 3.0;
       req.pos.y = (mkb::ui_sprite_draw_req.pos.y + scale_y * 0.5) - 3.0;
 
+      /*
       corner_pos = VEC_SUB(req.pos, orig_pos);
 
       req.pos.x = orig_pos.x + (corner_pos.x*COS(req.rot_z) + corner_pos.y*SIN(req.rot_z));
       req.pos.y = orig_pos.y + (corner_pos.y*COS(req.rot_z) - corner_pos.x*SIN(req.rot_z));
+      */
 
       req.u1 = (1.0 - 6.0 / fill_width);
       req.v1 = (1.0 - 6.0 / fill_height);
