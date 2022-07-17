@@ -4,6 +4,7 @@
 #include "heap.h"
 #include "vecutil.h"
 #include "list.h"
+#include "menu_impl.h"
 #define SIN(x) mkb::math_sin(x)
 #define COS(x) SIN(16384-x)
 
@@ -34,6 +35,8 @@ namespace ui_box {
         m_pos.y = y;
         m_dimensions.x = width;
         m_dimensions.y = height;
+        m_scale.x = 1.0;
+        m_scale.y = 1.0;
     }
 
     // Display a UIBox, also run all modifiers
@@ -48,6 +51,8 @@ namespace ui_box {
                         case AnimType::MODIFIER_WIGGLE:
                             modifier_wiggle(mod);
                             break;
+                        case AnimType::MODIFIER_ZOOM:
+                            modifier_zoom(mod);
                         case AnimType::MODIFIER_NONE:
                         default:
                         break;
@@ -62,6 +67,7 @@ namespace ui_box {
 
             mkb::mtxa_from_identity();
             mkb::mtxa_translate_xyz(m_pos.x+(m_dimensions.x/2), m_pos.y+(m_dimensions.y/2), 0.0);
+            mkb::mtxa_scale_xyz(m_scale.x, m_scale.y, 1);
             mkb::mtxa_rotate_z(m_rot_z);
             mkb::mtxa_translate_neg_xyz(m_pos.x+(m_dimensions.x/2), m_pos.y+(m_dimensions.y/2), 0.0);
             mkb::GXLoadPosMtxImm(reinterpret_cast<float(*)[4]>(mkb::mtxa), 0);
@@ -74,16 +80,11 @@ namespace ui_box {
         }
     }
 
-    void UIBox::set_state(UIBoxState state)
-    {
-        this->state = state;
-    }
 
     // Make the UI box rotate around its centerpoint. Angle is in standard mkb s16 angle format, period is in seconds
     // Max period is 60 seconds
-    void UIBox::set_wiggle_modifier(u16 angle, float period)
+    void UIBox::set_wiggle_modifier(const u16 &angle, const float &period)
     {
-        // TODO: fix
         modifiers.append(new UIBoxModifier {
             .type = AnimType::MODIFIER_WIGGLE,
             .int_param_1 = angle,
@@ -91,21 +92,36 @@ namespace ui_box {
         });
     }
 
-    void UIBox::set_fade_in_zoom_modifier(float time)
+    void UIBox::set_zoom_modifier(const float &time, const ZoomType &zoom_type, const float &delay)
     {
         modifiers.append(new UIBoxModifier {
-            .type = AnimType::MODIFIER_FADE_IN_ZOOM,
-            .int_param_1 = static_cast<u16>(1092*time),
+            .type = AnimType::MODIFIER_ZOOM,
+            .int_param_1 = (s32)(delay*60.0f),
+            .int_param_2 = (s32)(time*60.0f),
+            .float_param_2 = (zoom_type == ZoomType::ZOOM_IN) ? 1.0f : -1.0f,
+            .float_param_3 = (zoom_type == ZoomType::ZOOM_IN) ? 0.0f : 1.0f,
         });
     }
 
-    UIBoxState UIBox::getState() const
+    UIBoxState UIBox::get_state() const
     {
         return state;
     }
 
+    void UIBox::set_state(const UIBoxState &state)
+    {
+        this->state = state;
+    }
+
+    void UIBox::set_scale(const float &x, const float &y)
+    {
+        m_scale.x = x;
+        m_scale.y = y;
+    }
+
     // Animation that rotates the UIBox back and forth along its center.
-    // This will not function properly without draw_ui_box_ext.
+    // int_param_1 -> angle to rotate in s16
+    // int_param_2 -> period of rotation in frames
     void UIBox::modifier_wiggle(UIBoxModifier* modifier)
     {
         if (modifier->counter >= 65535) modifier->counter = 0;
@@ -114,10 +130,41 @@ namespace ui_box {
         modifier->counter++;
     }
 
-    void UIBox::modifier_fade_in_zoom(UIBoxModifier* modifier)
+    // Animation that adjusts the scale of the UIBox based on the counter.
+    #define CURRENT_FRAME modifier->counter
+    #define DELAY_FRAMES (u32)modifier->int_param_1
+    #define DURATION (u32)modifier->int_param_2
+    #define AMPLITUDE modifier->float_param_2
+    #define OFFSET modifier->float_param_3
+    void UIBox::modifier_zoom(UIBoxModifier* modifier)
     {
 
+        MOD_ASSERT_MSG(DELAY_FRAMES > 0, "Zoom modifier delay cannot be negative");
+        MOD_ASSERT_MSG(DURATION > 0, "Zoom modifier duration cannot be negative");
+
+        if (CURRENT_FRAME < DELAY_FRAMES) {
+            CURRENT_FRAME++;
+            return;
+        }
+
+        if (CURRENT_FRAME-DELAY_FRAMES > DURATION) return;
+
+        float scale = AMPLITUDE *
+                      mkb::sin((float)(CURRENT_FRAME - DELAY_FRAMES) *
+                               (3.14159/2.0) *
+                               (1.0f/(float)(DURATION)))
+                      + OFFSET;
+
+        m_scale.x = scale;
+        m_scale.y = scale;
+
+        CURRENT_FRAME++;
     }
+    #undef CURRENT_FRAME
+    #undef DELAY_FRAMES
+    #undef DURATION
+    #undef AMPLITUDE
+    #undef OFFSET
 
     // A re-implementation ~~and extension of~~ mkb::draw_ui_box.
     // The commented parts rotate the individual slices about the center of the fill.

@@ -16,9 +16,9 @@ bool sent = false;
 bool sent2 = false;
 float mystery = 0.0;
 
+/*
 void sprite_disp(mkb::Sprite* sprite) {
 
-    /*
     mkb::sprintf(msg2, msg2_f, mkb::balls[0].banana_count);
 
     fc = static_cast<u8>((mkb::math_sin(sprite->para1)+1.0)*127.0);
@@ -80,10 +80,11 @@ void sprite_disp(mkb::Sprite* sprite) {
 
     if (sprite_banana != nullptr) {
         sprite_banana->pos.x = sprite->pos.x-60;
-    }*/
+    }
 }
 
-
+*/
+ui_box::UIBox* box;
 void init() {
 }
 
@@ -99,15 +100,22 @@ void tick() {
     }
 
     if (pad::button_down(mkb::PAD_TRIGGER_Z) && !sent) {
-        ui_box::UIBox* box = new ui_box::UIBox(220, 190, 200, 100);
-        ui_box::ui_boxes.append(box);
-        box->set_wiggle_modifier(16384, 0.5);
+        box = new ui_box::UIBox(220, 120, 200, 100);
+        box->set_scale(0,0);
+        box->set_wiggle_modifier(2000, 3);
+        box->set_zoom_modifier(0.25, ui_box::ZoomType::ZOOM_IN, 1.0f);
+        box->set_zoom_modifier(0.25, ui_box::ZoomType::ZOOM_OUT, 2.0f);
         //mkb::call_SoundReqID_arg_2(10);
+        ui_box::ui_boxes.append(box);
         sent = true;
+        sent2 = false;
 
     }
 
     if (pad::button_down(mkb::PAD_BUTTON_Y) && !sent2) {
+        ui_box::ui_boxes.remove_first(box);
+        sent = false;
+        sent2 = true;
     }
 }
 
