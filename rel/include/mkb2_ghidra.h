@@ -1174,19 +1174,20 @@ enum {
     CHALLENGE_MODE=0,
     COMPETITION_MODE=1,
     PRACTICE_MODE=2,
-    G_RETRY_W_NO_SHADOW=3,
-    G_NO_RETRY_VIEWSTAGE_INFLIFE=4,
-    G_NO_RETRY_VIEWSTAGE_INFLIFE_NOCOUNTER=5,
-    G_NO_PAUSING_NOCOUNTER=6,
-    G_NO_FALLOUT_SCREAM=7,
-    G_NO_FALLOUT_SCREAM_CRYING=8,
-    G_NO_FALLOUT_SCREEN_CHEERING=9,
-    G_NO_SHADOWS_CRASH_ON_FALLOUT=10,
+    MONKEY_RACE=3,
+    MONKEY_FIGHT=4,
+    MONKEY_TARGET=5,
+    MONKEY_BILLIARDS=6,
+    MONKEY_BOWLING=7,
+    MONKEY_GOLF=8,
+    MONKEY_SHOT=9,
+    MONKEY_BOAT=10,
     G_SPAWN_OPPOSITE_OF_STARTPOS=11,
-    G_SPAWN_ORIGIN=12,
-    G_DANCE_CONTINUE_SCREEN=13,
+    MONKEY_SOCCER=12,
+    MONKEY_DOGFIGHT=13,
     STORY_MODE=14,
-    G_H_POSE_CONTINUE_SCREEN=15
+    MONKEY_BASEBALL=15,
+    MONKEY_TENNIS=16
 };
 typedef undefined4 MainGameMode;
 
@@ -5150,7 +5151,7 @@ extern "C" {
     extern pointer INIT_REL_PATHS[2];
     extern OSHeapHandle currentHeap;
     extern undefined4 arena_lo;
-    extern pointer gx;
+    extern pointer g_some_internal_gx_struct;
     extern BOOL32 SHOULD_ALLOCATE_MEM_FROM_ARENA_HI;
     extern undefined4 rand_next_value;
     extern bool g_something_with_progressive_mode;
@@ -5757,6 +5758,7 @@ extern "C" {
     extern undefined4 g_last_filename_attempted_to_open;
     extern undefined4 g_minigame_tick_func;
     extern undefined1 g_haze_type;
+    extern undefined4 g_maybe_smth_related_to_pausing;
     extern struct MemCardInfo memcard_infos[2];
     extern struct StoryModeSaveFile storymode_save_files[3];
     extern undefined1 g_storymode_unlock_entries_copy[13];
@@ -5796,6 +5798,7 @@ extern "C" {
     extern undefined4 g_some_author_tick_func;
     extern undefined4 g_some_author_cutscene_timer;
     extern undefined4 g_some_author_cutscene_flag;
+    extern undefined4 g_playpoint_msg_counter;
     extern struct UnlockInfo unlock_info;
     extern pointer switchdataD_804ee064;
     extern undefined * story_mode_funcs;
@@ -7335,6 +7338,7 @@ extern "C" {
     void g_something_with_fog(double param_1, double param_2, int param_3);
     void g_something_with_raster_state(int param_1);
     void g_set_some_projection_matrix(double fov, double aspect_ratio, double near_clip, double far_clip);
+    void g_smth_with_projection_mtx(float * param_1);
     void gx_begin_display_list_wrapper(void * list, u32 size);
     u32 gx_end_display_list_wrapper(void);
     void g_zero_something(void);
@@ -7725,10 +7729,10 @@ extern "C" {
     void g_maybe_call_some_func_ptr_related_to_sub_mode(void);
     uint get_next_player_idx(void);
     int g_get_next_stage_id(void);
-    void g_something_with_pausemenu(int param_1);
+    void g_construct_pause_menu_sprite(int param_1);
     void g_check_input_in_pausemenu(int param_1);
     void handle_pausemenu_selection(int param_1);
-    void g_related_to_pausemenu(void);
+    void g_pause_game(void);
     void init_events(void);
     void tick_events(void);
     void event_init(EventID  event_id);
@@ -7931,6 +7935,8 @@ extern "C" {
     void g_zero_some_sprite_related_state(void);
     void draw_ui(void);
     void g_draw_sprite_requests_from_buffer(void);
+    u16 g_get_bmp_width(uint param_1);
+    u16 g_get_bmp_height(uint param_1);
     void init_ui_element_sprite_with_defaults(void);
     void set_ui_element_sprite_pos(double x, double y);
     void set_ui_element_sprite_depth(double depth);
@@ -8016,7 +8022,10 @@ extern "C" {
     void g_change_music_volume(s32 param_1, s32 param_2, u8 volume);
     void SoundEffectInit(void);
     void g_something_with_sound9(void);
-    void g_smth_calls_sndAuxCallbackUpdateSettingsReverbHI(undefined4 * param_1);
+    void g_snd_dbg_call_sndAuxCallbackupdateSettingsReverbHI_1(undefined4 * param_1);
+    void g_snd_dbg_call_sndAuxCallbackUpdateSettingsChorus_2(undefined4 * param_1);
+    void g_snd_dbg_call_sndAuxCallbackUpdateSettingsReverbHI_2(void);
+    void g_snd_dbg_call_sndAuxCallbackUpdateSettingsChorus_1(void);
     void g_set_some_sound_data(void);
     void g_something_with_sound6(void);
     void g_something_with_sound11(void);
@@ -8648,8 +8657,10 @@ extern "C" {
     void event_sprite_init(void);
     void event_sprite_tick(void);
     void event_sprite_dest(void);
+    void g_smth_with_drawing_all_sprites(int param_1);
     void draw_sprite(struct Sprite * sprite);
     void call_something_with_bmp_bmp_com(int param_1);
+    void g_call_smth_with_freeing_memory(int param_1);
     void g_something_with_iteratively_freeing_memory(void);
     Sprite * create_sprite(void);
     Sprite * create_linked_sprite(struct Sprite * sprite);
@@ -8683,6 +8694,7 @@ extern "C" {
     void g_get_string_sprite_width_2(int param_1);
     void g_call_call_smth_with_fonts_chara_load_w_defaults(byte * param_1);
     void g_call_get_string_sprite_width(byte * string);
+    void g_smth_with_screen_fading(void);
     void fade_screen_to_color(uint flags, u32 color, uint frames);
     undefined4 draw_sprite_draw_request(struct SpriteDrawRequest * request);
     void g_scale_sprite_for_widescreen(uint param_1);
@@ -8695,6 +8707,8 @@ extern "C" {
     double g_smth_with_fonts_chara_load(byte * string, int param_2, char param_3);
     void g_call_smth_with_fonts_chara_load_w_defaults(byte * string);
     double g_get_string_sprite_width(byte * string);
+    void g_display_playpoint_or_gift_message_child(int param_1, int param_2, int * param_3);
+    void g_smth_with_playpoint_or_gift_msg(int param_1, char * param_2);
     void g_some_printf_function_4(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, int param_9, char * param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
     void create_pausemenu_sprite(void);
     void g_smth_creates_gameover_sprite(undefined4 param_1, struct Sprite * sprite);
@@ -8760,9 +8774,11 @@ extern "C" {
     void sprite_save_tick(u8 * status, struct Sprite * sprite);
     void sprite_save_disp(struct Sprite * sprite);
     void sprite_monkey_counter_icon_disp(struct Sprite * sprite);
+    undefined4 g_smth_with_get_active_monkey_icon(undefined4 param_1, int param_2, int param_3);
     void g_create_how_to_sprite(void);
     void g_sprite_how_to_tick(u8 * status, struct Sprite * sprite);
     void g_sprite_how_to_disp(struct Sprite * sprite);
+    void g_sprite_how_to_dest(void);
     void create_hud_sprites(void);
     void create_score_sprites(float pos_x, float pos_y);
     void create_timer_sprites(float param_1, float param_2);
@@ -8842,6 +8858,7 @@ extern "C" {
     void event_mouse_init(void);
     void event_mouse_tick(void);
     void event_mouse_dest(void);
+    void g_smth_with_drawing_text_sprites(void);
     void event_rend_efc_init(void);
     void event_rend_efc_tick(void);
     void event_rend_efc_dest(void);
@@ -9066,18 +9083,25 @@ extern "C" {
     void empty_function(void);
     void compare_play_points_with_99999_after_exit_game(void);
     dword get_play_point_count(void);
-    void g_display_playpoint_or_gift_message(double param_1, double param_2, undefined param_3);
+    void g_display_playpoint_or_gift_message(double g_x_pos, double g_y_pos, undefined param_3);
+    void g_playpoint_or_gift_msg_disp(undefined8 param_1_00, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, int * param_9, undefined4 param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
+    bool is_able_to_unlock_party_game(void);
     void unlock_party_game(int party_game);
+    bool is_able_to_unlock_gift(void);
     void g_something_with_assinging_unlockables(void);
     void unlock_movie(int movie);
     void unlock_staff_credits_game(void);
+    uint are_all_gifts_unlocked(void);
     uint g_check_if_partygame_unlocked(int param_1);
     int get_num_of_unlocked_party_games(void);
     bool are_all_party_games_unlocked(void);
     void set_unlocked_monkeys_to_three(void);
     byte get_num_unlocked_monkeys(void);
+    bool are_all_extra_monkeys_unlocked(void);
     void g_set_movie_as_unlocked(int param_1);
     uint g_is_movie_unlocked(int param_1);
+    bool are_all_movies_unlocked(void);
+    byte is_staff_credits_game_unlocked(void);
     undefined4 return_5(void);
     undefined4 return_0(void);
     void main_game_rel_prolog(void);
@@ -9300,15 +9324,67 @@ extern "C" {
     void sample_unlinked_func(void);
     void test_mode_prolog(void);
     void test_mode_unlinked_func(void);
-    void g_references_420_05_maybe_wraparound_for_debug(void);
-    void g_init_smd_test_sound_main(void);
-    void g_something_with_debug_mode_sound(void);
+    void smd_test_select_init(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, undefined4 param_9, undefined4 param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
+    void smd_test_select_main(void);
+    void smd_test_dip_init(void);
+    void smd_test_dip_main(void);
+    void smd_test_input_init(void);
+    void smd_test_input_main(void);
+    void smd_test_sound_init(void);
+    void smd_test_sound_main(void);
     void g_draw_debug_mode_sound_screen(undefined8 param_1, undefined8 param_2, double param_3, double param_4, double param_5, double param_6, double param_7, double param_8, undefined4 param_9, undefined4 param_10, int param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
-    void g_something_that_loads_common_p_dot_lz(void);
+    void smd_test_adx_init(void);
+    void smd_test_adx_main(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, undefined4 param_9, undefined4 param_10, uint * param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
+    void smd_test_blur_init(void);
+    void smd_test_blur_main(void);
+    void smd_test_shadow_init(void);
+    void smd_test_shadow_main(void);
+    void smd_test_focus_init(void);
+    void smd_test_focus_main(void);
+    void smd_test_indirect_init(void);
+    void smd_test_indirect_main(void);
+    void smd_test_nlobject_init(void);
+    void smd_test_nlobject_main(void);
+    void smd_test_bitmap_init(void);
+    void smd_test_bitmap_main(void);
+    void smd_test_font_init(void);
+    void smd_test_font_main(void);
+    void smd_test_aram_font_init(void);
+    void smd_test_aram_font_main(void);
+    void smd_test_motion_init(void);
+    void smd_test_motion_main(undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8);
+    void smd_test_newmotion_init(void);
+    void smd_test_newmotion_main(undefined4 param_1, undefined4 param_2, int param_3, int param_4, int param_5, undefined4 param_6, int param_7, int param_8);
+    void smd_test_advreplay_init(void);
+    void smd_test_model_init(void);
+    void smd_test_model_main(void);
+    void smd_test_newmodel_init(void);
+    void smd_test_newmodel_main(void);
+    void smd_test_pattern_init(void);
+    void smd_test_pattern_main(void);
+    void smd_test_romfont_init(void);
+    void smd_test_romfont_main(void);
+    void smd_test_prerend_init(void);
+    void smd_test_prerend_main(void);
+    void smd_test_preview_init(void);
+    void smd_test_preview_main(void);
+    void smd_test_replay_init(void);
+    void smd_test_replay_main(void);
+    void smd_test_scene_play_init(void);
+    void smd_test_scene_play_main(undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8);
+    void smd_test_dialog_init(void);
+    void smd_test_dialog_main(undefined4 param_1, undefined4 param_2, undefined2 * param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8);
+    void smd_test_difficulty_init(void);
+    void smd_test_difficulty_main(void);
+    void smd_test_chk_repsize_init(void);
+    void smd_test_chk_repsize_main(void);
+    void smd_test_shadow_main_child(void);
     void empty_function(void);
     void empty_function(void);
     void empty_function(void);
+    void smd_test_focus_main_child(void);
     void empty_function(void);
+    void smd_test_indirect_main_child(void);
     void empty_function(void);
     void g_some_printf_function_7(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, char * param_9, char * param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
     void g_something_freeing_something_from_main_heap_2(void);

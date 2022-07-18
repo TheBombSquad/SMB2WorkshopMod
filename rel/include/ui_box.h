@@ -13,6 +13,7 @@ namespace ui_box {
         MODIFIER_NONE,
         MODIFIER_WIGGLE,
         MODIFIER_ZOOM,
+        MODIFIER_LIFETIME,
     };
 
     enum class UIBoxState {
@@ -41,24 +42,30 @@ namespace ui_box {
         void disp();
         void set_state(const UIBoxState &state);
         void set_wiggle_modifier(const u16 &angle, const float &period);
-        void set_zoom_modifier(const float &time, const ZoomType &zoom_type, const float &delay = 0.0f);
+        void set_zoom_modifier(const u32 &time, const ZoomType &zoom_type, const u32 &delay = 0);
+        void set_lifetime_modifier(const u32 &time);
         void set_scale(const float &x, const float &y);
+        void set_title(char* title);
+        void set_subtitle(char* subtitle);
+        void set_message(char* message);
         UIBoxState get_state() const;
 
-    private:
+
+        private:
         UIBoxState state;
         Vec2d m_pos;
         Vec2d m_dimensions;
         Vec2d m_scale;
         s32 m_rot_z = 0;
-        char* title = nullptr;
-        char* subtitle = nullptr;
-        char* message = nullptr;
+        char* m_title = nullptr;
+        char* m_subtitle = nullptr;
+        char* m_message = nullptr;
         List<UIBoxModifier> modifiers = List<UIBoxModifier>();
         u8 modifier_count;
 
         void modifier_wiggle(UIBoxModifier* modifier);
         void modifier_zoom(UIBoxModifier* modifier);
+        void modifier_lifetime(UIBoxModifier* modifier);
     };
 
     void init();

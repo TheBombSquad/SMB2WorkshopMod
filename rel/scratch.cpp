@@ -14,8 +14,8 @@ u8 fc;
 mkb::Sprite* sprite_banana = nullptr;
 bool sent = false;
 bool sent2 = false;
-float mystery = 0.0;
-
+u32 mystery = 0;
+u32 mystery_2 = 0;
 /*
 void sprite_disp(mkb::Sprite* sprite) {
 
@@ -84,39 +84,33 @@ void sprite_disp(mkb::Sprite* sprite) {
 }
 
 */
-ui_box::UIBox* box;
 void init() {
 }
 
 void tick() {
-    if (pad::button_down(mkb::PAD_TRIGGER_R)) {
-        mystery += 1.0;
-        mkb::OSReport("x: %f\n", mystery);
+    if (pad::button_down(mkb::PAD_BUTTON_X)) {
+        mkb::OSReport("playing sound %d\n", mystery);
+        mkb::call_SoundReqID_arg_1(mystery);
+        mystery += 1;
     }
 
     if (pad::button_down(mkb::PAD_TRIGGER_L)) {
-        mystery -= 1.0;
         mkb::OSReport("x: %f\n", mystery);
     }
 
     if (pad::button_down(mkb::PAD_TRIGGER_Z) && !sent) {
-        box = new ui_box::UIBox(220, 120, 200, 100);
-        box->set_scale(0,0);
-        box->set_wiggle_modifier(2000, 3);
-        box->set_zoom_modifier(0.25, ui_box::ZoomType::ZOOM_IN, 1.0f);
-        box->set_zoom_modifier(0.25, ui_box::ZoomType::ZOOM_OUT, 2.0f);
         //mkb::call_SoundReqID_arg_2(10);
-        ui_box::ui_boxes.append(box);
+        mkb::OSReport("free: %x\n", heap::get_free_space());
+
         sent = true;
         sent2 = false;
-
     }
 
     if (pad::button_down(mkb::PAD_BUTTON_Y) && !sent2) {
-        ui_box::ui_boxes.remove_first(box);
         sent = false;
         sent2 = true;
     }
+    if (sent) mystery_2++;
 }
 
 void disp() {}

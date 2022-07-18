@@ -21,8 +21,15 @@ namespace ui_box {
         if (!ui_boxes.empty()) {
             Element<UIBox>* e = ui_boxes.first;
             do {
-                e->val->disp();
-                e = e->next;
+                if (e->val->get_state() == UIBoxState::STATE_DESTROY) {
+                    Element<UIBox>* next = e->next;
+                    ui_boxes.remove_first(e->val);
+                    e = next;
+                }
+                else {
+                    e->val->disp();
+                    e = e->next;
+                }
             }
             while (e != nullptr);
         }
@@ -53,6 +60,10 @@ namespace ui_box {
                             break;
                         case AnimType::MODIFIER_ZOOM:
                             modifier_zoom(mod);
+                            break;
+                        case AnimType::MODIFIER_LIFETIME:
+                            modifier_lifetime(mod);
+                            break;
                         case AnimType::MODIFIER_NONE:
                         default:
                         break;
@@ -64,19 +75,32 @@ namespace ui_box {
         }
 
         if (state != UIBoxState::STATE_INVISIBLE && state != UIBoxState::STATE_INVISIBLE_NO_TICK) {
+            Vec2d centered_pos;
+            centered_pos.x = m_pos.x+(m_dimensions.x/2);
+            centered_pos.y = m_pos.y+(m_dimensions.y/2);
 
             mkb::mtxa_from_identity();
-            mkb::mtxa_translate_xyz(m_pos.x+(m_dimensions.x/2), m_pos.y+(m_dimensions.y/2), 0.0);
+            mkb::mtxa_translate_xyz(centered_pos.x, centered_pos.y, 0.0);
             mkb::mtxa_scale_xyz(m_scale.x, m_scale.y, 1);
             mkb::mtxa_rotate_z(m_rot_z);
-            mkb::mtxa_translate_neg_xyz(m_pos.x+(m_dimensions.x/2), m_pos.y+(m_dimensions.y/2), 0.0);
+            mkb::mtxa_translate_neg_xyz(centered_pos.x, centered_pos.y, 0.0);
             mkb::GXLoadPosMtxImm(reinterpret_cast<float(*)[4]>(mkb::mtxa), 0);
             mkb::init_ui_element_sprite_with_defaults();
-            mkb::set_ui_element_sprite_pos(m_pos.x+(m_dimensions.x/2), m_pos.y+(m_dimensions.y/2));
+            mkb::set_ui_element_sprite_pos(centered_pos.x, centered_pos.y);
             mkb::set_ui_element_sprite_scale(1, 1);
             mkb::set_ui_element_sprite_scale(m_dimensions.x/416, m_dimensions.y/176);
             mkb::set_ui_element_sprite_depth(0.10);
             draw_ui_box_ext(0x5);
+            mkb::init_global_font_sprite_vars_with_defaults();
+            mkb::set_global_font_sprite_type(mkb::FONT32_ASC_24x24);
+            mkb::set_global_font_sprite_flags(0x80000000);
+            mkb::set_global_font_sprite_drop_shadow_flag();
+            mkb::g_set_global_font_sprite_mult_color(0xff8000);
+            mkb::set_global_font_sprite_scale(0.7, 1);
+            mkb::set_global_font_sprite_depth(0.01);
+            mkb::set_global_font_sprite_pos(centered_pos.x, centered_pos.y);
+            mkb::set_global_font_sprite_alignment(mkb::ALIGN_CENTER);
+            mkb::draw_text_sprite_string((mkb::byte*)m_title);
         }
     }
 
@@ -92,20 +116,43 @@ namespace ui_box {
         });
     }
 
-    void UIBox::set_zoom_modifier(const float &time, const ZoomType &zoom_type, const float &delay)
+    void UIBox::set_zoom_modifier(const u32 &time, const ZoomType &zoom_type, const u32 &delay)
     {
         modifiers.append(new UIBoxModifier {
             .type = AnimType::MODIFIER_ZOOM,
-            .int_param_1 = (s32)(delay*60.0f),
-            .int_param_2 = (s32)(time*60.0f),
+            .int_param_1 = delay,
+            .int_param_2 = time,
             .float_param_2 = (zoom_type == ZoomType::ZOOM_IN) ? 1.0f : -1.0f,
             .float_param_3 = (zoom_type == ZoomType::ZOOM_IN) ? 0.0f : 1.0f,
+        });
+    }
+
+    void UIBox::set_lifetime_modifier(const u32 &time)
+    {
+        modifiers.append(new UIBoxModifier {
+            .type = AnimType::MODIFIER_LIFETIME,
+            .int_param_1 = time,
         });
     }
 
     UIBoxState UIBox::get_state() const
     {
         return state;
+    }
+
+    void UIBox::set_title(char* title)
+    {
+        m_title = title;
+    }
+
+    void UIBox::set_subtitle(char* subtitle)
+    {
+        m_subtitle = subtitle;
+    }
+
+    void UIBox::set_message(char* message)
+    {
+        m_message = message;
     }
 
     void UIBox::set_state(const UIBoxState &state)
@@ -139,8 +186,8 @@ namespace ui_box {
     void UIBox::modifier_zoom(UIBoxModifier* modifier)
     {
 
-        MOD_ASSERT_MSG(DELAY_FRAMES > 0, "Zoom modifier delay cannot be negative");
-        MOD_ASSERT_MSG(DURATION > 0, "Zoom modifier duration cannot be negative");
+        MOD_ASSERT_MSG(DELAY_FRAMES >= 0, "Zoom modifier delay cannot be negative");
+        MOD_ASSERT_MSG(DURATION > 0, "Zoom modifier duration cannot be negative or zero");
 
         if (CURRENT_FRAME < DELAY_FRAMES) {
             CURRENT_FRAME++;
@@ -159,6 +206,19 @@ namespace ui_box {
         m_scale.y = scale;
 
         CURRENT_FRAME++;
+    }
+
+    // Destroys the UIBox after int_param_1 frames
+    void UIBox::modifier_lifetime(UIBoxModifier *modifier)
+    {
+        if (modifier->counter < modifier->int_param_1) {
+            modifier->counter++;
+            return;
+        }
+        else {
+            set_state(UIBoxState::STATE_DESTROY);
+            return;
+        }
     }
     #undef CURRENT_FRAME
     #undef DELAY_FRAMES

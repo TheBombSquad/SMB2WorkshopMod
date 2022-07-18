@@ -36,6 +36,7 @@ void List<T>::append(T* obj)
         }
         i->next = e;
     }
+    mkb::OSReport("appending %X to list\n", obj);
 }
 
 // This won't remove duplicate values
@@ -67,6 +68,7 @@ void List<T>::remove_first(T* obj)
                     i->next = nullptr;
                 }
                 heap::free_to_heap(obj);
+                mkb::OSReport("destroyed %X\n", obj);
                 return;
             }
             i = i->next;
