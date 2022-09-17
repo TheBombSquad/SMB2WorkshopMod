@@ -10,7 +10,6 @@
 
 namespace config {
 
-static int config_file_length;
 static mkb::DVDFileInfo config_file_info;
 static char* config_file_buf;
 static char config_file_path[] = "/config.txt";
@@ -173,15 +172,14 @@ void parse_function_toggles(char* buf) {
 }
 
 void parse_config() {
-    config_file_length = mkb::DVDOpen(config_file_path, &config_file_info);
-    if (config_file_length != 0) {
-        // Round the length of the config file to a multiple of 32, necessary for DVDReadAsyncPrio
-        config_file_length = (config_file_info.length + 0x1f) & 0xffffffe0;
-        config_file_buf = static_cast<char*>(heap::alloc(config_file_length));
-        config_file_length = mkb::read_entire_file_using_dvdread_prio_async(&config_file_info, config_file_buf, config_file_length, 0);
+    bool open_success = mkb::DVDOpen(config_file_path, &config_file_info);
+    if (open_success) {
+        // heap::alloc rounds to a multiple of 32, necessary for DVDReadAsyncPrio
+        config_file_buf = static_cast<char*>(heap::alloc(config_file_info.length));
+        u32 read_length = mkb::read_entire_file_using_dvdread_prio_async(&config_file_info, config_file_buf, config_file_info.length, 0);
         char* eof = config_file_buf + config_file_info.length;
 
-        if (config_file_length != 0) {
+        if (read_length > 0) {
             mkb::OSReport("[wsmod] Now parsing config file...\n");
             char section[64] = {0};
             char *file = config_file_buf;
