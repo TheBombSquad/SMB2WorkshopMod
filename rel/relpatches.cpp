@@ -228,14 +228,10 @@ namespace relpatches
     }
 
 
-    // TODO: Probably not the best way to implement this, will need to look into a
-    // proper fix soon. In a function that sets a parameter that enables heat
-    // haze for the specific desert theme ID, the theme ID is compared to 0xffff
-    // instead of 0x7.
-    // 0x2c00ffff = cmpwi r0, 0xffff
+    // Nop a call to a function which controls where Sand's haze is drawn.
     void remove_desert_haze::init_main_loop()
     {
-        patch::write_word(reinterpret_cast<void*>(0x802e4ed8), 0x2c00ffff);
+        patch::write_nop(reinterpret_cast<void*>(0x802e54b8));
     }
 
     // Hooks right before the call to SoftStreamStart, then nops the
