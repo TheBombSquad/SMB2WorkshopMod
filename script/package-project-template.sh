@@ -22,13 +22,10 @@ DOL_DEST=PATH/TO/YOUR/main.dol
 # Included in the repo
 RELLOADER_SRC=relloader/iso-rel-loader-us.asm
 
-# Name of the REL file
-# If you change this, you also need to modify the iso-rel-loader-us.asm accordingly
-REL_NAME=mkb2.rel_sample.rel
-
 # Destination of the REL file
 # Ideally you want the path to an extracted root of Super Monkey Ball 2
 # You'll probably want to replace mkb2.rel_sample.rel
+# If you change the file name, you also need to modify iso-rel-loader-us.asm accordingly
 REL_DEST=PATH/TO/YOUR/mkb2.rel_sample.rel
 
 # Pass -i to this script to inject the main.dol file
@@ -40,4 +37,4 @@ fi
 make -j$(nproc)
 
 echo 'Copying REL to' $REL_DEST
-cp ApeSphere.us.rel $REL_DEST
+cp mkb2.rel_sample.rel $REL_DEST

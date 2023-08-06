@@ -6,13 +6,6 @@ if [ $(basename "$PWD") = script ] ; then
 cd ..
 fi
 
-# Import external tool configs into Clion
-mkdir -p "$PWD/.idea/tools"
-cp "$PWD/script/clion-config/customTargets.xml" "$PWD/.idea"
-cp "$PWD/script/clion-config/External Tools.xml" "$PWD/.idea/tools"
-
-# Make our build script executable
-chmod +x "$PWD/script"
 # Generates a compilation database project file for Clion
 echo "Configuring elf2rel..."
 ELF2REL_BUILD=$PWD/dep/ttyd-tools/ttyd-tools/elf2rel/build

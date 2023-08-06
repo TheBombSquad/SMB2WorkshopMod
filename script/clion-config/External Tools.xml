@@ -2,7 +2,7 @@
   <tool name="build_with_make" showInMainMenu="false" showInEditor="false" showInProject="false" showInSearchPopup="false" disabled="false" useConsole="true" showConsoleOnStdOut="false" showConsoleOnStdErr="false" synchronizeAfterRun="true">
     <exec>
       <option name="COMMAND" value="bash" />
-      <option name="PARAMETERS" value="-c scripts/package-project.sh" />
+      <option name="PARAMETERS" value="-c script/package-project.sh" />
       <option name="WORKING_DIRECTORY" value="$ProjectFileDir$" />
     </exec>
   </tool>
