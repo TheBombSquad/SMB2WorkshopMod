@@ -95,7 +95,7 @@ void init_main_game();
 namespace extend_reflections {
 void init_main_loop();
 void mirror_tick();
-float get_distance(Vec3f& vec1, Vec3f& vec2);
+float get_distance(Vec& vec1, Vec& vec2);
 
 }
 
@@ -167,6 +167,13 @@ void dmd_scen_sceneplay_init_patch();
 
 namespace stobj_draw_fix {
 void init_main_loop();
+}
+
+namespace stage_author_names {
+void init_main_loop();
+void sprite_init(float x, float y);
+void sprite_tick();
+void sprite_disp();
 }
 
 }
