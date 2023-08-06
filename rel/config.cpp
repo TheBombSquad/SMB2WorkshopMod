@@ -10,6 +10,7 @@
 
 namespace config {
 
+static int config_file_length;
 static mkb::DVDFileInfo config_file_info;
 static char* config_file_buf;
 static char config_file_path[] = "/config.txt";
@@ -175,8 +176,9 @@ void parse_config() {
     bool open_success = mkb::DVDOpen(config_file_path, &config_file_info);
     if (open_success) {
         // heap::alloc rounds to a multiple of 32, necessary for DVDReadAsyncPrio
-        config_file_buf = static_cast<char*>(heap::alloc(config_file_info.length));
-        u32 read_length = mkb::read_entire_file_using_dvdread_prio_async(&config_file_info, config_file_buf, config_file_info.length, 0);
+        config_file_length = (config_file_info.length + 0x1f) & 0xffffffe0;
+        config_file_buf = static_cast<char*>(heap::alloc(config_file_length));
+        u32 read_length = mkb::read_entire_file_using_dvdread_prio_async(&config_file_info, config_file_buf, config_file_length, 0);
         char* eof = config_file_buf + config_file_info.length;
 
         if (read_length > 0) {
