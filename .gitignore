@@ -272,6 +272,7 @@ __pycache__/
 /cmake-build-debug/
 
 /go.sh
+/package-project.sh
 
 /release/
 *.vcxproj*
