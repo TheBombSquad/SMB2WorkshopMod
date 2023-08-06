@@ -67,12 +67,12 @@ struct Player
 	float unk_190;
 	float wControlStickSensitivity;
 	float wControlStickAngle;
-	float unk_19c;
-	float unk_1a0;
+	float viewDirectionForwardWorld;
+	float playerDirectionWorld;
 	float wPlayerAngle;
 	float unk_1a8;
-	float wPlayerDirection;
-	uint32_t unk_1b0;
+	float playerDisplayDirectionCurrent;
+	float playerDisplayDirectionTarget;
 	uint32_t unk_1b4;
 	float wPlayerCollisionBox[3];
 	float wPlayerCollisionRelated[3];
@@ -90,8 +90,8 @@ struct Player
 	void *wUnkObj6;
 	uint8_t gap_210[52];
 	uint8_t unk_244;
-	uint8_t wFollowerFlags[2];
-	uint8_t prevFollowerId[2];
+	uint8_t partyId[2];
+	uint8_t prevPartyId[2];
 	uint8_t unk_249;
 	uint16_t wPauseButtonBuffer;
 	uint32_t unk_24c;
