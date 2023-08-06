@@ -1,13 +1,13 @@
 #pragma once
 
-#include <mkb.h>
+#include "mkb.h"
 #include "version.h"
 
 namespace modlink {
 
 // Struct read by additional SMB2 mods like the Practice Mod, to load themselves after Workshop Mod
 struct ModLink {
-    u32 magic;  // 0xFEEDC0DE
+    u32 magic;// 0xFEEDC0DE
 
     // ModLink format version, shouldn't change much if ever. Bump major version to prevent existing
     // Practice Mod rel loaders from loading.
@@ -28,4 +28,4 @@ struct ModLink {
  */
 void write();
 
-}
+}// namespace modlink

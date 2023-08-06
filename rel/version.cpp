@@ -14,4 +14,4 @@ s32 compare(const SemVer& v1, const SemVer& v2) {
     return 0;
 }
 
-}
+}// namespace version

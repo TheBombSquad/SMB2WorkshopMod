@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mkb.h>
+#include "mkb.h"
 
 namespace version {
 
@@ -14,4 +14,4 @@ extern const SemVer WSMOD_VERSION;
 
 s32 compare(const SemVer& v1, const SemVer& v2);
 
-}
+}// namespace version

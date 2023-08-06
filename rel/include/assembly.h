@@ -1,10 +1,9 @@
 #pragma once
 
-#include <mkb.h>
-#include <relpatches.h>
+#include "mkb.h"
+#include "relpatches.h"
 
-namespace main
-{
+namespace main {
 
 extern "C" {
 
@@ -45,7 +44,6 @@ void get_monkey_id_hook();
 
 extern mkb::SubMode sub_mode;
 void fix_rain_ripple();
-
 }
 
-}
+}// namespace main

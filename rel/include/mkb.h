@@ -21,19 +21,19 @@ inline void GXTexCoord2f32(float s, float t) {
     GXWGFifo.v_f32 = t;
 }
 
-}  // namespace mkb
+}// namespace mkb
 
 // It's convenient to always use these types "as our own", without having to namespace-address them
 using mkb::f32;
 using mkb::f64;
 using mkb::Quat;
 using mkb::s16;
+using mkb::S16Vec;
 using mkb::s32;
+using mkb::S32Vec;
 using mkb::s8;
 using mkb::u16;
 using mkb::u32;
 using mkb::u8;
-using mkb::Vec2d;
-using mkb::S32Vec;
 using mkb::Vec;
-using mkb::S16Vec;
+using mkb::Vec2d;

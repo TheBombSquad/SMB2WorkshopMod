@@ -1,11 +1,11 @@
 #include "config.h"
-#include "relpatches.h"
-#include "patch.h"
-#include "assembly.h"
-#include "log.h"
-#include "heap.h"
 
-#define STREQ(x,y) (mkb::strcmp(const_cast<char*>(x),const_cast<char*>(y))==0)
+#include "assembly.h"
+#include "heap.h"
+#include "log.h"
+#include "relpatches.h"
+
+#define STREQ(x, y) (mkb::strcmp(const_cast<char*>(x), const_cast<char*>(y)) == 0)
 #define KEY_ENABLED(x) (STREQ(key, x) && STREQ(value, "enabled"))
 
 namespace config {
@@ -16,73 +16,83 @@ static char* config_file_buf;
 static char config_file_path[] = "/config.txt";
 
 u16* parse_stageid_list(char* buf, u16* array) {
-    buf = mkb::strchr(buf, '\n')+1;
+    buf = mkb::strchr(buf, '\n') + 1;
 
-    char *end_of_section;
+    char* end_of_section;
     char key[64] = {0};
     char value[64] = {0};
     end_of_section = mkb::strchr(buf, '}');
     do {
         char *key_start, *key_end, *end_of_line;
-        key_start = mkb::strchr(buf, 'E')+2;
+        key_start = mkb::strchr(buf, 'E') + 2;
         key_end = mkb::strchr(buf, ':');
         MOD_ASSERT_MSG(key_start < key_end, "Key start after key end, did you start your key with a tab and not spaces?");
         end_of_line = mkb::strchr(buf, '\n');
-        mkb::strncpy(key, key_start, (key_end-key_start));
-        mkb::strncpy(value, key_end+2, (end_of_line-key_end)-2);
+        mkb::strncpy(key, key_start, (key_end - key_start));
+        mkb::strncpy(value, key_end + 2, (end_of_line - key_end) - 2);
         int key_idx = mkb::atoi(key);
-        u16 value_short = (u16)mkb::atoi(value);
+        u16 value_short = (u16) mkb::atoi(value);
         array[key_idx] = value_short;
 
-        buf = end_of_line+1;
+        buf = end_of_line + 1;
         mkb::memset(key, '\0', 64);
         mkb::memset(value, '\0', 64);
-    }
-    while (buf < end_of_section);
+    } while (buf < end_of_section);
     return array;
 }
 
 void parse_party_game_toggles(char* buf) {
-    buf = mkb::strchr(buf, '\n')+1;
+    buf = mkb::strchr(buf, '\n') + 1;
 
-    char *end_of_section;
+    char* end_of_section;
     char key[64] = {0};
     char value[64] = {0};
     end_of_section = mkb::strchr(buf, '}');
     do {
         char *key_start, *key_end, *end_of_line;
-        key_start = mkb::strchr(buf, '\t')+1;
+        key_start = mkb::strchr(buf, '\t') + 1;
         key_end = mkb::strchr(buf, ':');
         MOD_ASSERT_MSG(key_start < key_end, "Key start after key end, did you start your key with a tab and not spaces?");
         end_of_line = mkb::strchr(buf, '\n');
-        mkb::strncpy(key, key_start, (key_end-key_start));
-        mkb::strncpy(value, key_end+2, (end_of_line-key_end)-2);
+        mkb::strncpy(key, key_start, (key_end - key_start));
+        mkb::strncpy(value, key_end + 2, (end_of_line - key_end) - 2);
 
-        if KEY_ENABLED("monkey-race")           relpatches::party_game_toggle::party_game_bitflag |= 0x1;
-        else if KEY_ENABLED("monkey-fight")     relpatches::party_game_toggle::party_game_bitflag |= 0x2;
-        else if KEY_ENABLED("monkey-target")    relpatches::party_game_toggle::party_game_bitflag |= 0x4;
-        else if KEY_ENABLED("monkey-billiards") relpatches::party_game_toggle::party_game_bitflag |= 0x8;
-        else if KEY_ENABLED("monkey-bowling")   relpatches::party_game_toggle::party_game_bitflag |= 0x10;
-        else if KEY_ENABLED("monkey-golf")      relpatches::party_game_toggle::party_game_bitflag |= 0x20;
-        else if KEY_ENABLED("monkey-boat")      relpatches::party_game_toggle::party_game_bitflag |= 0x40;
-        else if KEY_ENABLED("monkey-shot")      relpatches::party_game_toggle::party_game_bitflag |= 0x80;
-        else if KEY_ENABLED("monkey-dogfight")  relpatches::party_game_toggle::party_game_bitflag |= 0x100;
-        else if KEY_ENABLED("monkey-soccer")    relpatches::party_game_toggle::party_game_bitflag |= 0x200;
-        else if KEY_ENABLED("monkey-baseball")  relpatches::party_game_toggle::party_game_bitflag |= 0x400;
-        else if KEY_ENABLED("monkey-tennis")    relpatches::party_game_toggle::party_game_bitflag |= 0x800;
+        if KEY_ENABLED ("monkey-race")
+            relpatches::party_game_toggle::party_game_bitflag |= 0x1;
+        else if KEY_ENABLED ("monkey-fight")
+            relpatches::party_game_toggle::party_game_bitflag |= 0x2;
+        else if KEY_ENABLED ("monkey-target")
+            relpatches::party_game_toggle::party_game_bitflag |= 0x4;
+        else if KEY_ENABLED ("monkey-billiards")
+            relpatches::party_game_toggle::party_game_bitflag |= 0x8;
+        else if KEY_ENABLED ("monkey-bowling")
+            relpatches::party_game_toggle::party_game_bitflag |= 0x10;
+        else if KEY_ENABLED ("monkey-golf")
+            relpatches::party_game_toggle::party_game_bitflag |= 0x20;
+        else if KEY_ENABLED ("monkey-boat")
+            relpatches::party_game_toggle::party_game_bitflag |= 0x40;
+        else if KEY_ENABLED ("monkey-shot")
+            relpatches::party_game_toggle::party_game_bitflag |= 0x80;
+        else if KEY_ENABLED ("monkey-dogfight")
+            relpatches::party_game_toggle::party_game_bitflag |= 0x100;
+        else if KEY_ENABLED ("monkey-soccer")
+            relpatches::party_game_toggle::party_game_bitflag |= 0x200;
+        else if KEY_ENABLED ("monkey-baseball")
+            relpatches::party_game_toggle::party_game_bitflag |= 0x400;
+        else if KEY_ENABLED ("monkey-tennis")
+            relpatches::party_game_toggle::party_game_bitflag |= 0x800;
 
-        buf = end_of_line+1;
+        buf = end_of_line + 1;
         mkb::memset(key, '\0', 64);
         mkb::memset(value, '\0', 64);
-    }
-    while (buf < end_of_section);
+    } while (buf < end_of_section);
 }
 
 void parse_function_toggles(char* buf) {
     // Enters from section parsing, so skip to the next line
-    buf = mkb::strchr(buf, '\n')+1;
+    buf = mkb::strchr(buf, '\n') + 1;
 
-    char *end_of_section;
+    char* end_of_section;
     char key[64] = {0};
     char value[64] = {0};
     end_of_section = mkb::strchr(buf, '}');
@@ -90,12 +100,12 @@ void parse_function_toggles(char* buf) {
 
     do {
         char *key_start, *key_end, *end_of_line;
-        key_start = mkb::strchr(buf, '\t')+1;
+        key_start = mkb::strchr(buf, '\t') + 1;
         key_end = mkb::strchr(buf, ':');
         MOD_ASSERT_MSG(key_start < key_end, "Key start after key end, did you start your key with a tab and not spaces?");
         end_of_line = mkb::strchr(buf, '\n');
-        mkb::strncpy(key, key_start, (key_end-key_start));
-        mkb::strncpy(value, key_end+2, (end_of_line-key_end)-2);
+        mkb::strncpy(key, key_start, (key_end - key_start));
+        mkb::strncpy(value, key_end + 2, (end_of_line - key_end) - 2);
 
         // Iterate through all the REL patch tickables, looking for match of key name
         for (unsigned int i = 0; i < relpatches::PATCH_COUNT; i++) {
@@ -132,8 +142,8 @@ void parse_function_toggles(char* buf) {
 
 
                     // Check to see if the passed value is within the defined bounds
-                    MOD_ASSERT_MSG(parsed_value >= relpatches:: patches[i].minimum_value, "Passed value for patch smaller than minimum value");
-                    MOD_ASSERT_MSG(parsed_value <= relpatches:: patches[i].maximum_value, "Passed value for patch larger than maximum value");
+                    MOD_ASSERT_MSG(parsed_value >= relpatches::patches[i].minimum_value, "Passed value for patch smaller than minimum value");
+                    MOD_ASSERT_MSG(parsed_value <= relpatches::patches[i].maximum_value, "Passed value for patch larger than maximum value");
 
                     // Set the status to the parsed value, if it differes from the default passed value
                     if (parsed_value != relpatches::patches[i].default_value) {
@@ -160,16 +170,14 @@ void parse_function_toggles(char* buf) {
 
                         break;
                     }
-
                 }
             }
         }
 
-        buf = end_of_line+1;
+        buf = end_of_line + 1;
         mkb::memset(key, '\0', 64);
         mkb::memset(value, '\0', 64);
-    }
-    while (buf < end_of_section);
+    } while (buf < end_of_section);
 }
 
 void parse_config() {
@@ -184,7 +192,7 @@ void parse_config() {
         if (read_length > 0) {
             mkb::OSReport("[wsmod] Now parsing config file...\n");
             char section[64] = {0};
-            char *file = config_file_buf;
+            char* file = config_file_buf;
             do {
                 char *section_start, *section_end;
                 // Parse the start of a section of the config starting with # and ending with {
@@ -197,7 +205,7 @@ void parse_config() {
                     section_start += 2;
                     section_end -= 1;
 
-                    mkb::strncpy(section, section_start, (section_end-section_start));
+                    mkb::strncpy(section, section_start, (section_end - section_start));
 
                     mkb::OSReport("[wsmod] Now parsing category %s...\n", section);
 
@@ -228,19 +236,17 @@ void parse_config() {
                         mkb::OSReport("[wsmod]  Unknown category %s found in config!\n", section);
                     }
 
-                    file = mkb::strchr(section_end, '\n')+1;
+                    file = mkb::strchr(section_end, '\n') + 1;
                     mkb::memset(section, '\0', 64);
                 }
                 else {
                     break;
                 }
-            }
-            while (file <= eof);
-
+            } while (file <= eof);
         }
         mkb::DVDClose(&config_file_info);
         heap::free(config_file_buf);
     }
 }
 
-}
+}// namespace config

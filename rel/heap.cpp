@@ -1,8 +1,8 @@
 #include "heap.h"
 
-#include <mkb.h>
-#include <cinttypes>
+#include "mkb.h"
 #include "relutil.h"
+#include <cinttypes>
 
 namespace heap {
 
@@ -15,7 +15,8 @@ mkb::ChunkInfo* extract_chunk(mkb::ChunkInfo* list, mkb::ChunkInfo* chunk) {
 
     if (!chunk->prev) {
         return chunk->next;
-    } else {
+    }
+    else {
         chunk->prev->next = chunk->next;
         return list;
     }
@@ -43,7 +44,7 @@ mkb::ChunkInfo* find_chunk_in_list(mkb::ChunkInfo* list, mkb::ChunkInfo* chunk) 
 
 static void make_heap() {
     u32 start = mkb::OSRoundUp32B(*reinterpret_cast<u32*>(0x8000452C));
-    void* end_ptr = relutil::compute_mainloop_reldata_boundary();  // TODO precompute?
+    void* end_ptr = relutil::compute_mainloop_reldata_boundary();// TODO precompute?
     u32 end = mkb::OSRoundDown32B(reinterpret_cast<u32>(end_ptr));
     u32 size = end - start;
 
@@ -84,7 +85,8 @@ void* alloc(u32 size) {
     if (leftover_size < min_size) {
         // Too small to split, so just extract it
         s_heap_info.first_free = extract_chunk(s_heap_info.first_free, temp_chunk);
-    } else {
+    }
+    else {
         // Large enough to split
         temp_chunk->size = static_cast<s32>(new_size);
 
@@ -103,7 +105,8 @@ void* alloc(u32 size) {
 
         if (new_chunk->prev) {
             new_chunk->prev->next = new_chunk;
-        } else {
+        }
+        else {
             s_heap_info.first_free = new_chunk;
         }
     }
@@ -143,7 +146,7 @@ bool free(void* ptr) {
 u32 get_free_space() {
     u32 space = 0;
     for (mkb::ChunkInfo* chunk = s_heap_info.first_free; chunk; chunk = chunk->next) {
-        space += chunk->size - 32;  // Don't count the ChunkInfo
+        space += chunk->size - 32;// Don't count the ChunkInfo
     }
     return space;
 }
@@ -197,4 +200,4 @@ mkb::HeapInfo& get_heap_info() {
     return s_heap_info;
 }
 
-}  // namespace heap
+}// namespace heap

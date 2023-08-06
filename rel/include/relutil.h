@@ -8,4 +8,4 @@ namespace relutil {
  */
 void* compute_mainloop_reldata_boundary();
 
-}  // namespace relutil
+}// namespace relutil

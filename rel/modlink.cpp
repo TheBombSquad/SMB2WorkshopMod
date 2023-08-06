@@ -1,7 +1,7 @@
 #include "modlink.h"
 
-#include "version.h"
 #include "heap.h"
+#include "version.h"
 
 namespace modlink {
 
@@ -17,4 +17,4 @@ void write() {
     link->heap_info = &heap::get_heap_info();
 }
 
-}
+}// namespace modlink
