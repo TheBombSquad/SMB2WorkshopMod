@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CLionExternalBuildManager">
+    <target id="37f5bc4d-1eb0-470c-9663-f995c345b9f5" name="WSMod" defaultType="TOOL">
+      <configuration id="e0dbc18f-dbbe-498f-a91d-4da50e0909aa" name="WSMod">
+        <build type="TOOL">
+          <tool actionId="Tool_External Tools_build_with_make" />
+        </build>
+        <clean type="TOOL">
+          <tool actionId="Tool_External Tools_clean_with_make" />
+        </clean>
+      </configuration>
+    </target>
+  </component>
+</project>
