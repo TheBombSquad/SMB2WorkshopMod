@@ -6,6 +6,9 @@ if [ $(basename "$PWD") = script ] ; then
 cd ..
 fi
 
+# Clean up so Bear can actually generate a compile_commands.json
+make clean
+
 # Generates a compilation database project file for Clion
 echo "Configuring elf2rel..."
 ELF2REL_BUILD=$PWD/dep/ttyd-tools/ttyd-tools/elf2rel/build
