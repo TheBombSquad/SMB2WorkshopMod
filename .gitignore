@@ -272,6 +272,7 @@ __pycache__/
 /cmake-build-debug/
 
 /go.sh
+/script/package-project.sh
 
 /release/
 *.vcxproj*
@@ -287,4 +288,4 @@ __pycache__/
 /build.*/
 /compile_commands.json
 /ApeSphere.*
-/.qtc_clangd/
+/.qtc_clangd

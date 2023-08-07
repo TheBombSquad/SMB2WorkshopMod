@@ -129,16 +129,6 @@ export HFILES := $(addsuffix .h,$(subst .,_,$(BINFILES)))
 # For REL linking
 export LDFILES		:= $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.ld)))
 export MAPFILE		:= $(CURDIR)/rel/include/mkb2.$(REGION).lst
-ifeq ($(REGION),us)
-	export BANNERFILE	:= $(CURDIR)/image/banner_us.raw
-	export ICONFILE		:= $(CURDIR)/image/icon_us.raw
-else ifeq ($(REGION),jp)
-	export BANNERFILE	:= $(CURDIR)/image/banner_jp.raw
-	export ICONFILE		:= $(CURDIR)/image/icon_jp.raw
-else ifeq ($(REGION),eu)
-	export BANNERFILE	:= $(CURDIR)/image/banner_eu.raw
-	export ICONFILE		:= $(CURDIR)/image/icon_eu.raw
-endif
 
 #---------------------------------------------------------------------------------
 # build a list of include paths
@@ -186,7 +176,7 @@ $(OFILES_SOURCES) : $(HFILES)
 # REL linking
 %.rel: %.elf
 	@echo output ... $(notdir $@)
-	@$(ELF2REL) $< -s $(MAPFILE) --rel-version 2
+	@$(ELF2REL) $< -s $(MAPFILE) --rel-version 2 --rel-id 100
 	
 #---------------------------------------------------------------------------------
 # This rule links in binary data with the .jpg extension

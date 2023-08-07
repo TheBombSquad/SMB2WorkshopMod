@@ -1,0 +1,1061 @@
+// This is the config file for Workshop Mod 0.3.0!
+// Place this in the root of your game directory, and name it config.txt
+// It should be in the same folder as the included REL file, mkb2.rel_sample.rel
+//
+// DO NOT ADD NEW LINES OR ENTRIES TO THIS FILE, ONLY MODIFY EXISTING ENTRIES!
+// IF YOU ABSOLUTELY MUST ADD NEW ENTRIES, USE TABS (\T) AND NOT SPACES!
+
+// ----------------------------------------------------------------------------
+
+// Valid values: 'enabled', 'disabled', decimal integer values
+
+// ----------------------------------------------------------------------------
+
+// Information about REL patches:
+//
+// perfect-bonus-completion
+//
+// When the number of bananas remaining on a stage that is marked as a bonus 
+// stage hits zero, the stage is completed with a 'Perfect' pop-up and voice
+// line, identical to SMB1.
+
+// remove-desert-haze
+//
+// Removes the heat haze on levels in theme ID 7 (sand). 
+// Indirectly fixes the widescreen issue with heat haze.
+
+// story-mode-music-fix
+//
+// Prevents the world music from being interrupted by the stage select music 
+// in Story Mode.
+
+// no-music-vol-decrease-on-pause
+//
+// Prevents the music volume from being lowered when the game is paused.
+
+// story-mode-char-select
+//
+// Allows the player to select between the four playable monkeys in Story Mode.
+
+// no-hurry-up-music
+//
+// Stops the 'hurry up' music from playing.
+
+// fix-revolution-slot
+//
+// Removes hardcoded elements from Revolution's level slot.
+
+// fix-labyrinth-camera
+//
+// Fixes the lower-angle camera hardcoded to Labyrinth's level slot.
+
+// challenge-mode-death-count
+//
+// Challenge mode has infinite lives, and the life counter is converted into 
+// a counter that tracks the number of deaths.
+
+// disable-how-to-play-screen
+//
+// Disables the tutorial/ranking sequence that shows up when the player goes 
+// idle at the title screen.
+
+// fix-wormhole-surfaces
+//
+// Fixes an issue where wormhole surfaces do not appear on stage IDs 130 
+// through 180, and stage ID 199.
+
+// fix-stage-object-reflection
+//
+// Fixes an issue where goal posts would not reflect properly, and makes any 
+// stage object with the effect bitflag 0x4 reflect in a reflective stage object.
+
+// enhance-reflective-surfaces
+//
+// Allows for arbitrarily many mirror planes on a stage, rendering the mirror plane
+// from the origin of the reflective object nearest to the player. Also applies the
+// item group/collision header transformation to the mirror plane, allowing for
+// reflective objects to be animated.
+
+// custom-music-id
+//
+// Draws music ID data from a per-stage list, defined below, instead of basing
+// it on the active theme.
+
+// custom-theme-id
+//
+// Draws theme ID data from a per-stage list, defined below, instead of using
+// the built-in list.
+
+// skip-intro-movie
+//
+// Skips the AV logo and intro movie sequence on game start, immediately
+// skipping to the title screen.
+
+// smb1-camera-toggle
+//
+// Allows for the SMB1 camera to be toggled with the Z button mid-game.
+
+// fix-missing-w
+//
+// Replaces the misplaced 't' letter in the story mode data entry screen with
+// the correct letter, a lowercase 'w'.
+
+// skip-cutscenes
+//
+// Skips the cutscenes in story mode.
+
+// remove-playpoints
+//
+// Removes the playpoint screen upon returning from story or challenge mode,
+// and unlocks all party games. 
+
+// fix-storm-continue-platform
+//
+// Fixes an issue with the storm theme where rain droplet splashes would not appear
+// correctly on the continue platform.
+
+// fix-any-percent-crash
+//
+// Fixes an issue where skipping more than two or three stages in story mode with the
+// any% skip glitch would lead to the game crashing. Please note that this allows for
+// up to 99 skips to be performed. 
+
+// party-game-toggle
+//
+// Permanently enables or disables party games based off the Party Game Toggles
+// list, defined below.
+
+// enable-menu-reflections
+//
+// Allows for the stages that appear in the background of the menu, stages 3 and 201,
+// to have mirrors in the background. This is experimental and may cause issues.
+
+// custom-world-count
+//
+// Allows for the number of worlds in story mode to be modified. After the final world,
+// the end cutscene will play, or the credits sequence will start if the cutscene skip
+// patch is enabled. The minimum value is 1, and the maximum value is 10.
+
+// stobj-draw-fix
+//
+// Stage objects (stobjs) like party balls and goaltapes may show up incorrectly
+// or not at all if they reside on an itemgroup whose index is >127. This patch
+// increases the limit to 256 total itemgroups.
+
+// ----------------------------------------------------------------------------
+
+// 'enabled' - Applies the patch
+// 'disabled' - Does not apply the patch
+
+# REL Patches {
+	perfect-bonus-completion: disabled
+	remove-desert-haze: disabled
+	story-mode-music-fix: disabled
+	no-music-vol-decrease-on-pause: disabled
+	story-mode-char-select: disabled
+	no-hurry-up-music: disabled
+	fix-revolution-slot: disabled
+	fix-labyrinth-camera: disabled
+	challenge-mode-death-count: disabled
+	disable-how-to-play-screen: disabled
+	fix-wormhole-surfaces: disabled
+	fix-stage-object-reflection: disabled
+	enhance-reflective-surfaces: disabled
+	custom-music-id: disabled
+	custom-theme-id: disabled
+	skip-intro-movie: disabled
+	smb1-camera-toggle: disabled
+	fix-missing-w: disabled
+	skip-cutscenes: disabled
+	remove-playpoints: disabled
+	fix-storm-continue-platform: disabled
+	fix-any-percent-crash: disabled
+	party-game-toggle: disabled
+	enable-menu-reflections: disabled
+	custom-world-count: 10
+	stobj-draw-fix: disabled
+}
+
+// Toggles which party games are accessible from the party game menu.
+// Party games marked with 'disabled' will be permanently disabled, and
+// cannot be unlocked or accessed. 
+// Requires the patch 'party-game-toggle' to be enabled.
+
+# Party Game Toggles {
+	monkey-race: disabled
+	monkey-fight: disabled
+	monkey-target: disabled
+	monkey-billiards: disabled
+	monkey-bowling: disabled
+	monkey-golf: disabled
+	monkey-boat: disabled
+	monkey-shot: disabled
+	monkey-dogfight: disabled
+	monkey-soccer: disabled
+	monkey-baseball: disabled
+	monkey-tennis: disabled
+}
+
+// Stage ID to theme ID mapping. Theme IDs are in decimal.
+// The default, vanilla theme ID list is provided for your convenience.
+// A theme ID list is included with the download of this mod.
+// Requires the patch 'custom-theme-id' to be enabled.
+
+# Theme IDs {
+	STAGE 0: 0
+	STAGE 1: 19
+	STAGE 2: 19
+	STAGE 3: 19
+	STAGE 4: 19
+	STAGE 5: 19
+	STAGE 6: 19
+	STAGE 7: 17
+	STAGE 8: 17
+	STAGE 9: 17
+	STAGE 10: 17
+	STAGE 11: 17
+	STAGE 12: 17
+	STAGE 13: 17
+	STAGE 14: 17
+	STAGE 15: 17
+	STAGE 16: 17
+	STAGE 17: 18
+	STAGE 18: 32
+	STAGE 19: 32
+	STAGE 20: 32
+	STAGE 21: 32
+	STAGE 22: 32
+	STAGE 23: 32
+	STAGE 24: 32
+	STAGE 25: 32
+	STAGE 26: 32
+	STAGE 27: 32
+	STAGE 28: 20
+	STAGE 29: 20
+	STAGE 30: 20
+	STAGE 31: 20
+	STAGE 32: 20
+	STAGE 33: 20
+	STAGE 34: 20
+	STAGE 35: 20
+	STAGE 36: 20
+	STAGE 37: 20
+	STAGE 38: 21
+	STAGE 39: 21
+	STAGE 40: 21
+	STAGE 41: 21
+	STAGE 42: 21
+	STAGE 43: 21
+	STAGE 44: 21
+	STAGE 45: 21
+	STAGE 46: 21
+	STAGE 47: 21
+	STAGE 48: 25
+	STAGE 49: 24
+	STAGE 50: 24
+	STAGE 51: 24
+	STAGE 52: 24
+	STAGE 53: 24
+	STAGE 54: 24
+	STAGE 55: 24
+	STAGE 56: 24
+	STAGE 57: 24
+	STAGE 58: 24
+	STAGE 59: 22
+	STAGE 60: 22
+	STAGE 61: 22
+	STAGE 62: 22
+	STAGE 63: 22
+	STAGE 64: 22
+	STAGE 65: 22
+	STAGE 66: 22
+	STAGE 67: 22
+	STAGE 68: 22
+	STAGE 69: 1
+	STAGE 70: 19
+	STAGE 71: 1
+	STAGE 72: 1
+	STAGE 73: 1
+	STAGE 74: 1
+	STAGE 75: 1
+	STAGE 76: 1
+	STAGE 77: 1
+	STAGE 78: 1
+	STAGE 79: 1
+	STAGE 80: 1
+	STAGE 81: 1
+	STAGE 82: 1
+	STAGE 83: 1
+	STAGE 84: 1
+	STAGE 85: 1
+	STAGE 86: 1
+	STAGE 87: 1
+	STAGE 88: 1
+	STAGE 89: 1
+	STAGE 90: 1
+	STAGE 91: 1
+	STAGE 92: 1
+	STAGE 93: 1
+	STAGE 94: 1
+	STAGE 95: 1
+	STAGE 96: 1
+	STAGE 97: 1
+	STAGE 98: 1
+	STAGE 99: 1
+	STAGE 100: 1
+	STAGE 101: 27
+	STAGE 102: 27
+	STAGE 103: 1
+	STAGE 104: 1
+	STAGE 105: 1
+	STAGE 106: 1
+	STAGE 107: 1
+	STAGE 108: 1
+	STAGE 109: 1
+	STAGE 110: 1
+	STAGE 111: 1
+	STAGE 112: 1
+	STAGE 113: 1
+	STAGE 114: 1
+	STAGE 115: 1
+	STAGE 116: 1
+	STAGE 117: 1
+	STAGE 118: 1
+	STAGE 119: 1
+	STAGE 120: 1
+	STAGE 121: 19
+	STAGE 122: 18
+	STAGE 123: 22
+	STAGE 124: 1
+	STAGE 125: 1
+	STAGE 126: 1
+	STAGE 127: 1
+	STAGE 128: 1
+	STAGE 129: 1
+	STAGE 130: 1
+	STAGE 131: 19
+	STAGE 132: 20
+	STAGE 133: 24
+	STAGE 134: 17
+	STAGE 135: 22
+	STAGE 136: 18
+	STAGE 137: 4
+	STAGE 138: 31
+	STAGE 139: 31
+	STAGE 140: 31
+	STAGE 141: 6
+	STAGE 142: 3
+	STAGE 143: 19
+	STAGE 144: 20
+	STAGE 145: 34
+	STAGE 146: 20
+	STAGE 147: 21
+	STAGE 148: 6
+	STAGE 149: 6
+	STAGE 150: 19
+	STAGE 151: 11
+	STAGE 152: 29
+	STAGE 153: 26
+	STAGE 154: 23
+	STAGE 155: 29
+	STAGE 156: 29
+	STAGE 157: 29
+	STAGE 158: 29
+	STAGE 159: 28
+	STAGE 160: 30
+	STAGE 161: 33
+	STAGE 162: 33
+	STAGE 163: 33
+	STAGE 164: 33
+	STAGE 165: 33
+	STAGE 166: 33
+	STAGE 167: 33
+	STAGE 168: 33
+	STAGE 169: 33
+	STAGE 170: 33
+	STAGE 171: 33
+	STAGE 172: 33
+	STAGE 173: 33
+	STAGE 174: 33
+	STAGE 175: 33
+	STAGE 176: 33
+	STAGE 177: 33
+	STAGE 178: 33
+	STAGE 179: 14
+	STAGE 180: 12
+	STAGE 181: 3
+	STAGE 182: 3
+	STAGE 183: 3
+	STAGE 184: 1
+	STAGE 185: 1
+	STAGE 186: 1
+	STAGE 187: 1
+	STAGE 188: 1
+	STAGE 189: 1
+	STAGE 190: 1
+	STAGE 191: 1
+	STAGE 192: 1
+	STAGE 193: 1
+	STAGE 194: 1
+	STAGE 195: 19
+	STAGE 196: 1
+	STAGE 197: 10
+	STAGE 198: 16
+	STAGE 199: 2
+	STAGE 200: 20
+	STAGE 201: 19
+	STAGE 202: 19
+	STAGE 203: 19
+	STAGE 204: 19
+	STAGE 205: 26
+	STAGE 206: 20
+	STAGE 207: 20
+	STAGE 208: 20
+	STAGE 209: 20
+	STAGE 210: 20
+	STAGE 211: 22
+	STAGE 212: 22
+	STAGE 213: 22
+	STAGE 214: 22
+	STAGE 215: 22
+	STAGE 216: 23
+	STAGE 217: 23
+	STAGE 218: 23
+	STAGE 219: 23
+	STAGE 220: 23
+	STAGE 221: 19
+	STAGE 222: 19
+	STAGE 223: 19
+	STAGE 224: 19
+	STAGE 225: 26
+	STAGE 226: 20
+	STAGE 227: 20
+	STAGE 228: 20
+	STAGE 229: 20
+	STAGE 230: 26
+	STAGE 231: 18
+	STAGE 232: 18
+	STAGE 233: 18
+	STAGE 234: 18
+	STAGE 235: 18
+	STAGE 236: 18
+	STAGE 237: 18
+	STAGE 238: 18
+	STAGE 239: 18
+	STAGE 240: 26
+	STAGE 241: 21
+	STAGE 242: 21
+	STAGE 243: 21
+	STAGE 244: 21
+	STAGE 245: 21
+	STAGE 246: 21
+	STAGE 247: 21
+	STAGE 248: 21
+	STAGE 249: 21
+	STAGE 250: 21
+	STAGE 251: 22
+	STAGE 252: 22
+	STAGE 253: 22
+	STAGE 254: 22
+	STAGE 255: 22
+	STAGE 256: 23
+	STAGE 257: 23
+	STAGE 258: 23
+	STAGE 259: 23
+	STAGE 260: 23
+	STAGE 261: 19
+	STAGE 262: 19
+	STAGE 263: 19
+	STAGE 264: 19
+	STAGE 265: 26
+	STAGE 266: 21
+	STAGE 267: 21
+	STAGE 268: 21
+	STAGE 269: 21
+	STAGE 270: 26
+	STAGE 271: 24
+	STAGE 272: 24
+	STAGE 273: 24
+	STAGE 274: 24
+	STAGE 275: 24
+	STAGE 276: 24
+	STAGE 277: 24
+	STAGE 278: 24
+	STAGE 279: 24
+	STAGE 280: 26
+	STAGE 281: 25
+	STAGE 282: 25
+	STAGE 283: 25
+	STAGE 284: 25
+	STAGE 285: 25
+	STAGE 286: 25
+	STAGE 287: 25
+	STAGE 288: 25
+	STAGE 289: 25
+	STAGE 290: 26
+	STAGE 291: 17
+	STAGE 292: 17
+	STAGE 293: 17
+	STAGE 294: 17
+	STAGE 295: 17
+	STAGE 296: 17
+	STAGE 297: 17
+	STAGE 298: 17
+	STAGE 299: 17
+	STAGE 300: 26
+	STAGE 301: 32
+	STAGE 302: 32
+	STAGE 303: 32
+	STAGE 304: 32
+	STAGE 305: 32
+	STAGE 306: 32
+	STAGE 307: 32
+	STAGE 308: 32
+	STAGE 309: 32
+	STAGE 310: 32
+	STAGE 311: 22
+	STAGE 312: 22
+	STAGE 313: 22
+	STAGE 314: 22
+	STAGE 315: 22
+	STAGE 316: 22
+	STAGE 317: 22
+	STAGE 318: 22
+	STAGE 319: 22
+	STAGE 320: 22
+	STAGE 321: 22
+	STAGE 322: 22
+	STAGE 323: 22
+	STAGE 324: 22
+	STAGE 325: 22
+	STAGE 326: 23
+	STAGE 327: 23
+	STAGE 328: 23
+	STAGE 329: 23
+	STAGE 330: 23
+	STAGE 331: 23
+	STAGE 332: 23
+	STAGE 333: 23
+	STAGE 334: 23
+	STAGE 335: 23
+	STAGE 336: 23
+	STAGE 337: 23
+	STAGE 338: 23
+	STAGE 339: 23
+	STAGE 340: 23
+	STAGE 341: 23
+	STAGE 342: 23
+	STAGE 343: 23
+	STAGE 344: 23
+	STAGE 345: 23
+	STAGE 346: 23
+	STAGE 347: 23
+	STAGE 348: 23
+	STAGE 349: 23
+	STAGE 350: 23
+	STAGE 351: 1
+	STAGE 352: 1
+	STAGE 353: 1
+	STAGE 354: 1
+	STAGE 355: 1
+	STAGE 356: 1
+	STAGE 357: 1
+	STAGE 358: 1
+	STAGE 359: 1
+	STAGE 360: 1
+	STAGE 361: 1
+	STAGE 362: 1
+	STAGE 363: 1
+	STAGE 364: 1
+	STAGE 365: 1
+	STAGE 366: 1
+	STAGE 367: 1
+	STAGE 368: 1
+	STAGE 369: 1
+	STAGE 370: 1
+	STAGE 371: 1
+	STAGE 372: 1
+	STAGE 373: 1
+	STAGE 374: 1
+	STAGE 375: 1
+	STAGE 376: 1
+	STAGE 377: 1
+	STAGE 378: 1
+	STAGE 379: 1
+	STAGE 380: 1
+	STAGE 381: 1
+	STAGE 382: 1
+	STAGE 383: 1
+	STAGE 384: 1
+	STAGE 385: 1
+	STAGE 386: 1
+	STAGE 387: 1
+	STAGE 388: 1
+	STAGE 389: 1
+	STAGE 390: 1
+	STAGE 391: 1
+	STAGE 392: 1
+	STAGE 393: 1
+	STAGE 394: 1
+	STAGE 395: 1
+	STAGE 396: 1
+	STAGE 397: 29
+	STAGE 398: 23
+	STAGE 399: 35
+	STAGE 400: 22
+	STAGE 401: 29
+	STAGE 402: 35
+	STAGE 403: 19
+	STAGE 404: 29
+	STAGE 405: 17
+	STAGE 406: 40
+	STAGE 407: 39
+	STAGE 408: 35
+	STAGE 409: 32
+	STAGE 410: 37
+	STAGE 411: 37
+	STAGE 412: 35
+	STAGE 413: 38
+	STAGE 414: 21
+	STAGE 415: 36
+	STAGE 416: 41
+	STAGE 417: 22
+	STAGE 418: 23
+	STAGE 419: 35
+	STAGE 420: 32
+}
+
+// To be implemented soon
+
+# Difficulty Layout {
+
+}
+
+// Stage ID to music ID mapping. Music IDs are in decimal.
+// The default, vanilla music ID list is provided for your convenience.
+// A music ID list is included with the download of this mod.
+// Requires the patch 'custom-music-id' to be enabled.
+
+# Music IDs {
+	STAGE 0: 0
+	STAGE 1: 7
+	STAGE 2: 7
+	STAGE 3: 7
+	STAGE 4: 7
+	STAGE 5: 7
+	STAGE 6: 7
+	STAGE 7: 1
+	STAGE 8: 1
+	STAGE 9: 1
+	STAGE 10: 1
+	STAGE 11: 1
+	STAGE 12: 1
+	STAGE 13: 1
+	STAGE 14: 1
+	STAGE 15: 1
+	STAGE 16: 1
+	STAGE 17: 4
+	STAGE 18: 64
+	STAGE 19: 64
+	STAGE 20: 64
+	STAGE 21: 64
+	STAGE 22: 64
+	STAGE 23: 64
+	STAGE 24: 64
+	STAGE 25: 64
+	STAGE 26: 64
+	STAGE 27: 64
+	STAGE 28: 61
+	STAGE 29: 61
+	STAGE 30: 61
+	STAGE 31: 61
+	STAGE 32: 61
+	STAGE 33: 61
+	STAGE 34: 61
+	STAGE 35: 61
+	STAGE 36: 61
+	STAGE 37: 61
+	STAGE 38: 6
+	STAGE 39: 6
+	STAGE 40: 6
+	STAGE 41: 6
+	STAGE 42: 6
+	STAGE 43: 6
+	STAGE 44: 6
+	STAGE 45: 6
+	STAGE 46: 6
+	STAGE 47: 6
+	STAGE 48: 63
+	STAGE 49: 70
+	STAGE 50: 70
+	STAGE 51: 70
+	STAGE 52: 70
+	STAGE 53: 70
+	STAGE 54: 70
+	STAGE 55: 70
+	STAGE 56: 70
+	STAGE 57: 70
+	STAGE 58: 70
+	STAGE 59: 16
+	STAGE 60: 16
+	STAGE 61: 16
+	STAGE 62: 16
+	STAGE 63: 16
+	STAGE 64: 16
+	STAGE 65: 16
+	STAGE 66: 16
+	STAGE 67: 16
+	STAGE 68: 16
+	STAGE 69: 0
+	STAGE 70: 7
+	STAGE 71: 0
+	STAGE 72: 0
+	STAGE 73: 0
+	STAGE 74: 0
+	STAGE 75: 0
+	STAGE 76: 0
+	STAGE 77: 0
+	STAGE 78: 0
+	STAGE 79: 0
+	STAGE 80: 0
+	STAGE 81: 0
+	STAGE 82: 0
+	STAGE 83: 0
+	STAGE 84: 0
+	STAGE 85: 0
+	STAGE 86: 0
+	STAGE 87: 0
+	STAGE 88: 0
+	STAGE 89: 0
+	STAGE 90: 0
+	STAGE 91: 0
+	STAGE 92: 0
+	STAGE 93: 0
+	STAGE 94: 0
+	STAGE 95: 0
+	STAGE 96: 0
+	STAGE 97: 0
+	STAGE 98: 0
+	STAGE 99: 0
+	STAGE 100: 0
+	STAGE 101: 0
+	STAGE 102: 0
+	STAGE 103: 0
+	STAGE 104: 0
+	STAGE 105: 0
+	STAGE 106: 0
+	STAGE 107: 0
+	STAGE 108: 0
+	STAGE 109: 0
+	STAGE 110: 0
+	STAGE 111: 0
+	STAGE 112: 0
+	STAGE 113: 0
+	STAGE 114: 0
+	STAGE 115: 0
+	STAGE 116: 0
+	STAGE 117: 0
+	STAGE 118: 0
+	STAGE 119: 0
+	STAGE 120: 0
+	STAGE 121: 7
+	STAGE 122: 4
+	STAGE 123: 16
+	STAGE 124: 0
+	STAGE 125: 0
+	STAGE 126: 0
+	STAGE 127: 0
+	STAGE 128: 0
+	STAGE 129: 0
+	STAGE 130: 0
+	STAGE 131: 7
+	STAGE 132: 61
+	STAGE 133: 70
+	STAGE 134: 1
+	STAGE 135: 16
+	STAGE 136: 4
+	STAGE 137: 0
+	STAGE 138: 0
+	STAGE 139: 0
+	STAGE 140: 0
+	STAGE 141: 0
+	STAGE 142: 0
+	STAGE 143: 7
+	STAGE 144: 61
+	STAGE 145: 0
+	STAGE 146: 61
+	STAGE 147: 6
+	STAGE 148: 0
+	STAGE 149: 0
+	STAGE 150: 7
+	STAGE 151: 0
+	STAGE 152: 0
+	STAGE 153: 42
+	STAGE 154: 58
+	STAGE 155: 0
+	STAGE 156: 0
+	STAGE 157: 0
+	STAGE 158: 0
+	STAGE 159: 0
+	STAGE 160: 0
+	STAGE 161: 0
+	STAGE 162: 0
+	STAGE 163: 0
+	STAGE 164: 0
+	STAGE 165: 0
+	STAGE 166: 0
+	STAGE 167: 0
+	STAGE 168: 0
+	STAGE 169: 0
+	STAGE 170: 0
+	STAGE 171: 0
+	STAGE 172: 0
+	STAGE 173: 0
+	STAGE 174: 0
+	STAGE 175: 0
+	STAGE 176: 0
+	STAGE 177: 0
+	STAGE 178: 0
+	STAGE 179: 0
+	STAGE 180: 0
+	STAGE 181: 0
+	STAGE 182: 0
+	STAGE 183: 0
+	STAGE 184: 0
+	STAGE 185: 0
+	STAGE 186: 0
+	STAGE 187: 0
+	STAGE 188: 0
+	STAGE 189: 0
+	STAGE 190: 0
+	STAGE 191: 0
+	STAGE 192: 0
+	STAGE 193: 0
+	STAGE 194: 0
+	STAGE 195: 7
+	STAGE 196: 0
+	STAGE 197: 0
+	STAGE 198: 0
+	STAGE 199: 7
+	STAGE 200: 61
+	STAGE 201: 7
+	STAGE 202: 7
+	STAGE 203: 7
+	STAGE 204: 7
+	STAGE 205: 42
+	STAGE 206: 61
+	STAGE 207: 61
+	STAGE 208: 61
+	STAGE 209: 61
+	STAGE 210: 61
+	STAGE 211: 16
+	STAGE 212: 16
+	STAGE 213: 16
+	STAGE 214: 16
+	STAGE 215: 16
+	STAGE 216: 58
+	STAGE 217: 58
+	STAGE 218: 58
+	STAGE 219: 58
+	STAGE 220: 58
+	STAGE 221: 7
+	STAGE 222: 7
+	STAGE 223: 7
+	STAGE 224: 7
+	STAGE 225: 42
+	STAGE 226: 61
+	STAGE 227: 61
+	STAGE 228: 61
+	STAGE 229: 61
+	STAGE 230: 42
+	STAGE 231: 4
+	STAGE 232: 4
+	STAGE 233: 4
+	STAGE 234: 4
+	STAGE 235: 4
+	STAGE 236: 4
+	STAGE 237: 4
+	STAGE 238: 4
+	STAGE 239: 4
+	STAGE 240: 42
+	STAGE 241: 6
+	STAGE 242: 6
+	STAGE 243: 6
+	STAGE 244: 6
+	STAGE 245: 6
+	STAGE 246: 6
+	STAGE 247: 6
+	STAGE 248: 6
+	STAGE 249: 6
+	STAGE 250: 6
+	STAGE 251: 16
+	STAGE 252: 16
+	STAGE 253: 16
+	STAGE 254: 16
+	STAGE 255: 16
+	STAGE 256: 58
+	STAGE 257: 58
+	STAGE 258: 58
+	STAGE 259: 58
+	STAGE 260: 58
+	STAGE 261: 7
+	STAGE 262: 7
+	STAGE 263: 7
+	STAGE 264: 7
+	STAGE 265: 42
+	STAGE 266: 6
+	STAGE 267: 6
+	STAGE 268: 6
+	STAGE 269: 6
+	STAGE 270: 42
+	STAGE 271: 70
+	STAGE 272: 70
+	STAGE 273: 70
+	STAGE 274: 70
+	STAGE 275: 70
+	STAGE 276: 70
+	STAGE 277: 70
+	STAGE 278: 70
+	STAGE 279: 70
+	STAGE 280: 42
+	STAGE 281: 63
+	STAGE 282: 63
+	STAGE 283: 63
+	STAGE 284: 63
+	STAGE 285: 63
+	STAGE 286: 63
+	STAGE 287: 63
+	STAGE 288: 63
+	STAGE 289: 63
+	STAGE 290: 42
+	STAGE 291: 1
+	STAGE 292: 1
+	STAGE 293: 1
+	STAGE 294: 1
+	STAGE 295: 1
+	STAGE 296: 1
+	STAGE 297: 1
+	STAGE 298: 1
+	STAGE 299: 1
+	STAGE 300: 42
+	STAGE 301: 64
+	STAGE 302: 64
+	STAGE 303: 64
+	STAGE 304: 64
+	STAGE 305: 64
+	STAGE 306: 64
+	STAGE 307: 64
+	STAGE 308: 64
+	STAGE 309: 64
+	STAGE 310: 64
+	STAGE 311: 16
+	STAGE 312: 16
+	STAGE 313: 16
+	STAGE 314: 16
+	STAGE 315: 16
+	STAGE 316: 16
+	STAGE 317: 16
+	STAGE 318: 16
+	STAGE 319: 16
+	STAGE 320: 16
+	STAGE 321: 16
+	STAGE 322: 16
+	STAGE 323: 16
+	STAGE 324: 16
+	STAGE 325: 16
+	STAGE 326: 58
+	STAGE 327: 58
+	STAGE 328: 58
+	STAGE 329: 58
+	STAGE 330: 58
+	STAGE 331: 58
+	STAGE 332: 58
+	STAGE 333: 58
+	STAGE 334: 58
+	STAGE 335: 58
+	STAGE 336: 58
+	STAGE 337: 58
+	STAGE 338: 58
+	STAGE 339: 58
+	STAGE 340: 58
+	STAGE 341: 58
+	STAGE 342: 58
+	STAGE 343: 58
+	STAGE 344: 58
+	STAGE 345: 58
+	STAGE 346: 58
+	STAGE 347: 58
+	STAGE 348: 58
+	STAGE 349: 58
+	STAGE 350: 58
+	STAGE 351: 0
+	STAGE 352: 0
+	STAGE 353: 0
+	STAGE 354: 0
+	STAGE 355: 0
+	STAGE 356: 0
+	STAGE 357: 0
+	STAGE 358: 0
+	STAGE 359: 0
+	STAGE 360: 0
+	STAGE 361: 0
+	STAGE 362: 0
+	STAGE 363: 0
+	STAGE 364: 0
+	STAGE 365: 0
+	STAGE 366: 0
+	STAGE 367: 0
+	STAGE 368: 0
+	STAGE 369: 0
+	STAGE 370: 0
+	STAGE 371: 0
+	STAGE 372: 0
+	STAGE 373: 0
+	STAGE 374: 0
+	STAGE 375: 0
+	STAGE 376: 0
+	STAGE 377: 0
+	STAGE 378: 0
+	STAGE 379: 0
+	STAGE 380: 0
+	STAGE 381: 0
+	STAGE 382: 0
+	STAGE 383: 0
+	STAGE 384: 0
+	STAGE 385: 0
+	STAGE 386: 0
+	STAGE 387: 0
+	STAGE 388: 0
+	STAGE 389: 0
+	STAGE 390: 0
+	STAGE 391: 0
+	STAGE 392: 0
+	STAGE 393: 0
+	STAGE 394: 0
+	STAGE 395: 0
+	STAGE 396: 0
+	STAGE 397: 0
+	STAGE 398: 58
+	STAGE 399: 0
+	STAGE 400: 16
+	STAGE 401: 0
+	STAGE 402: 0
+	STAGE 403: 7
+	STAGE 404: 0
+	STAGE 405: 1
+	STAGE 406: 0
+	STAGE 407: 0
+	STAGE 408: 0
+	STAGE 409: 64
+	STAGE 410: 0
+	STAGE 411: 0
+	STAGE 412: 0
+	STAGE 413: 0
+	STAGE 414: 6
+	STAGE 415: 0
+	STAGE 416: 0
+	STAGE 417: 16
+	STAGE 418: 58
+	STAGE 419: 0
+	STAGE 420: 61
+}
