@@ -1,11 +1,11 @@
-#include "assembly.h"
-#include "config.h"
-#include "heap.h"
-#include "mkb.h"
-#include "modlink.h"
-#include "pad.h"
-#include "patch.h"
-#include "version.h"
+#include "config/config.h"
+#include "internal/assembly.h"
+#include "internal/heap.h"
+#include "internal/modlink.h"
+#include "internal/pad.h"
+#include "internal/patch.h"
+#include "internal/version.h"
+#include "mkb/mkb.h"
 
 #define STREQ(x, y) (mkb::strcmp(const_cast<char*>(x), const_cast<char*>(y)) == 0)
 

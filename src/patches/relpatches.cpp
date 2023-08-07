@@ -1,12 +1,12 @@
 #include "relpatches.h"
 
-#include "assembly.h"
-#include "heap.h"
-#include "log.h"
-#include "mkb.h"
-#include "pad.h"
-#include "patch.h"
-#include "ppcutil.h"
+#include "internal/assembly.h"
+#include "internal/heap.h"
+#include "internal/log.h"
+#include "internal/pad.h"
+#include "internal/patch.h"
+#include "mkb/mkb.h"
+#include "util/ppcutil.h"
 
 namespace relpatches {
 enum Patches : int {

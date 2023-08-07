@@ -128,7 +128,7 @@ export HFILES := $(addsuffix .h,$(subst .,_,$(BINFILES)))
 
 # For REL linking
 export LDFILES		:= $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.ld)))
-export MAPFILE		:= $(CURDIR)/src/include/mkb2.$(REGION).lst
+export MAPFILE		:= $(CURDIR)/src/mkb/mkb2.$(REGION).lst
 
 #---------------------------------------------------------------------------------
 # build a list of include paths

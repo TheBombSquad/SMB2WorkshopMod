@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mkb.h"
+#include "mkb/mkb.h"
 
 // These seem terribly hacky, maybe a better replacement could be made in the future
 // Maybe we could even show a custom crash screen!

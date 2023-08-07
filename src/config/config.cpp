@@ -1,9 +1,9 @@
 #include "config.h"
 
-#include "assembly.h"
-#include "heap.h"
-#include "log.h"
-#include "relpatches.h"
+#include "internal/assembly.h"
+#include "internal/heap.h"
+#include "internal/log.h"
+#include "patches/relpatches.h"
 
 #define STREQ(x, y) (mkb::strcmp(const_cast<char*>(x), const_cast<char*>(y)) == 0)
 #define KEY_ENABLED(x) (STREQ(key, x) && STREQ(value, "enabled"))
