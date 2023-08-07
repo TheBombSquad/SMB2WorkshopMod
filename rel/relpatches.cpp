@@ -227,9 +227,9 @@ void relpatches::perfect_bonus::init() {
         event_info_tick_tramp,
         mkb::event_info_tick, []() {
             event_info_tick_tramp.dest();
-            if (mkb::mode_info.g_ball_mode == mkb::BALLMODE_ON_BONUS_STAGE &&
+            if (mkb::mode_info.ball_mode == mkb::BALLMODE_ON_BONUS_STAGE &&
                 mkb::mode_info.bananas_remaining == 0) {
-                mkb::mode_info.g_ball_mode |= 0x228;
+                mkb::mode_info.ball_mode |= 0x228;
             }
         });
 }
@@ -441,12 +441,12 @@ void mirror_tick() {
                 for (u32 refl_idx = 0; refl_idx < hdr->reflective_stage_model_count; refl_idx++) {
                     mkb::StagedefReflectiveStageModel* refl = &hdr->reflective_stage_model_list[refl_idx];
                     current_ball_position = ball->pos;
-                    distance_to_mirror = get_distance(current_ball_position, refl->g_model_header_ptr->origin);
+                    distance_to_mirror = get_distance(current_ball_position, refl->g_model_header_ptr->bound_sphere_center);
 
                     if (nearest_dist_to_mir == -1.0 || distance_to_mirror < nearest_dist_to_mir) {
                         nearest_dist_to_mir = distance_to_mirror;
                         active_ig = &mkb::itemgroups[col_hdr_idx];
-                        mirror_origin = refl->g_model_header_ptr->origin;
+                        mirror_origin = refl->g_model_header_ptr->bound_sphere_center;
                         ig_init_pos = hdr->origin;
                     }
                 }
@@ -541,12 +541,12 @@ void tick() {
         patch::write_word(reinterpret_cast<void*>(0x80920ba0), 0xC000000);
         if (mkb::g_currently_visible_menu_screen == 0x6) {
             if (pad::button_pressed(mkb::PAD_BUTTON_A)) {
-                mkb::menu_stack_ptr = 1;
-                *(&mkb::menu_stack_ptr + 2) = 7;
+                mkb::sel_menu_info.menu_stack_ptr = 1;
+                mkb::sel_menu_info.menu_stack[1] = 7;
             }
             else if (pad::button_pressed(mkb::PAD_BUTTON_B)) {
                 if (mkb::g_character_selected) return;
-                mkb::menu_stack_ptr = 2;
+                mkb::sel_menu_info.menu_stack_ptr = 2;
             }
         }
     }
@@ -629,8 +629,8 @@ void mute_all_music_tracks() {
 void dmd_scen_newgame_main_patch() {
     mute_all_music_tracks();
     mkb::g_SoftStreamStart_with_some_defaults_2(0);
-    mkb::g_storymode_next_world = 0;
-    mkb::g_storymode_mode = mkb::DMD_SCEN_SEL_WORLD_INIT;
+    mkb::scen_info.next_world = 0;
+    mkb::scen_info.mode = mkb::DMD_SCEN_SEL_WORLD_INIT;
     return;
 }
 
@@ -642,7 +642,7 @@ void dmd_scen_sceneplay_init_patch() {
         active_state++;
     }
     else {
-        active_state = mkb::g_storymode_next_world;
+        active_state = mkb::scen_info.next_world;
     }
 
     mute_all_music_tracks();
@@ -651,7 +651,7 @@ void dmd_scen_sceneplay_init_patch() {
     if (active_state == WORLD_COUNT) {
         mkb::mode_flags = mkb::mode_flags | 0x100000;
         patch::write_word(reinterpret_cast<void*>(0x8054dbdc), 0xffffffff);
-        mkb::g_storymode_mode = mkb::DMD_SCEN_GAME_CLEAR_INIT;
+        mkb::scen_info.mode = mkb::DMD_SCEN_GAME_CLEAR_INIT;
     }
 
     // If we're in 'world 12', initialize the name entry sequence.
@@ -668,22 +668,22 @@ void dmd_scen_sceneplay_init_patch() {
 
         mkb::mode_flags = mkb::mode_flags | 0x100000;
         patch::write_word(reinterpret_cast<void*>(0x8054dbdc), 0xffffffff);
-        mkb::g_storymode_mode = mkb::DMD_SCEN_NAMEENTRY_INIT;
+        mkb::scen_info.mode = mkb::DMD_SCEN_NAMEENTRY_INIT;
     }
 
     // If we're in 'world 13', initialize the game over sequence.
     else if (active_state == WORLD_COUNT + 2) {
         mkb::mode_flags = mkb::mode_flags | 0x100000;
         patch::write_word(reinterpret_cast<void*>(0x8054dbdc), 0xffffffff);
-        mkb::g_storymode_mode = mkb::DMD_SCEN_GAME_OVER_INIT;
+        mkb::scen_info.mode = mkb::DMD_SCEN_GAME_OVER_INIT;
     }
 
     // Otherwise, we're on a valid world, so, instead of loading a cutscene, just go to the
     // next world's stage select screen.
     else {
         mkb::g_SoftStreamStart_with_some_defaults_2(0);
-        mkb::g_storymode_next_world++;
-        mkb::g_storymode_mode = mkb::DMD_SCEN_SEL_WORLD_NEXT;
+        mkb::scen_info.next_world++;
+        mkb::scen_info.mode = mkb::DMD_SCEN_SEL_WORLD_NEXT;
     }
 
     return;
@@ -691,8 +691,8 @@ void dmd_scen_sceneplay_init_patch() {
 
 // Keeps active_state synced between file loads.
 void dmd_scen_sel_floor_init_patch() {
-    active_state = mkb::curr_world;
-    mkb::g_storymode_mode = mkb::DMD_SCEN_SEL_FLOOR_MAIN;
+    active_state = mkb::scen_info.world;
+    mkb::scen_info.mode = mkb::DMD_SCEN_SEL_FLOOR_MAIN;
 
     // I have no idea what this does, it's something the game does in the original function
     u32 data = *reinterpret_cast<u32*>(0x8054dbc0);
@@ -845,7 +845,7 @@ void sel_ngc_init() {
 // TODO: If/when I make a patch/toggle for changing the menu BG stage slots, don't hardcode the value.
 namespace enable_menu_reflections {
 static patch::Tramp<decltype(&mkb::queue_stage_load)> s_load_stage_1_tramp;
-static patch::Tramp<decltype(&mkb::g_load_stage_2)> s_load_stage_2_tramp;
+static patch::Tramp<decltype(&mkb::load_stage)> s_load_stage_2_tramp;
 
 void rendefc_handler(u32 stage_id) {
     if (mkb::main_mode == mkb::MD_SEL) {
@@ -869,7 +869,7 @@ void init_main_loop() {
             s_load_stage_1_tramp.dest(stage_id);
         });
     patch::hook_function(
-        s_load_stage_2_tramp, mkb::g_load_stage_2, [](u32 stage_id) {
+        s_load_stage_2_tramp, mkb::load_stage, [](int stage_id) {
             rendefc_handler(stage_id);
             s_load_stage_2_tramp.dest(stage_id);
         });
@@ -905,8 +905,8 @@ void init_sel_ngc() {
 }
 
 void dmd_scen_sceneplay_init_patch() {
-    if (mkb::g_storymode_next_world == WORLD_COUNT) {
-        mkb::g_storymode_next_world = 10;
+    if (mkb::scen_info.next_world == WORLD_COUNT) {
+        mkb::scen_info.next_world = 10;
     }
     s_sceneplay_init_tramp.dest();
 }
@@ -1042,7 +1042,7 @@ void sprite_init(float x, float y) {
         sprite->field21_0x20 = 1.0;
         sprite->field22_0x24 = 1.0;
         sprite->g_flags1 = sprite->g_flags1 | 0xa1000000;
-        sprite->field8_0x12 = 0x60;
+        sprite->widescreen_translation_x = 0x60;
         mkb::sprintf(sprite->text, author_name);
         sprite->tick_func = mkb::sprite_hud_stage_name_tick;
     }
@@ -1064,7 +1064,7 @@ void sprite_init(float x, float y) {
         sprite_shadow->field21_0x20 = 0.45;
         sprite_shadow->field22_0x24 = 0;
         sprite_shadow->g_flags1 = sprite->g_flags1 | 0xa1000000;
-        sprite_shadow->field8_0x12 = 0x60;
+        sprite_shadow->widescreen_translation_x = 0x60;
         mkb::sprintf(sprite_shadow->text, author_name);
         sprite_shadow->tick_func = mkb::sprite_hud_stage_name_tick;
     }
