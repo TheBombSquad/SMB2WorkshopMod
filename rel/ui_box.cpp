@@ -4,7 +4,6 @@
 #include "heap.h"
 #include "vecutil.h"
 #include "list.h"
-#include "menu_impl.h"
 #define SIN(x) mkb::math_sin(x)
 #define COS(x) SIN(16384-x)
 
@@ -91,16 +90,16 @@ namespace ui_box {
             mkb::set_ui_element_sprite_scale(m_dimensions.x/416, m_dimensions.y/176);
             mkb::set_ui_element_sprite_depth(0.10);
             draw_ui_box_ext(0x5);
-            mkb::init_global_font_sprite_vars_with_defaults();
-            mkb::set_global_font_sprite_type(mkb::FONT32_ASC_24x24);
-            mkb::set_global_font_sprite_flags(0x80000000);
-            mkb::set_global_font_sprite_drop_shadow_flag();
-            mkb::g_set_global_font_sprite_mult_color(0xff8000);
-            mkb::set_global_font_sprite_scale(0.7, 1);
-            mkb::set_global_font_sprite_depth(0.01);
-            mkb::set_global_font_sprite_pos(centered_pos.x, centered_pos.y);
-            mkb::set_global_font_sprite_alignment(mkb::ALIGN_CENTER);
-            mkb::draw_text_sprite_string((mkb::byte*)m_title);
+            mkb::textdraw_reset();
+            mkb::textdraw_set_font(mkb::FONT32_ASC_24x24);
+            mkb::textdraw_set_flags(0x80000000);
+            mkb::textdraw_set_drop_shadow();
+            mkb::textdraw_set_mul_color(0xff8000);
+            mkb::textdraw_set_scale(0.7, 1);
+            mkb::textdraw_set_depth(0.01);
+            mkb::textdraw_set_pos(centered_pos.x, centered_pos.y);
+            mkb::textdraw_set_alignment(mkb::ALIGN_CENTER);
+            mkb::textdraw_print(m_title);
         }
     }
 
@@ -120,8 +119,8 @@ namespace ui_box {
     {
         modifiers.append(new UIBoxModifier {
             .type = AnimType::MODIFIER_ZOOM,
-            .int_param_1 = delay,
-            .int_param_2 = time,
+            .int_param_1 = static_cast<s32>(delay),
+            .int_param_2 = static_cast<s32>(time),
             .float_param_2 = (zoom_type == ZoomType::ZOOM_IN) ? 1.0f : -1.0f,
             .float_param_3 = (zoom_type == ZoomType::ZOOM_IN) ? 0.0f : 1.0f,
         });
@@ -131,7 +130,7 @@ namespace ui_box {
     {
         modifiers.append(new UIBoxModifier {
             .type = AnimType::MODIFIER_LIFETIME,
-            .int_param_1 = time,
+            .int_param_1 = static_cast<s32>(time),
         });
     }
 
@@ -211,7 +210,7 @@ namespace ui_box {
     // Destroys the UIBox after int_param_1 frames
     void UIBox::modifier_lifetime(UIBoxModifier *modifier)
     {
-        if (modifier->counter < modifier->int_param_1) {
+        if (modifier->counter < static_cast<u32>(modifier->int_param_1)) {
             modifier->counter++;
             return;
         }

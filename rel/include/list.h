@@ -51,8 +51,8 @@ void List<T>::remove_first(T* obj)
         else {
             first = i->next;
         }
-        heap::free_to_heap(i);
-        heap::free_to_heap(obj);
+        heap::free(i);
+        heap::free(obj);
         return;
     }
 
@@ -61,13 +61,13 @@ void List<T>::remove_first(T* obj)
             if (i->next->val == obj) {
                 if (i->next->next != nullptr) {
                     Element<T>* n = i->next->next;
-                    heap::free_to_heap(i->next);
+                    heap::free(i->next);
                     i->next = n;
                 }
                 else {
                     i->next = nullptr;
                 }
-                heap::free_to_heap(obj);
+                heap::free(obj);
                 mkb::OSReport("destroyed %X\n", obj);
                 return;
             }
