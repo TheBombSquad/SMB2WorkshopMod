@@ -57,9 +57,9 @@ else
 #---------------------------------------------------------------------------------
 TARGET		:=	mkb2.rel_sample
 BUILD		:=	build
-SOURCES		:=	rel $(wildcard rel/*)
+SOURCES		:=	src $(wildcard src/*)
 DATA		:=	data  
-INCLUDES	:=	rel/include
+INCLUDES	:=	$(shell find src -type d)
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -128,7 +128,7 @@ export HFILES := $(addsuffix .h,$(subst .,_,$(BINFILES)))
 
 # For REL linking
 export LDFILES		:= $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.ld)))
-export MAPFILE		:= $(CURDIR)/rel/include/mkb2.$(REGION).lst
+export MAPFILE		:= $(CURDIR)/src/include/mkb2.$(REGION).lst
 
 #---------------------------------------------------------------------------------
 # build a list of include paths
