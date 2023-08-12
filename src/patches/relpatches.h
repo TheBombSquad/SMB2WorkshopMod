@@ -2,6 +2,8 @@
 
 #include "mkb/mkb.h"
 
+#include "tickable.h"
+
 namespace relpatches {
 
 static constexpr u16 STAGE_COUNT = 421;
@@ -20,7 +22,6 @@ struct Tickable {
     void (*disp_func)() = nullptr;          // Display function (debug window stuff)
     void (*tick_func)() = nullptr;          // Tick function
 };
-
 extern const unsigned int PATCH_COUNT;
 extern Tickable patches[];
 
@@ -72,13 +73,6 @@ namespace fix_wormhole_surfaces {
 void init_main_loop();
 
 }
-
-namespace challenge_death_count {
-void init_main_game();
-u32 update_death_count();
-void death_counter_sprite_tick(u8* status, mkb::Sprite* sprite);
-
-}// namespace challenge_death_count
 
 namespace disable_tutorial {
 void init_main_loop();
