@@ -5,11 +5,10 @@
 #include "internal/pad.h"
 #include "internal/patch.h"
 #include "internal/version.h"
+#include "patches/tickable.h"
 #include "mkb/mkb.h"
 
-
 namespace main {
-
 static patch::Tramp<decltype(&mkb::process_inputs)> s_process_inputs_tramp;
 
 bool debug_mode_enabled = false;
@@ -38,10 +37,12 @@ void init() {
     modlink::write();
 
     perform_assembly_patches();
+    tickable::get_tickable_manager().init();
 
     // Load our config file
     config::parse_config();
 
+    /*
     patch::hook_function(
         s_process_inputs_tramp, mkb::process_inputs, []() {
             s_process_inputs_tramp.dest();
@@ -58,6 +59,7 @@ void init() {
 
             pad::tick();
         });
+        */
 
 }
 
@@ -66,15 +68,6 @@ void init() {
  * controller inputs have been read and processed however, to ensure the lowest input delay.
  */
 void tick() {
-    /*
-if (debug_mode_enabled)
-{
-    mkb::dip_switches |= mkb::DIP_DEBUG | mkb::DIP_DISP;
-}
-else
-{
-    mkb::dip_switches &= ~(mkb::DIP_DEBUG | mkb::DIP_DISP);
-}*/
     pad::on_frame_start();
 }
 

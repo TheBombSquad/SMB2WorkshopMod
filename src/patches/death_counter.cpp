@@ -1,14 +1,19 @@
 #include "death_counter.h"
-
 #include "internal/patch.h"
+#include "tickable.h"
 
 namespace death_counter {
 
-static Tickable t = Tickable((TickableArgs){
-    .name = "challenge-mode-death-count",
-    .description = "Challenge mode death count",
-    .init_main_game = init_main_game,
-});
+tickable::Tickable* t = []() {
+    static uint8_t s_buf[sizeof(tickable::Tickable)];
+    tickable::Tickable* t = new (s_buf) tickable::Tickable{
+        .name = "challenge-mode-death-count",
+        .description = "Challenge mode death count",
+        .init_main_game = init_main_game
+    };
+   tickable::get_tickable_manager().push(reinterpret_cast<tickable::Tickable*>(s_buf));
+   return t;
+}();
 
 // Death count for each of the four players
 static u32 death_count[4];
@@ -17,7 +22,7 @@ static u32 death_count[4];
 // decrements the life counter on player death. Then, hooks into the
 // decrement life counter function, and runs the update_death_count func.
 // Then, hooks into the monkey counter sprite tick function, and calls
-// the death counter sprite tick function instead.'
+// the death counter sprite tick function instead.
 void init_main_game() {
     mkb::memset(death_count, 0, sizeof(death_count));
 
@@ -76,4 +81,6 @@ void death_counter_sprite_tick(u8* status, mkb::Sprite* sprite) {
 
     mkb::sprintf(sprite->text, "%u", display);
 }
+
+
 }// namespace challenge_death_count

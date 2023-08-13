@@ -3,7 +3,7 @@
 #include "internal/assembly.h"
 #include "internal/heap.h"
 #include "internal/log.h"
-#include "patches/relpatches.h"
+#include "patches/tickable.h"
 
 #define STREQ(x, y) (mkb::strcmp(const_cast<char*>(x), const_cast<char*>(y)) == 0)
 #define KEY_ENABLED(x) (STREQ(key, x) && STREQ(value, "enabled"))
@@ -107,71 +107,75 @@ void parse_function_toggles(char* buf) {
         mkb::strncpy(key, key_start, (key_end - key_start));
         mkb::strncpy(value, key_end + 2, (end_of_line - key_end) - 2);
 
-        // Iterate through all the REL patch tickables, looking for match of key name
-        for (unsigned int i = 0; i < relpatches::PATCH_COUNT; i++) {
-            if (relpatches::patches[i].name != nullptr && STREQ(key, relpatches::patches[i].name)) {
-
+        for (const auto& tickable : tickable::get_tickable_manager().get_tickables()) {
+            //mkb::OSReport("debug: tickable parse\n");
+            if (tickable->name != nullptr && STREQ(key, tickable->name)) {
                 // 'value' is enabled, set the value to 1
                 if (STREQ(value, "enabled")) {
-                    relpatches::patches[i].status = true;
+                    tickable->enabled = true;
 
                     // Execute the main_loop init func, if it exists
-                    if (relpatches::patches[i].main_loop_init_func != nullptr) {
-                        relpatches::patches[i].main_loop_init_func();
+                    if (tickable->init_main_loop != nullptr) {
+                        (*tickable->init_main_loop)();
                     }
 
-                    // Print init message, if it exists
-                    if (relpatches::patches[i].message != nullptr) {
-                        mkb::OSReport(relpatches::patches[i].message, "ENABLED!");
+                    // Print init description, if it exists
+                    if (tickable->description != nullptr) {
+                        mkb::OSReport("[wsmod]  %s %s", tickable->description, "ENABLED!");
                     }
 
                     break;
                 }
 
-                // 'value' is disabled, set value to 0
+                    // 'value' is disabled, set value to 0
                 else if (STREQ(value, "disabled")) {
-                    if (relpatches::patches[i].message != nullptr) {
-                        mkb::OSReport(relpatches::patches[i].message, "disabled!");
+                    if (tickable->description != nullptr) {
+                        mkb::OSReport("[wsmod]  %s %s", tickable->description, "disabled.");
                     }
                     break;
                 }
 
-                // 'value' is some integer, set the value and initialize the patch if it differs from the default
+                    // 'value' is some integer, set the value and initialize the patch if it differs from the default
                 else {
                     parsed_value = mkb::atoi(value);
 
+                    if (!tickable->default_value.has_value()) break;
 
                     // Check to see if the passed value is within the defined bounds
-                    MOD_ASSERT_MSG(parsed_value >= relpatches::patches[i].minimum_value, "Passed value for patch smaller than minimum value");
-                    MOD_ASSERT_MSG(parsed_value <= relpatches::patches[i].maximum_value, "Passed value for patch larger than maximum value");
+                    MOD_ASSERT_MSG(parsed_value >= tickable->lower_bound, "Passed value for patch smaller than minimum value");
+                    MOD_ASSERT_MSG(parsed_value <= tickable->upper_bound, "Passed value for patch larger than maximum value");
 
-                    // Set the status to the parsed value, if it differes from the default passed value
-                    if (parsed_value != relpatches::patches[i].default_value) {
-                        relpatches::patches[i].status = parsed_value;
+                    // Set the enabled to the parsed value, if it differes from the default passed value
+                    if (parsed_value != tickable->default_value) {
+                        tickable->enabled = parsed_value;
 
                         // Execute the main_loop init func, if it exists
-                        if (relpatches::patches[i].main_loop_init_func != nullptr) {
-                            relpatches::patches[i].main_loop_init_func();
+                        if (tickable->init_main_game != nullptr) {
+                            mkb::OSReport("Calling main_loop\n");
+                            (*tickable->init_main_loop)();
                         }
 
-                        // Print init message, if it exists
-                        if (relpatches::patches[i].message != nullptr) {
-                            mkb::OSReport(relpatches::patches[i].message, "ENABLED! (custom value passed)", parsed_value);
+                        // Print init description, if it exists
+                        if (tickable->description != nullptr) {
+                            mkb::OSReport("[wsmod]  %s %s %s)", tickable->description, "ENABLED! (custom value passed: ", parsed_value);
                         }
 
                         break;
                     }
 
-                    // If the value is the default, do not enable the patch
+                        // If the value is the default, do not enable the patch
                     else {
-                        if (relpatches::patches[i].message != nullptr) {
-                            mkb::OSReport(relpatches::patches[i].message, "disabled! (default value passed)", parsed_value);
+                        if (tickable->description != nullptr) {
+                            mkb::OSReport("[wsmod]  %s %s %s)", tickable->description, "disabled. (default value passed: ", parsed_value);
                         }
 
                         break;
                     }
                 }
             }
+        }
+        // Iterate through all the REL patch tickables, looking for match of key name
+        for (unsigned int i = 0; i < relpatches::PATCH_COUNT; i++) {
         }
 
         buf = end_of_line + 1;
