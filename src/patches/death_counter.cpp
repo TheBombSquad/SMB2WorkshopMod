@@ -4,16 +4,9 @@
 
 namespace death_counter {
 
-tickable::Tickable* t = []() {
-    static uint8_t s_buf[sizeof(tickable::Tickable)];
-    tickable::Tickable* t = new (s_buf) tickable::Tickable{
-        .name = "challenge-mode-death-count",
-        .description = "Challenge mode death count",
-        .init_main_game = init_main_game
-    };
-   tickable::get_tickable_manager().push(reinterpret_cast<tickable::Tickable*>(s_buf));
-   return t;
-}();
+TICKABLE_DEFINITION((.name = "challenge-mode-death-count",
+                     .description = "Challenge mode death count",
+                     .init_main_game = init_main_game))
 
 // Death count for each of the four players
 static u32 death_count[4];
@@ -83,4 +76,4 @@ void death_counter_sprite_tick(u8* status, mkb::Sprite* sprite) {
 }
 
 
-}// namespace challenge_death_count
+}// namespace death_counter

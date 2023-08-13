@@ -8,8 +8,6 @@
 
 namespace tickable {
 
-static uint8_t s_buf[sizeof(TickableManager)];
-static bool s_buf_init = false;
 
 void TickableManager::push(Tickable* tickable) {
     auto tick_ptr = etl::unique_ptr<Tickable>(tickable);
@@ -68,11 +66,14 @@ void TickableManager::init() const {
 }
 
 TickableManager& get_tickable_manager() {
+    static uint8_t s_tickable_manager[sizeof(TickableManager)];
+    static bool s_buf_init = false;
+
     if (!s_buf_init) {
-        new (s_buf) TickableManager();
+        new (s_tickable_manager) TickableManager();
         s_buf_init = true;
     }
-    auto ptr = reinterpret_cast<TickableManager*>(s_buf);
+    auto ptr = reinterpret_cast<TickableManager*>(s_tickable_manager);
     return *ptr;
 }
 

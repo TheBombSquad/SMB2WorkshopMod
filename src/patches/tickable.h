@@ -5,10 +5,28 @@
 #include "etl/vector.h"
 #include "mkb.h"
 
-namespace tickable {
-// TODO: Use preprocessor stuff to figure this out on compile time
-constexpr size_t PATCH_COUNT = 32;
+#define _TOKEN_CONCAT(x, y) x##y
+#define TOKEN_CONCAT(x, y) _TOKEN_CONCAT(x, y)
+#define UNPAREN(...) __VA_ARGS__
 
+#define _TICKABLE_DEFINITION(in, idx)                                                                                     \
+    tickable::Tickable* TOKEN_CONCAT(t_ptr_, idx) = []() {                                                                \
+        static uint8_t TOKEN_CONCAT(s_tickable_buf_, idx)[sizeof(tickable::Tickable)];                                    \
+        tickable::Tickable* t = new (TOKEN_CONCAT(s_tickable_buf_, idx)) tickable::Tickable{                              \
+            in};                                                                                                          \
+        tickable::get_tickable_manager().push(reinterpret_cast<tickable::Tickable*>(TOKEN_CONCAT(s_tickable_buf_, idx))); \
+        return t;                                                                                                         \
+    }();
+
+#define TICKABLE_DEFINITION(in) _TICKABLE_DEFINITION(UNPAREN in, __COUNTER__)
+
+namespace tickable {
+
+// Capacity of the tickable manager vector, increase if needed
+// This only stores pointers, so memory impact should be low
+constexpr size_t PATCH_CAPACITY = 32;
+
+// Represents a patch, or code that ticks every frame
 struct Tickable {
     const char* name;
     const char* description;
@@ -23,9 +41,10 @@ struct Tickable {
     void (*tick)() = nullptr;
 };
 
+// Manages all tickables
 class TickableManager {
 public:
-    typedef etl::vector<etl::unique_ptr<Tickable>, PATCH_COUNT> TickableVec;
+    typedef etl::vector<etl::unique_ptr<Tickable>, PATCH_CAPACITY> TickableVec;
     const TickableVec& get_tickables() const;
     void push(Tickable* tickable);
     void init() const;
