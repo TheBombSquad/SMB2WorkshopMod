@@ -7,7 +7,7 @@ namespace remove_desert_haze {
 
 TICKABLE_DEFINITION((
         .name = "remove-desert-haze",
-        .description = "[wsmod]  Desert haze removal %s\n",
+        .description = "Desert haze removal",
         .init_main_loop = init_main_loop, ))
 
 // TODO: Probably not the best way to implement this, will need to look into a

@@ -9,7 +9,7 @@ namespace custom_theme_id {
 
 TICKABLE_DEFINITION((
         .name = "custom-theme-id",
-        .description = "[wsmod]  Custom theme ID patch %s\n",
+        .description = "Custom theme ID patch",
         .init_main_loop = init_main_loop, ))
 
 // Hooks into two functions that set the global world_theme variable

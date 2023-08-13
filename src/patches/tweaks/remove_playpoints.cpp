@@ -9,7 +9,7 @@ namespace remove_playpoints {
 
 TICKABLE_DEFINITION((
         .name = "remove-playpoints",
-        .description = "[wsmod]  Playpoint removal patch %s\n",
+        .description = "Playpoint removal patch",
         .init_main_game = init_main_game,
         .tick = tick, ))
 

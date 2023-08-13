@@ -8,7 +8,7 @@ namespace fix_labyrinth_camera {
 
 TICKABLE_DEFINITION((
         .name = "fix-labyrinth-camera",
-        .description = "[wsmod]  Labyrinth stage slot fix %s\n",
+        .description = "Labyrinth stage slot fix",
         .init_main_loop = init_main_loop, ))
 
 // Always compare the stage ID to 0xFFFF when these camera functions check

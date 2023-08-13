@@ -8,7 +8,7 @@ namespace skip_intro_movie {
 
 TICKABLE_DEFINITION((
         .name = "skip-intro-movie",
-        .description = "[wsmod]  Skip intro movie patch %s\n",
+        .description = "Skip intro movie patch",
         .init_main_loop = init_main_loop, ))
 
 // Immediately goes to the title screen

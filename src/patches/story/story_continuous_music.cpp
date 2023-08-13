@@ -8,7 +8,7 @@ namespace story_continuous_music {
 
 TICKABLE_DEFINITION((
         .name = "story-mode-music-fix",
-        .description = "[wsmod]  Continuous story mode music %s\n",
+        .description = "Continuous story mode music",
         .init_main_loop = init_main_loop, ))
 
 // Hooks right before the call to SoftStreamStart, then nops the

@@ -7,7 +7,7 @@ namespace pause_volume_fix {
 
 TICKABLE_DEFINITION((
         .name = "no-music-vol-decrease-on-pause",
-        .description = "[wsmod]  No music volume decrease on pause %s\n",
+        .description = "No music volume decrease on pause",
         .init_main_loop = init_main_loop, ))
 
 // Nop a call to a function that decreases in-game volume on pause

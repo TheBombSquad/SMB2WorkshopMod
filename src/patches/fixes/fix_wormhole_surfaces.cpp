@@ -8,7 +8,7 @@ namespace fix_wormhole_surfaces {
 
 TICKABLE_DEFINITION((
         .name = "fix-wormhole-surfaces",
-        .description = "[wsmod]  Party game stage slot fix %s\n",
+        .description = "Party game stage slot fix",
         .init_main_loop = init_main_loop, ))
 
 // Always return 'true' for a specific function that checks if the stage ID

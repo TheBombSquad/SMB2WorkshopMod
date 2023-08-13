@@ -8,7 +8,7 @@ namespace fix_revolution_slot {
 
 TICKABLE_DEFINITION((
         .name = "fix-revolution-slot",
-        .description = "[wsmod]  Revolution stage slot fix %s\n",
+        .description = "Revolution stage slot fix",
         .init_main_loop = init_main_loop, ))
 
 // Always return 'false' for a specific function that checks if the stage ID

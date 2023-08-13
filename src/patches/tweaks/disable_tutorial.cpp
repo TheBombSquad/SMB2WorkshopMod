@@ -8,7 +8,7 @@ namespace disable_tutorial {
 
 TICKABLE_DEFINITION((
         .name = "disable-how-to-play-screen",
-        .description = "[wsmod]  Tutorial sequence removal %s\n",
+        .description = "Tutorial sequence removal",
         .init_main_loop = init_main_loop, ))
 
 // Nops the sub_mode_frame_counter decrement in smd_adv_title_tick.

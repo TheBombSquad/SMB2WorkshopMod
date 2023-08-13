@@ -9,7 +9,7 @@ namespace fix_stobj_reflection {
 
 TICKABLE_DEFINITION((
         .name = "fix-stage-object-reflection",
-        .description = "[wsmod]  Stobj reflection flag support %s\n",
+        .description = "Stobj reflection flag support",
         .init_main_loop = init_main_loop,
         .init_main_game = init_main_game, ))
 

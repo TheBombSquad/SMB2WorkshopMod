@@ -10,7 +10,7 @@ namespace smb1_camera_toggle {
 
 TICKABLE_DEFINITION((
         .name = "smb1-camera-toggle",
-        .description = "[wsmod]  SMB1 camera toggle %s\n",
+        .description = "SMB1 camera toggle",
         .init_main_loop = init_main_loop,
         .tick = tick, ))
 

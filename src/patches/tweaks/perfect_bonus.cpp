@@ -9,7 +9,7 @@ namespace perfect_bonus {
 
 TICKABLE_DEFINITION((
         .name = "perfect-bonus-completion",
-        .description = "[wsmod]  Perfect bonus completion %s\n",
+        .description = "Perfect bonus completion",
         .init_main_loop = init_main_loop, ))
 
 // If the stage is a bonus stage (ball mode 0x40) and no bananas remain,

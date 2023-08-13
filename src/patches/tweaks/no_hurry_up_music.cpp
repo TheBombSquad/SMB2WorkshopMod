@@ -8,7 +8,7 @@ namespace no_hurry_up_music {
 
 TICKABLE_DEFINITION((
         .name = "no-hurry-up-music",
-        .description = "[wsmod]  Hurry up music removal %s\n",
+        .description = "Hurry up music removal",
         .init_main_game = init_main_game,
         .tick = tick, ))
 

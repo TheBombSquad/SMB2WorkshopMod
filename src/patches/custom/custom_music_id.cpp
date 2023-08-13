@@ -9,7 +9,7 @@ namespace custom_music_id {
 
 TICKABLE_DEFINITION((
         .name = "custom-music-id",
-        .description = "[wsmod]  Custom music ID patch %s\n",
+        .description = "Custom music ID patch",
         .init_main_loop = init_main_loop, ))
 
 // Hooks into g_handle_world_bgm, modifies the variable for BGM ID to point to

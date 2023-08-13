@@ -10,7 +10,7 @@ namespace story_char_select {
 
 TICKABLE_DEFINITION((
         .name = "story-mode-char-select",
-        .description = "[wsmod]  Story mode character select %s\n",
+        .description = "Story mode character select",
         .init_main_loop = init_main_loop,
         .init_main_game = init_main_game,
         .tick = tick, ))

@@ -8,7 +8,7 @@ namespace extended_reflections {
 
 TICKABLE_DEFINITION((
         .name = "enhance-reflective-surfaces",
-        .description = "[wsmod]  Reflective surface enhancements %s\n",
+        .description = "Reflective surface enhancements",
         .init_main_loop = init_main_loop, ))
 
 float nearest_dist_to_mir, distance_to_mirror;
@@ -75,4 +75,5 @@ void init_main_loop() {
     distance_to_mirror = 0.0;
     active_ig = nullptr;
 }
+
 }// namespace extended_reflections

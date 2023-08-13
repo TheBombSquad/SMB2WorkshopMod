@@ -11,7 +11,7 @@ namespace menu_reflections {
 
 TICKABLE_DEFINITION((
         .name = "enable-menu-reflections",
-        .description = "[wsmod]  Menu reflection patch %s\n",
+        .description = "Menu reflection patch",
         .init_main_loop = init_main_loop, ))
 
 static patch::Tramp<decltype(&mkb::queue_stage_load)> s_load_stage_1_tramp;

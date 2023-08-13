@@ -9,7 +9,7 @@ namespace story_skip_cutscenes {
 
 TICKABLE_DEFINITION((
         .name = "skip-cutscenes",
-        .description = "[wsmod]  Cutscene skip patch %s\n",
+        .description = "Cutscene skip patch",
         .init_main_game = init_main_game, ))
 
 constexpr auto WORLD_COUNT = 10;// TODO: attach to patch that changes this

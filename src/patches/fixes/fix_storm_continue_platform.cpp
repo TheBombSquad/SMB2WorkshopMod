@@ -10,7 +10,7 @@ namespace fix_storm_continue_platform {
 
 TICKABLE_DEFINITION((
         .name = "fix-storm-continue-platform",
-        .description = "[wsmod]  Storm continue platform patch %s\n",
+        .description = "Storm continue platform patch",
         .init_main_loop = init_main_loop, ))
 
 void init_main_loop() {

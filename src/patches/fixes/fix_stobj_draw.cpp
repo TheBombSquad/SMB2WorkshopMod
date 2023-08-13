@@ -14,7 +14,7 @@ namespace fix_stobj_draw {
 
 TICKABLE_DEFINITION((
         .name = "stobj-draw-fix",
-        .description = "[wsmod] Stobj draw fix patch %s\n",
+        .description = "Stobj draw fix patch",
         .init_main_loop = init_main_loop, ))
 
 // These are Ghidra addresses...

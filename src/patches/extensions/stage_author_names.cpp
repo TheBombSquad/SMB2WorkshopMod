@@ -12,14 +12,14 @@ namespace stage_author_names {
 
 TICKABLE_DEFINITION((
         .name = "stage-author-names",
-        .description = "[mod] Stage author name display %s\n",
+        .description = "Stage author name display",
         .init_main_loop = init_main_loop, ))
 
 static char author_file_path[] = "/stgname/authors.str";
 static char author_fallback_name = '\0';
 static char* author_file_buf = nullptr;
 static constexpr u16 STAGE_COUNT = 421;
-static char author_list[STAGE_COUNT][128];
+static char author_list[STAGE_COUNT][64];
 
 void sprite_init(float x, float y) {
 

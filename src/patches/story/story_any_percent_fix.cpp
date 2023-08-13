@@ -9,7 +9,7 @@ namespace story_any_percent_fix {
 
 TICKABLE_DEFINITION((
         .name = "fix-any-percent-crash",
-        .description = "[wsmod]  Story mode any-percent crash fix %s\n",
+        .description = "Story mode any-percent crash fix",
         .init_main_loop = init_main_loop,
         .tick = tick, ))
 

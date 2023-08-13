@@ -9,7 +9,7 @@ namespace story_missing_w_fix {
 
 TICKABLE_DEFINITION((
         .name = "fix-missing-w",
-        .description = "[wsmod]  Missing 'w'  patch %s\n",
+        .description = "Missing 'w' patch",
         .init_main_game = init_main_game, ))
 
 static char CHAR_w[4] = {'w', '\0', '\0', '\0'};

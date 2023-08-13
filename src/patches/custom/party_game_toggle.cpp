@@ -10,7 +10,7 @@ namespace party_game_toggle {
 
 TICKABLE_DEFINITION((
         .name = "party-game-toggle",
-        .description = "[wsmod]  Party game toggle patch %s\n",
+        .description = "Party game toggle patch",
         .init_sel_ngc = init_sel_ngc, ))
 
 u16 party_game_bitflag = 0;
@@ -53,4 +53,5 @@ void init_sel_ngc() {
     mkb::sprintf(mkb::CAN_PLAY_NUM_PARTY_GAMES_STRING, "You can play /bcff8000/%d/bcffff00/ party games!",
                  number_of_unlocked_party_games(party_game_bitflag));
 }
+
 }// namespace party_game_toggle
