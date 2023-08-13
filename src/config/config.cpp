@@ -141,14 +141,14 @@ void parse_function_toggles(char* buf) {
                 else {
                     parsed_value = mkb::atoi(value);
 
-                    if (!tickable->default_value.has_value()) break;
+                    if (!tickable->active_value.has_value()) break;
 
                     // Check to see if the passed value is within the defined bounds
                     MOD_ASSERT_MSG(parsed_value >= tickable->lower_bound, "Passed value for patch smaller than minimum value");
                     MOD_ASSERT_MSG(parsed_value <= tickable->upper_bound, "Passed value for patch larger than maximum value");
 
                     // Set the enabled to the parsed value, if it differes from the default passed value
-                    if (parsed_value != tickable->default_value) {
+                    if (parsed_value != tickable->active_value) {
                         tickable->enabled = parsed_value;
 
                         // Execute the main_loop init func, if it exists
@@ -158,7 +158,7 @@ void parse_function_toggles(char* buf) {
 
                         // Print init description, if it exists
                         if (tickable->description != nullptr) {
-                            mkb::OSReport("[wsmod]  %s %s %s\n)", tickable->description, "ENABLED! (custom value passed: ", parsed_value);
+                            mkb::OSReport("[wsmod]  %s %s %d)\n", tickable->description, "ENABLED! (custom value passed: ", parsed_value);
                         }
 
                         break;
@@ -167,7 +167,7 @@ void parse_function_toggles(char* buf) {
                     // If the value is the default, do not enable the patch
                     else {
                         if (tickable->description != nullptr) {
-                            mkb::OSReport("[wsmod]  %s %s %s\n)", tickable->description, "disabled. (default value passed: ", parsed_value);
+                            mkb::OSReport("[wsmod]  %s %s %d)\n", tickable->description, "disabled. (default value passed: ", parsed_value);
                         }
 
                         break;

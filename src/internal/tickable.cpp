@@ -8,7 +8,6 @@
 
 namespace tickable {
 
-
 void TickableManager::push(Tickable* tickable) {
     auto tick_ptr = etl::unique_ptr<Tickable>(tickable);
     m_tickables.push_back(std::move(tick_ptr));
@@ -63,6 +62,15 @@ void TickableManager::init() const {
                 }
             }
         });
+}
+
+bool TickableManager::get_tickable_status(const char* name) const {
+    for (const auto& t : m_tickables) {
+        if (strcmp(t->name, name) == 0) {
+            return t->enabled;
+        }
+    }
+    return false;
 }
 
 TickableManager& get_tickable_manager() {

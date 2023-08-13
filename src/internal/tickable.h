@@ -10,15 +10,19 @@
 #define UNPAREN(...) __VA_ARGS__
 
 #define _TICKABLE_DEFINITION(in, idx)                                                                                     \
-    tickable::Tickable* TOKEN_CONCAT(t_ptr_, idx) = []() {                                                                \
-        static uint8_t TOKEN_CONCAT(s_tickable_buf_, idx)[sizeof(tickable::Tickable)];                                    \
-        tickable::Tickable* t = new (TOKEN_CONCAT(s_tickable_buf_, idx)) tickable::Tickable{                              \
+    tickable::Tickable* TOKEN_CONCAT(active_tickable_ptr, idx) = []() {                                                  \
+        static uint8_t TOKEN_CONCAT(s_tickable_buf, idx)[sizeof(tickable::Tickable)];                                    \
+        tickable::Tickable* t = new (TOKEN_CONCAT(s_tickable_buf, idx)) tickable::Tickable{                              \
             in};                                                                                                          \
-        tickable::get_tickable_manager().push(reinterpret_cast<tickable::Tickable*>(TOKEN_CONCAT(s_tickable_buf_, idx))); \
+        tickable::get_tickable_manager().push(reinterpret_cast<tickable::Tickable*>(TOKEN_CONCAT(s_tickable_buf, idx))); \
         return t;                                                                                                         \
     }();
 
-#define TICKABLE_DEFINITION(in) _TICKABLE_DEFINITION(UNPAREN in, __COUNTER__)
+#define TICKABLE_DEFINITION_IDX(in) _TICKABLE_DEFINITION(UNPAREN in, TOKEN_CONCAT(_, __COUNTER__))
+
+// Defines a new tickable, accessible by active_tickable_ptr
+// Adds the new tickable to the tickable manager
+#define TICKABLE_DEFINITION(in) _TICKABLE_DEFINITION(UNPAREN in,)
 
 namespace tickable {
 
@@ -31,7 +35,7 @@ struct Tickable {
     const char* name;
     const char* description;
     bool enabled;
-    etl::optional<int> default_value;
+    etl::optional<int> active_value;
     etl::optional<int> lower_bound;
     etl::optional<int> upper_bound;
     void (*init_main_loop)() = nullptr;
@@ -46,6 +50,7 @@ class TickableManager {
 public:
     typedef etl::vector<etl::unique_ptr<Tickable>, PATCH_CAPACITY> TickableVec;
     const TickableVec& get_tickables() const;
+    bool get_tickable_status(const char* name) const;
     void push(Tickable* tickable);
     void init() const;
 
