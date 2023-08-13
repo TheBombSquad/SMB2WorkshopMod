@@ -121,7 +121,7 @@ void parse_function_toggles(char* buf) {
 
                     // Print init description, if it exists
                     if (tickable->description != nullptr) {
-                        mkb::OSReport("[wsmod]  %s %s", tickable->description, "ENABLED!");
+                        mkb::OSReport("[wsmod]  %s %s\n", tickable->description, "ENABLED!");
                     }
 
                     break;
@@ -130,7 +130,7 @@ void parse_function_toggles(char* buf) {
                     // 'value' is disabled, set value to 0
                 else if (STREQ(value, "disabled")) {
                     if (tickable->description != nullptr) {
-                        mkb::OSReport("[wsmod]  %s %s", tickable->description, "disabled.");
+                        mkb::OSReport("[wsmod]  %s %s\n", tickable->description, "disabled.");
                     }
                     break;
                 }
@@ -151,13 +151,12 @@ void parse_function_toggles(char* buf) {
 
                         // Execute the main_loop init func, if it exists
                         if (tickable->init_main_game != nullptr) {
-                            mkb::OSReport("Calling main_loop\n");
                             (*tickable->init_main_loop)();
                         }
 
                         // Print init description, if it exists
                         if (tickable->description != nullptr) {
-                            mkb::OSReport("[wsmod]  %s %s %s)", tickable->description, "ENABLED! (custom value passed: ", parsed_value);
+                            mkb::OSReport("[wsmod]  %s %s %s\n)", tickable->description, "ENABLED! (custom value passed: ", parsed_value);
                         }
 
                         break;
@@ -166,7 +165,7 @@ void parse_function_toggles(char* buf) {
                         // If the value is the default, do not enable the patch
                     else {
                         if (tickable->description != nullptr) {
-                            mkb::OSReport("[wsmod]  %s %s %s)", tickable->description, "disabled. (default value passed: ", parsed_value);
+                            mkb::OSReport("[wsmod]  %s %s %s\n)", tickable->description, "disabled. (default value passed: ", parsed_value);
                         }
 
                         break;
