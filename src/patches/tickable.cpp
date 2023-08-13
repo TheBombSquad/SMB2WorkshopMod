@@ -1,8 +1,8 @@
 #include "tickable.h"
 #include "internal/patch.h"
 
-#include "log.h"
 #include "etl/iterator.h"
+#include "log.h"
 
 #define STREQ(x, y) (mkb::strcmp(const_cast<char*>(x), const_cast<char*>(y)) == 0)
 
@@ -30,8 +30,8 @@ void TickableManager::init() const {
 
         // Disp functions (REL patches)
         for (const auto& tickable: get_tickable_manager().get_tickables()) {
-            if (tickable->enabled) {
-                //(*tickable->disp)();
+            if (tickable->enabled && tickable->disp) {
+                (*tickable->disp)();
             }
         }
         s_draw_debugtext_tramp.dest();
@@ -46,7 +46,7 @@ void TickableManager::init() const {
             // Functions that need to be initialized when mkb2.main_game.rel is loaded
             if (STREQ(rel_filepath, "mkb2.main_game.rel")) {
                 for (const auto& tickable: get_tickable_manager().get_tickables()) {
-                    if (tickable->enabled) {
+                    if (tickable->enabled && tickable->init_main_game) {
                         mkb::OSReport("Calling init_main_game\n");
                         (*tickable->init_main_game)();
                     }
@@ -56,7 +56,7 @@ void TickableManager::init() const {
             // Functions that need to be initialized when mkb2.sel_ngc.rel is loaded
             else if (STREQ(rel_filepath, "mkb2.sel_ngc.rel")) {
                 for (const auto& tickable: get_tickable_manager().get_tickables()) {
-                    if (tickable->enabled) {
+                    if (tickable->enabled && tickable->init_sel_ngc) {
                         mkb::OSReport("Calling sel_ngc\n");
                         (*tickable->init_sel_ngc)();
                     }

@@ -2,8 +2,7 @@
 
 namespace scratch {
 
-void init() {
-}
+void init() {}
 void tick() {}
 void disp() {}
 

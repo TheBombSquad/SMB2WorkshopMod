@@ -25,11 +25,6 @@ struct Tickable {
 extern const unsigned int PATCH_COUNT;
 extern Tickable patches[];
 
-namespace perfect_bonus {
-void init();
-
-}
-
 namespace remove_desert_haze {
 void init_main_loop();
 

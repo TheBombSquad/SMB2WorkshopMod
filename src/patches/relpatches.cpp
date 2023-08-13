@@ -9,6 +9,7 @@
 #include "util/ppcutil.h"
 
 namespace relpatches {
+
 enum Patches : int {
     CHALLENGE_MODE_DEATH_COUNT,
     DISABLE_HOW_TO_PLAY_SCREEN,
@@ -102,17 +103,6 @@ Tickable patches[] = {
         .main_loop_init_func = no_music_vol_decrease_on_pause::init_main_loop,
     },
 
-    {
-        .name = "perfect-bonus-completion",
-        .message = "[wsmod]  Perfect bonus completion %s\n",
-        .main_loop_init_func = perfect_bonus::init,
-    },
-
-    {
-        .name = "remove-desert-haze",
-        .message = "[wsmod]  Desert haze removal %s\n",
-        .main_loop_init_func = remove_desert_haze::init_main_loop,
-    },
 
     {
         .name = "skip-intro-movie",
@@ -209,34 +199,6 @@ Tickable patches[] = {
 
 const unsigned int PATCH_COUNT = sizeof(patches) / sizeof(patches[0]);
 
-// If the stage is a bonus stage (ball mode 0x40) and no bananas remain,
-// end the stage with a perfect (|= 0x228)
-
-u16 WORLD_COUNT = 10;
-
-void relpatches::perfect_bonus::init() {
-    static patch::Tramp<decltype(&mkb::event_info_tick)> event_info_tick_tramp;
-
-    patch::hook_function(
-        event_info_tick_tramp,
-        mkb::event_info_tick, []() {
-            event_info_tick_tramp.dest();
-            if (mkb::mode_info.ball_mode == mkb::BALLMODE_ON_BONUS_STAGE &&
-                mkb::mode_info.bananas_remaining == 0) {
-                mkb::mode_info.ball_mode |= 0x228;
-            }
-        });
-}
-
-
-// TODO: Probably not the best way to implement this, will need to look into a
-// proper fix soon. In a function that sets a parameter that enables heat
-// haze for the specific desert theme ID, the theme ID is compared to 0xffff
-// instead of 0x7.
-// 0x2c00ffff = cmpwi r0, 0xffff
-void remove_desert_haze::init_main_loop() {
-    patch::write_word(reinterpret_cast<void*>(0x802e4ed8), 0x2c00ffff);
-}
 
 // Hooks right before the call to SoftStreamStart, then nops the
 // "Stage Select" music fadeout

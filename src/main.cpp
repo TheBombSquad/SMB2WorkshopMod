@@ -5,8 +5,8 @@
 #include "internal/pad.h"
 #include "internal/patch.h"
 #include "internal/version.h"
-#include "patches/tickable.h"
 #include "mkb/mkb.h"
+#include "patches/tickable.h"
 
 namespace main {
 static patch::Tramp<decltype(&mkb::process_inputs)> s_process_inputs_tramp;
@@ -60,7 +60,6 @@ void init() {
             pad::tick();
         });
         */
-
 }
 
 /*

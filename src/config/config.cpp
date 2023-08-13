@@ -107,8 +107,8 @@ void parse_function_toggles(char* buf) {
         mkb::strncpy(key, key_start, (key_end - key_start));
         mkb::strncpy(value, key_end + 2, (end_of_line - key_end) - 2);
 
-        for (const auto& tickable : tickable::get_tickable_manager().get_tickables()) {
-            //mkb::OSReport("debug: tickable parse\n");
+        for (const auto& tickable: tickable::get_tickable_manager().get_tickables()) {
+            // mkb::OSReport("debug: tickable parse\n");
             if (tickable->name != nullptr && STREQ(key, tickable->name)) {
                 // 'value' is enabled, set the value to 1
                 if (STREQ(value, "enabled")) {
@@ -127,7 +127,7 @@ void parse_function_toggles(char* buf) {
                     break;
                 }
 
-                    // 'value' is disabled, set value to 0
+                // 'value' is disabled, set value to 0
                 else if (STREQ(value, "disabled")) {
                     if (tickable->description != nullptr) {
                         mkb::OSReport("[wsmod]  %s %s\n", tickable->description, "disabled.");
@@ -135,7 +135,7 @@ void parse_function_toggles(char* buf) {
                     break;
                 }
 
-                    // 'value' is some integer, set the value and initialize the patch if it differs from the default
+                // 'value' is some integer, set the value and initialize the patch if it differs from the default
                 else {
                     parsed_value = mkb::atoi(value);
 
@@ -162,7 +162,7 @@ void parse_function_toggles(char* buf) {
                         break;
                     }
 
-                        // If the value is the default, do not enable the patch
+                    // If the value is the default, do not enable the patch
                     else {
                         if (tickable->description != nullptr) {
                             mkb::OSReport("[wsmod]  %s %s %s\n)", tickable->description, "disabled. (default value passed: ", parsed_value);
