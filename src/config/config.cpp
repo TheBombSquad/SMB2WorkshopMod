@@ -3,6 +3,7 @@
 #include "internal/assembly.h"
 #include "internal/heap.h"
 #include "internal/log.h"
+#include "patches/party_game_toggle.h"
 #include "patches/tickable.h"
 
 #define STREQ(x, y) (mkb::strcmp(const_cast<char*>(x), const_cast<char*>(y)) == 0)
@@ -58,29 +59,29 @@ void parse_party_game_toggles(char* buf) {
         mkb::strncpy(value, key_end + 2, (end_of_line - key_end) - 2);
 
         if KEY_ENABLED ("monkey-race")
-            relpatches::party_game_toggle::party_game_bitflag |= 0x1;
+            party_game_toggle::party_game_bitflag |= 0x1;
         else if KEY_ENABLED ("monkey-fight")
-            relpatches::party_game_toggle::party_game_bitflag |= 0x2;
+            party_game_toggle::party_game_bitflag |= 0x2;
         else if KEY_ENABLED ("monkey-target")
-            relpatches::party_game_toggle::party_game_bitflag |= 0x4;
+            party_game_toggle::party_game_bitflag |= 0x4;
         else if KEY_ENABLED ("monkey-billiards")
-            relpatches::party_game_toggle::party_game_bitflag |= 0x8;
+            party_game_toggle::party_game_bitflag |= 0x8;
         else if KEY_ENABLED ("monkey-bowling")
-            relpatches::party_game_toggle::party_game_bitflag |= 0x10;
+            party_game_toggle::party_game_bitflag |= 0x10;
         else if KEY_ENABLED ("monkey-golf")
-            relpatches::party_game_toggle::party_game_bitflag |= 0x20;
+            party_game_toggle::party_game_bitflag |= 0x20;
         else if KEY_ENABLED ("monkey-boat")
-            relpatches::party_game_toggle::party_game_bitflag |= 0x40;
+            party_game_toggle::party_game_bitflag |= 0x40;
         else if KEY_ENABLED ("monkey-shot")
-            relpatches::party_game_toggle::party_game_bitflag |= 0x80;
+            party_game_toggle::party_game_bitflag |= 0x80;
         else if KEY_ENABLED ("monkey-dogfight")
-            relpatches::party_game_toggle::party_game_bitflag |= 0x100;
+            party_game_toggle::party_game_bitflag |= 0x100;
         else if KEY_ENABLED ("monkey-soccer")
-            relpatches::party_game_toggle::party_game_bitflag |= 0x200;
+            party_game_toggle::party_game_bitflag |= 0x200;
         else if KEY_ENABLED ("monkey-baseball")
-            relpatches::party_game_toggle::party_game_bitflag |= 0x400;
+            party_game_toggle::party_game_bitflag |= 0x400;
         else if KEY_ENABLED ("monkey-tennis")
-            relpatches::party_game_toggle::party_game_bitflag |= 0x800;
+            party_game_toggle::party_game_bitflag |= 0x800;
 
         buf = end_of_line + 1;
         mkb::memset(key, '\0', 64);
@@ -107,6 +108,7 @@ void parse_function_toggles(char* buf) {
         mkb::strncpy(key, key_start, (key_end - key_start));
         mkb::strncpy(value, key_end + 2, (end_of_line - key_end) - 2);
 
+        // Iterate through all the REL patch tickables, looking for match of key name
         for (const auto& tickable: tickable::get_tickable_manager().get_tickables()) {
             // mkb::OSReport("debug: tickable parse\n");
             if (tickable->name != nullptr && STREQ(key, tickable->name)) {
@@ -172,9 +174,6 @@ void parse_function_toggles(char* buf) {
                     }
                 }
             }
-        }
-        // Iterate through all the REL patch tickables, looking for match of key name
-        for (unsigned int i = 0; i < relpatches::PATCH_COUNT; i++) {
         }
 
         buf = end_of_line + 1;

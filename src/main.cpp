@@ -42,7 +42,6 @@ void init() {
     // Load our config file
     config::parse_config();
 
-    /*
     patch::hook_function(
         s_process_inputs_tramp, mkb::process_inputs, []() {
             s_process_inputs_tramp.dest();
@@ -51,15 +50,14 @@ void init() {
             // to ensure lowest input delay
 
             // Tick functions (REL patches)
-            for (unsigned int i = 0; i < relpatches::PATCH_COUNT; i++) {
-                if (relpatches::patches[i].status && relpatches::patches[i].tick_func != nullptr) {
-                    relpatches::patches[i].tick_func();
+            for (const auto& tickable: tickable::get_tickable_manager().get_tickables()) {
+                if (tickable->enabled && tickable->tick) {
+                    tickable->tick();
                 }
             }
 
             pad::tick();
         });
-        */
 }
 
 /*

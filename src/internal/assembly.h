@@ -1,7 +1,6 @@
 #pragma once
 
 #include "mkb/mkb.h"
-#include "patches/relpatches.h"
 
 namespace main {
 
@@ -31,11 +30,11 @@ void reflection_draw_stage_hook();
 void reflection_view_stage_hook();
 
 // music_id_per_stage
-extern u16 bgm_id_lookup[relpatches::STAGE_COUNT];
+extern u16 bgm_id_lookup[421];// TODO: make dynamic
 void get_bgm_id_hook();
 
 // theme_id_per_stage
-extern u16 theme_id_lookup[relpatches::STAGE_COUNT];
+extern u16 theme_id_lookup[421];// TODO: make dynamic
 void get_theme_id_hook_1();
 void get_theme_id_hook_2();
 
