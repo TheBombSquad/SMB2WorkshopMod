@@ -1,7 +1,7 @@
 #include "pause_volume_fix.h"
 
 #include "internal/patch.h"
-#include "patches/tickable.h"
+#include "internal/tickable.h"
 
 namespace pause_volume_fix {
 

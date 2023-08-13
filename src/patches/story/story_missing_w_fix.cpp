@@ -2,7 +2,7 @@
 
 #include "internal/assembly.h"
 #include "internal/patch.h"
-#include "patches/tickable.h"
+#include "internal/tickable.h"
 
 // Defines the missing lowercase 'w' character and opints the game's duplicate 't' to the new 'w'.
 namespace story_missing_w_fix {

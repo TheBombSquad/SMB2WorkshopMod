@@ -1,7 +1,7 @@
 #include "death_counter.h"
 
 #include "internal/patch.h"
-#include "patches/tickable.h"
+#include "internal/tickable.h"
 
 namespace death_counter {
 

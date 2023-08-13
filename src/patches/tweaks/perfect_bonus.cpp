@@ -1,8 +1,8 @@
 #include "perfect_bonus.h"
 
 #include "internal/patch.h"
+#include "internal/tickable.h"
 #include "mkb/mkb.h"
-#include "patches/tickable.h"
 
 
 namespace perfect_bonus {

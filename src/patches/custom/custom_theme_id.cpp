@@ -2,8 +2,8 @@
 
 #include "internal/assembly.h"
 #include "internal/patch.h"
-#include "patches/tickable.h"
-#include "util/ppcutil.h"
+#include "internal/tickable.h"
+#include "utils/ppcutil.h"
 
 namespace custom_theme_id {
 

@@ -2,9 +2,9 @@
 
 #include "internal/pad.h"
 #include "internal/patch.h"
+#include "internal/tickable.h"
 #include "mkb/mkb.h"
-#include "patches/tickable.h"
-#include "util/ppcutil.h"
+#include "utils/ppcutil.h"
 
 namespace smb1_camera_toggle {
 

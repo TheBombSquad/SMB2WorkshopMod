@@ -2,8 +2,8 @@
 
 #include "internal/assembly.h"
 #include "internal/patch.h"
-#include "patches/tickable.h"
-#include "util/ppcutil.h"
+#include "internal/tickable.h"
+#include "utils/ppcutil.h"
 
 // Fixes an issue with rain droplets not appearing correctly on the continue platform in the storm theme.
 namespace fix_storm_continue_platform {

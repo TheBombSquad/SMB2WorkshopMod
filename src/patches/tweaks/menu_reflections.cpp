@@ -1,8 +1,8 @@
 #include "menu_reflections.h"
 
 #include "internal/patch.h"
+#include "internal/tickable.h"
 #include "mkb/mkb.h"
-#include "patches/tickable.h"
 
 // Enables reflective surfaces on the menu. Experimental and I don't really know why this works.
 // Assumes the menu stage slot is 3 or 201.

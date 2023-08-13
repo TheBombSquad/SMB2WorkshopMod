@@ -57,7 +57,7 @@ else
 #---------------------------------------------------------------------------------
 TARGET		:=	mkb2.rel_sample
 BUILD		:=	build
-SOURCES		:=	src $(wildcard src/*)
+SOURCES		:=	$(shell find src -type d 2> /dev/null)
 DATA		:=	data  
 INCLUDES	:=	$(shell find src -type d 2> /dev/null) dep/etl/include
 

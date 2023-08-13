@@ -3,8 +3,8 @@
 #include "internal/assembly.h"
 #include "internal/heap.h"
 #include "internal/log.h"
-#include "patches/party_game_toggle.h"
-#include "patches/tickable.h"
+#include "internal/tickable.h"
+#include "patches/custom/party_game_toggle.h"
 
 #define STREQ(x, y) (mkb::strcmp(const_cast<char*>(x), const_cast<char*>(y)) == 0)
 #define KEY_ENABLED(x) (STREQ(key, x) && STREQ(value, "enabled"))

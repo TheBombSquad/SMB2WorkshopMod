@@ -1,8 +1,8 @@
 #include "remove_playpoints.h"
 
 #include "internal/patch.h"
+#include "internal/tickable.h"
 #include "mkb/mkb.h"
-#include "patches/tickable.h"
 
 // Removes the playpoint notification screens when exiting from story mode or challenge mode, or after a 'game over'.
 namespace remove_playpoints {

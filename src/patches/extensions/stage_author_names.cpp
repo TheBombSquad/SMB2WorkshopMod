@@ -3,8 +3,8 @@
 #include "internal/heap.h"
 #include "internal/log.h"
 #include "internal/patch.h"
+#include "internal/tickable.h"
 #include "mkb/mkb.h"
-#include "patches/tickable.h"
 
 
 // Allows for stage author names to be displayed under the stage name.

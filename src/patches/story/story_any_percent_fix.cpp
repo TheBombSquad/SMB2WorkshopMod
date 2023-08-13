@@ -1,8 +1,8 @@
 #include "story_any_percent_fix.h"
 
 #include "internal/patch.h"
+#include "internal/tickable.h"
 #include "mkb/mkb.h"
-#include "patches/tickable.h"
 
 // Fixes an issue where skipping more than a certain number of stages for story mode any% causes a crash.
 namespace story_any_percent_fix {

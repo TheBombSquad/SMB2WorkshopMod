@@ -2,7 +2,7 @@
 
 #include "internal/assembly.h"
 #include "internal/patch.h"
-#include "patches/tickable.h"
+#include "internal/tickable.h"
 
 namespace story_continuous_music {
 

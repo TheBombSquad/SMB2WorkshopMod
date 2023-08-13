@@ -4,9 +4,9 @@
 #include "internal/modlink.h"
 #include "internal/pad.h"
 #include "internal/patch.h"
+#include "internal/tickable.h"
 #include "internal/version.h"
 #include "mkb/mkb.h"
-#include "patches/tickable.h"
 
 namespace main {
 static patch::Tramp<decltype(&mkb::process_inputs)> s_process_inputs_tramp;

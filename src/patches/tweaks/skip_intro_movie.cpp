@@ -1,8 +1,8 @@
 #include "skip_intro_movie.h"
 
 #include "internal/patch.h"
+#include "internal/tickable.h"
 #include "mkb/mkb.h"
-#include "patches/tickable.h"
 
 namespace skip_intro_movie {
 

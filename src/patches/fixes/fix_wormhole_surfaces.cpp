@@ -1,8 +1,8 @@
 #include "fix_wormhole_surfaces.h"
 
 #include "internal/patch.h"
-#include "patches/tickable.h"
-#include "util/ppcutil.h"
+#include "internal/tickable.h"
+#include "utils/ppcutil.h"
 
 namespace fix_wormhole_surfaces {
 

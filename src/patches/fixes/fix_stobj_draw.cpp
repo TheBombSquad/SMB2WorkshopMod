@@ -1,10 +1,10 @@
-#include "stobj_draw_fix.h"
+#include "fix_stobj_draw.h"
 
 #include "internal/patch.h"
+#include "internal/tickable.h"
 #include "mkb/mkb.h"
-#include "patches/tickable.h"
 
-namespace stobj_draw_fix {
+namespace fix_stobj_draw {
 /*
  * Stobjs (goaltapes, party balls, bumpers, etc) placed on itemgroups with index greater than 127 may get an
  * incorrect itemgroup transform, making them appear weirdly or not at all. This patch forces stobj itemgroup
@@ -53,4 +53,4 @@ void init_main_loop() {
     }
 }
 
-}// namespace stobj_draw_fix
+}// namespace fix_stobj_draw

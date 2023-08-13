@@ -1,9 +1,9 @@
 #include "party_game_toggle.h"
 
 #include "internal/patch.h"
+#include "internal/tickable.h"
 #include "mkb/mkb.h"
-#include "patches/tickable.h"
-#include "util/ppcutil.h"
+#include "utils/ppcutil.h"
 
 // Allows for party games to be toggled with a config option.
 namespace party_game_toggle {
