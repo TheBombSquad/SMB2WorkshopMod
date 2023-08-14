@@ -21,6 +21,36 @@ void TickableManager::init() const {
     static patch::Tramp<decltype(&mkb::draw_debugtext)> s_draw_debugtext_tramp;
     static patch::Tramp<decltype(&mkb::load_additional_rel)> s_load_additional_rel_tramp;
 
+    // Call init_main_loop on all tickables that have been enabled
+    for (const auto& tickable : m_tickables) {
+        // Print a message to our log on load
+        if (tickable->description != nullptr) {
+            // Has a custom value that was set during config load
+            if (tickable->active_value.has_value()) {
+                if (tickable->enabled) {
+                    mkb::OSReport("[wsmod]  %s %s %d)\n", tickable->description, "ENABLED! (custom value passed: ", *tickable->active_value);
+                }
+                else {
+                    mkb::OSReport("[wsmod]  %s %s %d)\n", tickable->description, "disabled. (default value passed: ", *tickable->active_value);
+                }
+            }
+            // Does not have a custom value that was set during config load
+            else {
+                if (tickable->enabled) {
+                    mkb::OSReport("[wsmod]  %s %s\n", tickable->description, "ENABLED!");
+                }
+                else {
+                    mkb::OSReport("[wsmod]  %s %s\n", tickable->description, "disabled.");
+                }
+            }
+        }
+
+        // Execute the main_loop init func, if it exists
+        if (tickable->enabled && tickable->init_main_loop) {
+           mkb::OSReport("Running init_main_loop for %s\n", tickable->name);
+            (*tickable->init_main_loop)();
+        }
+    }
     // Hook for mkb::draw_debugtext
     patch::hook_function(s_draw_debugtext_tramp, mkb::draw_debugtext, []() {
         // Drawing hook for UI elements.
@@ -30,6 +60,7 @@ void TickableManager::init() const {
         // Disp functions (REL patches)
         for (const auto& tickable: get_tickable_manager().get_tickables()) {
             if (tickable->enabled && tickable->disp) {
+                mkb::OSReport("Running disp for %s\n", tickable->name);
                 (*tickable->disp)();
             }
         }
@@ -46,7 +77,7 @@ void TickableManager::init() const {
             if (STREQ(rel_filepath, "mkb2.main_game.rel")) {
                 for (const auto& tickable: get_tickable_manager().get_tickables()) {
                     if (tickable->enabled && tickable->init_main_game) {
-                        mkb::OSReport("Calling init_main_game\n");
+                        mkb::OSReport("Running init_main_game for %s\n", tickable->name);
                         (*tickable->init_main_game)();
                     }
                 }
@@ -56,7 +87,7 @@ void TickableManager::init() const {
             else if (STREQ(rel_filepath, "mkb2.sel_ngc.rel")) {
                 for (const auto& tickable: get_tickable_manager().get_tickables()) {
                     if (tickable->enabled && tickable->init_sel_ngc) {
-                        mkb::OSReport("Calling sel_ngc\n");
+                        mkb::OSReport("Running init_sel_ngc for %s\n", tickable->name);
                         (*tickable->init_sel_ngc)();
                     }
                 }

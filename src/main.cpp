@@ -37,10 +37,12 @@ void init() {
     modlink::write();
 
     perform_assembly_patches();
-    tickable::get_tickable_manager().init();
 
     // Load our config file
     config::parse_config();
+
+    // Init all tickables/patches
+    tickable::get_tickable_manager().init();
 
     patch::hook_function(
         s_process_inputs_tramp, mkb::process_inputs, []() {

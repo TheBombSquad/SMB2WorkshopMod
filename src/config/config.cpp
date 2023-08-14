@@ -108,32 +108,18 @@ void parse_function_toggles(char* buf) {
         mkb::strncpy(key, key_start, (key_end - key_start));
         mkb::strncpy(value, key_end + 2, (end_of_line - key_end) - 2);
 
-        // Iterate through all the REL patch tickables, looking for match of key name
+        // Set the state of a given tickable based on the found key
         for (const auto& tickable: tickable::get_tickable_manager().get_tickables()) {
             // mkb::OSReport("debug: tickable parse\n");
             if (tickable->name != nullptr && STREQ(key, tickable->name)) {
                 // 'value' is enabled, set the value to 1
                 if (STREQ(value, "enabled")) {
                     tickable->enabled = true;
-
-                    // Execute the main_loop init func, if it exists
-                    if (tickable->init_main_loop != nullptr) {
-                        (*tickable->init_main_loop)();
-                    }
-
-                    // Print init description, if it exists
-                    if (tickable->description != nullptr) {
-                        mkb::OSReport("[wsmod]  %s %s\n", tickable->description, "ENABLED!");
-                    }
-
                     break;
                 }
 
                 // 'value' is disabled, set value to 0
                 else if (STREQ(value, "disabled")) {
-                    if (tickable->description != nullptr) {
-                        mkb::OSReport("[wsmod]  %s %s\n", tickable->description, "disabled.");
-                    }
                     break;
                 }
 
@@ -141,6 +127,7 @@ void parse_function_toggles(char* buf) {
                 else {
                     parsed_value = mkb::atoi(value);
 
+                    // Only set value on tickables that have a defined default active value
                     if (!tickable->active_value.has_value()) break;
 
                     // Check to see if the passed value is within the defined bounds
@@ -149,27 +136,12 @@ void parse_function_toggles(char* buf) {
 
                     // Set the enabled to the parsed value, if it differes from the default passed value
                     if (parsed_value != tickable->active_value) {
-                        tickable->enabled = parsed_value;
-
-                        // Execute the main_loop init func, if it exists
-                        if (tickable->init_main_game != nullptr) {
-                            (*tickable->init_main_loop)();
-                        }
-
-                        // Print init description, if it exists
-                        if (tickable->description != nullptr) {
-                            mkb::OSReport("[wsmod]  %s %s %d)\n", tickable->description, "ENABLED! (custom value passed: ", parsed_value);
-                        }
-
+                        tickable->active_value = parsed_value;
                         break;
                     }
 
                     // If the value is the default, do not enable the patch
                     else {
-                        if (tickable->description != nullptr) {
-                            mkb::OSReport("[wsmod]  %s %s %d)\n", tickable->description, "disabled. (default value passed: ", parsed_value);
-                        }
-
                         break;
                     }
                 }
