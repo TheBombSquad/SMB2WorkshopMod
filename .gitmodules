@@ -1,0 +1,3 @@
+[submodule "dep/etl"]
+	path = dep/etl
+	url = https://github.com/ETLCPP/etl.git

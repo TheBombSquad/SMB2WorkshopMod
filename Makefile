@@ -57,9 +57,9 @@ else
 #---------------------------------------------------------------------------------
 TARGET		:=	mkb2.rel_sample
 BUILD		:=	build
-SOURCES		:=	rel $(wildcard rel/*)
+SOURCES		:=	$(shell find src -type d 2> /dev/null)
 DATA		:=	data  
-INCLUDES	:=	rel/include
+INCLUDES	:=	$(shell find src -type d 2> /dev/null) dep/etl/include
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -69,7 +69,7 @@ MACHDEP		= -mno-sdata -mgcn -DGEKKO -mcpu=750 -meabi -mhard-float
 
 # -Wno-write-strings because some GC SDK functions take non-const char *,
 # and Ghidra can't represent const char * anyhow
-CFLAGS		= -nostdlib -ffreestanding -ffunction-sections -fdata-sections -g -Os -Wall -Wno-write-strings $(MACHDEP) $(INCLUDE)
+CFLAGS		= -nostdlib -ffunction-sections -fdata-sections -g -Os -Wall -Wno-write-strings $(MACHDEP) $(INCLUDE)
 CXXFLAGS	= -fno-exceptions -fno-rtti -std=gnu++20 $(CFLAGS)
 ASFLAGS     = -mregnames # Don't require % in front of register names
 
@@ -128,7 +128,7 @@ export HFILES := $(addsuffix .h,$(subst .,_,$(BINFILES)))
 
 # For REL linking
 export LDFILES		:= $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.ld)))
-export MAPFILE		:= $(CURDIR)/rel/include/mkb2.$(REGION).lst
+export MAPFILE		:= $(CURDIR)/src/mkb/mkb2.$(REGION).lst
 
 #---------------------------------------------------------------------------------
 # build a list of include paths
