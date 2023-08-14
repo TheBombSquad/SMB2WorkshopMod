@@ -1,17 +1,16 @@
 #pragma once
 
-#include <mkb.h>
-#include "list.h"
-#include "log.h"
-#include "heap.h"
+#include "internal/heap.h"
+#include "internal/log.h"
+#include "mkb/mkb.h"
 
-template <typename T>
+template<typename T>
 struct Element {
     Element* next = nullptr;
     T* val;
 };
 
-template <typename T>
+template<typename T>
 class List {
 public:
     void append(T* obj);
@@ -22,8 +21,7 @@ public:
 
 
 template<typename T>
-void List<T>::append(T* obj)
-{
+void List<T>::append(T* obj) {
     Element<T>* e = new Element<T>(nullptr, obj);
     if (empty()) {
         first = e;
@@ -41,8 +39,7 @@ void List<T>::append(T* obj)
 
 // This won't remove duplicate values
 template<typename T>
-void List<T>::remove_first(T* obj)
-{
+void List<T>::remove_first(T* obj) {
     Element<T>* i = first;
     if (i != nullptr && i->val == obj) {
         if (i->next == nullptr) {
@@ -79,8 +76,6 @@ void List<T>::remove_first(T* obj)
 }
 
 template<typename T>
-bool List<T>::empty()
-{
+bool List<T>::empty() {
     return (first == nullptr);
 }
-

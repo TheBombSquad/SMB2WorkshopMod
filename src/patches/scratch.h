@@ -1,11 +1,10 @@
 #pragma once
 
 #include <ui_box.h>
-namespace scratch
-{
+namespace scratch {
 
 void init();
 void tick();
 void disp();
 
-}
+}// namespace scratch

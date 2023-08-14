@@ -2,8 +2,7 @@
 #include "pad.h"
 #include "ui_box.h"
 
-namespace scratch
-{
+namespace scratch {
 
 char* msg = "Achievement unlocked!";
 char* msg1 = "Banana mania";
@@ -99,7 +98,7 @@ void tick() {
     }
 
     if (pad::button_down(mkb::PAD_TRIGGER_Z) && !sent) {
-        //mkb::call_SoundReqID_arg_2(10);
+        // mkb::call_SoundReqID_arg_2(10);
         mkb::OSReport("free: %x\n", heap::get_free_space());
 
         sent = true;
@@ -115,4 +114,4 @@ void tick() {
 
 void disp() {}
 
-}
+}// namespace scratch
