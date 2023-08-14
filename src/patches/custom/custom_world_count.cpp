@@ -37,10 +37,10 @@ void dmd_scen_sceneplay_init_patch() {
 }
 
 void init_main_game() {
-    mkb::OSReport("set world count to %d\n", get_world_count());
+    //mkb::OSReport("set world count to %d\n", get_world_count());
 
     if (tickable::get_tickable_manager().get_tickable_status("skip-cutscenes")) {
-        mkb::OSReport("hooking sceneplay\n");
+        //mkb::OSReport("hooking sceneplay\n");
 
         patch::hook_function(s_sceneplay_init_tramp,
                              mkb::dmd_scen_sceneplay_init, dmd_scen_sceneplay_init_patch);

@@ -21,12 +21,12 @@ void rendefc_handler(u32 stage_id) {
     if (mkb::main_mode == mkb::MD_SEL) {
         if (stage_id == 3 || stage_id == 201) {
             if (mkb::events[mkb::EVENT_REND_EFC].status == mkb::STAT_NULL) {
-                mkb::OSReport("Created menu rendefc stage %d\n", stage_id);
+                //mkb::OSReport("Created menu rendefc stage %d\n", stage_id);
                 mkb::event_init(mkb::EVENT_REND_EFC);
             }
         }
         else {
-            mkb::OSReport("Destroyed menu rendefc stage %d\n", stage_id);
+            //mkb::OSReport("Destroyed menu rendefc stage %d\n", stage_id);
             mkb::event_dest(mkb::EVENT_REND_EFC);
         }
     }
