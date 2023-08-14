@@ -9,20 +9,20 @@
 #define TOKEN_CONCAT(x, y) _TOKEN_CONCAT(x, y)
 #define UNPAREN(...) __VA_ARGS__
 
-#define _TICKABLE_DEFINITION(in, idx)                                                                                     \
+#define _TICKABLE_DEFINITION(in, idx)                                                                                    \
     tickable::Tickable* TOKEN_CONCAT(active_tickable_ptr, idx) = []() {                                                  \
         static uint8_t TOKEN_CONCAT(s_tickable_buf, idx)[sizeof(tickable::Tickable)];                                    \
         tickable::Tickable* t = new (TOKEN_CONCAT(s_tickable_buf, idx)) tickable::Tickable{                              \
-            in};                                                                                                          \
+            in};                                                                                                         \
         tickable::get_tickable_manager().push(reinterpret_cast<tickable::Tickable*>(TOKEN_CONCAT(s_tickable_buf, idx))); \
-        return t;                                                                                                         \
+        return t;                                                                                                        \
     }();
 
 #define TICKABLE_DEFINITION_IDX(in) _TICKABLE_DEFINITION(UNPAREN in, TOKEN_CONCAT(_, __COUNTER__))
 
 // Defines a new tickable, accessible by active_tickable_ptr
 // Adds the new tickable to the tickable manager
-#define TICKABLE_DEFINITION(in) _TICKABLE_DEFINITION(UNPAREN in,)
+#define TICKABLE_DEFINITION(in) _TICKABLE_DEFINITION(UNPAREN in, )
 
 namespace tickable {
 
