@@ -1,6 +1,6 @@
 #pragma once
 
-#include "internal/list.h"
+#include "etl/list.h"
 #include "mkb/mkb.h"
 
 namespace ui_box {
@@ -60,7 +60,7 @@ private:
     char* m_title = nullptr;
     char* m_subtitle = nullptr;
     char* m_message = nullptr;
-    List<UIBoxModifier> modifiers = List<UIBoxModifier>();
+    etl::list<UIBoxModifier, 4> modifiers = etl::list<UIBoxModifier, 4>();
     u8 modifier_count;
 
     void modifier_wiggle(UIBoxModifier* modifier);
@@ -71,7 +71,7 @@ private:
 void init();
 void disp_all();
 
-extern List<UIBox> ui_boxes;
+extern etl::list<UIBox, 16> ui_boxes;
 void draw_ui_box_ext(u32 texture_id);
 
 float lerp(float f1, float f2, float t);

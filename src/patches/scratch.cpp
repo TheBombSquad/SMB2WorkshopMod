@@ -1,6 +1,7 @@
 #include "scratch.h"
-#include "pad.h"
-#include "ui_box.h"
+#include "internal/heap.h"
+#include "internal/pad.h"
+#include "internal/ui_box.h"
 
 namespace scratch {
 

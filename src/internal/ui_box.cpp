@@ -1,7 +1,7 @@
 #include "ui_box.h"
 
+#include "etl/list.h"
 #include "internal/heap.h"
-#include "internal/list.h"
 #include "internal/log.h"
 #include "mkb/mkb.h"
 #include "utils/vecutil.h"
@@ -10,26 +10,20 @@
 #define COS(x) SIN(16384 - x)
 
 namespace ui_box {
-List<UIBox> ui_boxes = List<UIBox>();
+etl::list<UIBox, 16> ui_boxes = etl::list<UIBox, 16>();
 // Init the ui_box_stack as empty.
 void init() {
 }
 
 // Iterate through the ui_box_stack to find any UIBox elements, display if they exist. TODO: Handle 'visible', 'invisible', 'to be destroyed', etc states
 void disp_all() {
-    if (!ui_boxes.empty()) {
-        Element<UIBox>* e = ui_boxes.first;
-        do {
-            if (e->val->get_state() == UIBoxState::STATE_DESTROY) {
-                Element<UIBox>* next = e->next;
-                ui_boxes.remove_first(e->val);
-                e = next;
-            }
-            else {
-                e->val->disp();
-                e = e->next;
-            }
-        } while (e != nullptr);
+    for (auto& b: ui_boxes) {
+        if (b.get_state() == UIBoxState::STATE_DESTROY) {
+            // ui_boxes.remove();
+        }
+        else {
+            b.disp();
+        }
     }
 }
 
@@ -46,64 +40,58 @@ UIBox::UIBox(float x, float y, float width, float height) {
 // Display a UIBox, also run all modifiers
 void UIBox::disp() {
     if (state != UIBoxState::STATE_VISIBLE_NO_TICK && state != UIBoxState::STATE_INVISIBLE_NO_TICK) {
-        if (!modifiers.empty()) {
-            Element<UIBoxModifier>* e = modifiers.first;
-            do {
-                UIBoxModifier* mod = e->val;
-                switch (mod->type) {
-                    case AnimType::MODIFIER_WIGGLE:
-                        modifier_wiggle(mod);
-                        break;
-                    case AnimType::MODIFIER_ZOOM:
-                        modifier_zoom(mod);
-                        break;
-                    case AnimType::MODIFIER_LIFETIME:
-                        modifier_lifetime(mod);
-                        break;
-                    case AnimType::MODIFIER_NONE:
-                    default:
-                        break;
-                }
-                e = e->next;
-            } while (e != nullptr);
+        for (auto mod: modifiers) {
+            switch (mod.type) {
+                case AnimType::MODIFIER_WIGGLE:
+                    modifier_wiggle(&mod);
+                    break;
+                case AnimType::MODIFIER_ZOOM:
+                    modifier_zoom(&mod);
+                    break;
+                case AnimType::MODIFIER_LIFETIME:
+                    modifier_lifetime(&mod);
+                    break;
+                case AnimType::MODIFIER_NONE:
+                default:
+                    break;
+            }
+        }
+
+        if (state != UIBoxState::STATE_INVISIBLE && state != UIBoxState::STATE_INVISIBLE_NO_TICK) {
+            Vec2d centered_pos;
+            centered_pos.x = m_pos.x + (m_dimensions.x / 2);
+            centered_pos.y = m_pos.y + (m_dimensions.y / 2);
+
+            mkb::mtxa_from_identity();
+            mkb::mtxa_translate_xyz(centered_pos.x, centered_pos.y, 0.0);
+            mkb::mtxa_scale_xyz(m_scale.x, m_scale.y, 1);
+            mkb::mtxa_rotate_z(m_rot_z);
+            mkb::mtxa_translate_neg_xyz(centered_pos.x, centered_pos.y, 0.0);
+            mkb::GXLoadPosMtxImm(reinterpret_cast<float(*)[4]>(mkb::mtxa), 0);
+            mkb::init_ui_element_sprite_with_defaults();
+            mkb::set_ui_element_sprite_pos(centered_pos.x, centered_pos.y);
+            mkb::set_ui_element_sprite_scale(1, 1);
+            mkb::set_ui_element_sprite_scale(m_dimensions.x / 416, m_dimensions.y / 176);
+            mkb::set_ui_element_sprite_depth(0.10);
+            draw_ui_box_ext(0x5);
+            mkb::textdraw_reset();
+            mkb::textdraw_set_font(mkb::FONT32_ASC_24x24);
+            mkb::textdraw_set_flags(0x80000000);
+            mkb::textdraw_set_drop_shadow();
+            mkb::textdraw_set_mul_color(0xff8000);
+            mkb::textdraw_set_scale(0.7, 1);
+            mkb::textdraw_set_depth(0.01);
+            mkb::textdraw_set_pos(centered_pos.x, centered_pos.y);
+            mkb::textdraw_set_alignment(mkb::ALIGN_CENTER);
+            mkb::textdraw_print(m_title);
         }
     }
-
-    if (state != UIBoxState::STATE_INVISIBLE && state != UIBoxState::STATE_INVISIBLE_NO_TICK) {
-        Vec2d centered_pos;
-        centered_pos.x = m_pos.x + (m_dimensions.x / 2);
-        centered_pos.y = m_pos.y + (m_dimensions.y / 2);
-
-        mkb::mtxa_from_identity();
-        mkb::mtxa_translate_xyz(centered_pos.x, centered_pos.y, 0.0);
-        mkb::mtxa_scale_xyz(m_scale.x, m_scale.y, 1);
-        mkb::mtxa_rotate_z(m_rot_z);
-        mkb::mtxa_translate_neg_xyz(centered_pos.x, centered_pos.y, 0.0);
-        mkb::GXLoadPosMtxImm(reinterpret_cast<float(*)[4]>(mkb::mtxa), 0);
-        mkb::init_ui_element_sprite_with_defaults();
-        mkb::set_ui_element_sprite_pos(centered_pos.x, centered_pos.y);
-        mkb::set_ui_element_sprite_scale(1, 1);
-        mkb::set_ui_element_sprite_scale(m_dimensions.x / 416, m_dimensions.y / 176);
-        mkb::set_ui_element_sprite_depth(0.10);
-        draw_ui_box_ext(0x5);
-        mkb::textdraw_reset();
-        mkb::textdraw_set_font(mkb::FONT32_ASC_24x24);
-        mkb::textdraw_set_flags(0x80000000);
-        mkb::textdraw_set_drop_shadow();
-        mkb::textdraw_set_mul_color(0xff8000);
-        mkb::textdraw_set_scale(0.7, 1);
-        mkb::textdraw_set_depth(0.01);
-        mkb::textdraw_set_pos(centered_pos.x, centered_pos.y);
-        mkb::textdraw_set_alignment(mkb::ALIGN_CENTER);
-        mkb::textdraw_print(m_title);
-    }
 }
-
 
 // Make the UI box rotate around its centerpoint. Angle is in standard mkb s16 angle format, period is in seconds
 // Max period is 60 seconds
 void UIBox::set_wiggle_modifier(const u16& angle, const float& period) {
-    modifiers.append(new UIBoxModifier{
+    modifiers.push_back(UIBoxModifier{
         .type = AnimType::MODIFIER_WIGGLE,
         .int_param_1 = angle,
         .int_param_2 = static_cast<u16>(1092 * period),
@@ -111,7 +99,7 @@ void UIBox::set_wiggle_modifier(const u16& angle, const float& period) {
 }
 
 void UIBox::set_zoom_modifier(const u32& time, const ZoomType& zoom_type, const u32& delay) {
-    modifiers.append(new UIBoxModifier{
+    modifiers.push_back(UIBoxModifier{
         .type = AnimType::MODIFIER_ZOOM,
         .int_param_1 = static_cast<s32>(delay),
         .int_param_2 = static_cast<s32>(time),
@@ -121,7 +109,7 @@ void UIBox::set_zoom_modifier(const u32& time, const ZoomType& zoom_type, const 
 }
 
 void UIBox::set_lifetime_modifier(const u32& time) {
-    modifiers.append(new UIBoxModifier{
+    modifiers.push_back(UIBoxModifier{
         .type = AnimType::MODIFIER_LIFETIME,
         .int_param_1 = static_cast<s32>(time),
     });
