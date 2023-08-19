@@ -1,9 +1,17 @@
 #include "scratch.h"
 #include "internal/heap.h"
 #include "internal/pad.h"
+#include "internal/tickable.h"
 #include "internal/ui_box.h"
 
 namespace scratch {
+
+TICKABLE_DEFINITION((
+        .name = "scratch",
+        .description = "Scratch",
+        .enabled = true,
+        .init_main_loop = init,
+        .tick = tick))
 
 char* msg = "Achievement unlocked!";
 char* msg1 = "Banana mania";
@@ -102,6 +110,12 @@ void tick() {
         // mkb::call_SoundReqID_arg_2(10);
         mkb::OSReport("free: %x\n", heap::get_free_space());
 
+        /*
+        ui_box::UIBox* box_ptr = new ui_box::UIBox(00,200,640,80);
+        box_ptr->set_title("How long can a line be? I'm not sure, so I'm just going to type a really long message. I'll have to decrease the font scaling to the point where it's basically unreadable. I think there is an actual character limit that's tied to the the number of sprites that can be on the screen at a given time.\nDo I know what that limit is? No, I don't, but I should probably find out.");
+        ui_box::ui_boxes.push_back(*box_ptr);
+*/
+
         sent = true;
         sent2 = false;
     }
@@ -111,6 +125,8 @@ void tick() {
         sent2 = true;
     }
     if (sent) mystery_2++;
+
+    // ui_box::disp_all();
 }
 
 void disp() {}
