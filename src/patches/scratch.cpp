@@ -2,7 +2,11 @@
 #include "internal/heap.h"
 #include "internal/pad.h"
 #include "internal/tickable.h"
-#include "internal/ui_box.h"
+#include "internal/ui/ui_manager.h"
+#include "internal/ui/widget_container.h"
+#include "internal/ui/widget_text.h"
+#include "internal/ui/widget_window.h"
+#include "widget_button.h"
 
 namespace scratch {
 
@@ -96,37 +100,24 @@ void init() {
 }
 
 void tick() {
-    if (pad::button_down(mkb::PAD_BUTTON_X)) {
-        mkb::OSReport("playing sound %d\n", mystery);
-        mkb::call_SoundReqID_arg_1(mystery);
-        mystery += 1;
-    }
-
-    if (pad::button_down(mkb::PAD_TRIGGER_L)) {
-        mkb::OSReport("x: %f\n", mystery);
-    }
-
     if (pad::button_down(mkb::PAD_TRIGGER_Z) && !sent) {
-        // mkb::call_SoundReqID_arg_2(10);
-        mkb::OSReport("free: %x\n", heap::get_free_space());
+        mkb::call_SoundReqID_arg_2(10);
+        mkb::OSReport("free: %d\n", heap::get_free_space());
 
-        /*
-        ui_box::UIBox* box_ptr = new ui_box::UIBox(00,200,640,80);
-        box_ptr->set_title("How long can a line be? I'm not sure, so I'm just going to type a really long message. I'll have to decrease the font scaling to the point where it's basically unreadable. I think there is an actual character limit that's tied to the the number of sprites that can be on the screen at a given time.\nDo I know what that limit is? No, I don't, but I should probably find out.");
-        ui_box::ui_boxes.push_back(*box_ptr);
-*/
+        // Things go here
 
+        mkb::OSReport("free: %d\n", heap::get_free_space());
         sent = true;
-        sent2 = false;
     }
 
     if (pad::button_down(mkb::PAD_BUTTON_Y) && !sent2) {
         sent = false;
-        sent2 = true;
     }
-    if (sent) mystery_2++;
 
-    // ui_box::disp_all();
+    /*
+    if (base_ptr) {
+        base_ptr->tick();
+    }*/
 }
 
 void disp() {}
