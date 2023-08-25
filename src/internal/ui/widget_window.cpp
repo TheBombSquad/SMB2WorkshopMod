@@ -1,5 +1,6 @@
 #include "widget_window.h"
-#include "mkb_draw_ui_box.h"
+
+#include "internal/ui/mkb_draw_ui_box.h"
 
 namespace ui {
 
@@ -20,8 +21,6 @@ void ui::Window::disp() {
     mkb::set_ui_element_sprite_scale(m_dimensions.x / 416, m_dimensions.y / 176);
     mkb::set_ui_element_sprite_depth(0.10);
     draw_ui_box_ext(0x5);
-    /*
-     */
 }
 
 }// namespace ui

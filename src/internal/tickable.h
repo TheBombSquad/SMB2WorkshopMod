@@ -22,7 +22,7 @@
 
 // Defines a new tickable, accessible by active_tickable_ptr
 // Adds the new tickable to the tickable manager
-#define TICKABLE_DEFINITION(in) _TICKABLE_DEFINITION(UNPAREN in, ) //NOLINT
+#define TICKABLE_DEFINITION(in) _TICKABLE_DEFINITION(UNPAREN in, )// NOLINT
 
 namespace tickable {
 

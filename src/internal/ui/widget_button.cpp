@@ -1,6 +1,6 @@
 #include "widget_button.h"
 
-#include "pad.h"
+#include "internal/pad.h"
 #include "internal/ui/widget_text.h"
 
 namespace ui {
@@ -13,7 +13,7 @@ void Button::tick() {
     if (m_is_active) {
         m_color = DEFAULT_YELLOW;
 
-        if(pad::button_pressed(mkb::PAD_BUTTON_A)) {
+        if (pad::button_pressed(mkb::PAD_BUTTON_A)) {
             m_callback();
         }
     }
@@ -24,4 +24,4 @@ void Button::tick() {
     Widget::tick();
 }
 
-}
+}// namespace ui

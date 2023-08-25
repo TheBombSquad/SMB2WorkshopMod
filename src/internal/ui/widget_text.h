@@ -1,5 +1,6 @@
 #pragma once
-#include "widget.h"
+
+#include "internal/ui/widget.h"
 
 namespace ui {
 
@@ -9,8 +10,8 @@ constexpr mkb::Rgb24 DEFAULT_ORANGE = {0xFF, 0x80, 0x00};
 
 class Text : public Widget {
 public:
-    Text(const Vec2d pos, const char* text) : Widget(pos), m_text(text) {m_scale = Vec2d{0.7, 1.0};}
-    void disp() override;
+    Text(const Vec2d pos, const char* text) : Widget(pos), m_text(text) { m_scale = Vec2d{0.7, 1.0}; }
+    virtual void disp() override;
 
 protected:
     const char* m_text;

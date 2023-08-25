@@ -1,9 +1,9 @@
 #pragma once
 
 #include "internal/log.h"
+#include "internal/ui/modifier.h"
+#include "internal/ui/widget.h"
 #include "mkb/mkb.h"
-#include "modifier.h"
-#include "widget.h"
 
 namespace ui {
 

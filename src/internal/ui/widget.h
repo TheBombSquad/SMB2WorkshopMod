@@ -2,8 +2,8 @@
 
 #include "etl/delegate.h"
 #include "etl/list.h"
+#include "internal/ui/modifier.h"
 #include "mkb/mkb.h"
-#include "modifier.h"
 
 namespace ui {
 
@@ -21,8 +21,8 @@ class Widget {
 protected:
     Widget(Vec2d pos) : m_pos(pos){};
     Widget(Vec2d pos, Vec2d dimensions) : m_pos(pos), m_dimensions(dimensions){};
-    alignas(4) bool m_id = 0;
-    uint32_t m_visible = true;
+    uint32_t m_id = 0;
+    alignas(4) bool m_visible = true;
     Vec2d m_pos = Vec2d{0.f, 0.f};
     Vec2d m_dimensions = Vec2d{0.f, 0.f};
     Vec2d m_scale = Vec2d{1.f, 1.f};
@@ -33,9 +33,7 @@ protected:
     etl::list<etl::unique_ptr<Widget>, WIDGET_MAX_CHILDREN> m_children;
 
     static constexpr uint32_t WIDGET_MAX_MODIFIERS = 4;
-    etl::list<etl::unique_ptr<Modifier>, WIDGET_MAX_MODIFIERS> m_create_modifier;
     etl::list<etl::unique_ptr<Modifier>, WIDGET_MAX_MODIFIERS> m_tick_modifier;
-    etl::list<etl::unique_ptr<Modifier>, WIDGET_MAX_MODIFIERS> m_destroy_modifier;
 
     uint32_t m_counter = 0;
 
@@ -49,11 +47,9 @@ public:
     void add_child(etl::unique_ptr<Widget>&& widget) {
         m_children.emplace_back(std::move(widget));
     }
-
-    size_t get_m_id() const {
+    uint32_t get_m_id() const {
         return m_id;
     }
-
     const Vec2d& get_pos() const {
         return m_pos;
     }
@@ -93,7 +89,6 @@ public:
     void reset_counter() {
         m_counter = 0;
     }
-
     uint32_t is_visible() const {
         return m_visible;
     }

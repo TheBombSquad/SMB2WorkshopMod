@@ -5,8 +5,8 @@
 #include "internal/pad.h"
 #include "internal/patch.h"
 #include "internal/tickable.h"
-#include "internal/version.h"
 #include "internal/ui/ui_manager.h"
+#include "internal/version.h"
 #include "mkb/mkb.h"
 
 namespace main {
@@ -55,7 +55,7 @@ void init() {
             pad::tick();
 
             // Tick functions (REL patches)
-            for (const auto& tickable : tickable::get_tickable_manager().get_tickables()) {
+            for (const auto& tickable: tickable::get_tickable_manager().get_tickables()) {
                 if (tickable->enabled && tickable->tick) {
                     tickable->tick();
                 }

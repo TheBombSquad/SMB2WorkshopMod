@@ -1,7 +1,7 @@
 #include "widget_container.h"
 
-#include "widget_button.h"
-#include "pad.h"
+#include "internal/pad.h"
+#include "internal/ui/widget_button.h"
 
 namespace ui {
 
@@ -17,7 +17,7 @@ void Container::tick() {
     if (pad::dir_pressed(pad::DIR_DOWN)) {
         mkb::call_SoundReqID_arg_2(0x6f);
         mkb::OSReport("active idx: %d\n", m_active_index);
-        if (m_active_index == container_size-1) {
+        if (m_active_index == container_size - 1) {
             m_active_index = 0;
         }
         else {
@@ -29,7 +29,7 @@ void Container::tick() {
         mkb::call_SoundReqID_arg_2(0x6f);
         mkb::OSReport("active idx: %d\n", m_active_index);
         if (m_active_index == 0) {
-            m_active_index = container_size-1;
+            m_active_index = container_size - 1;
         }
         else {
             m_active_index--;
@@ -37,7 +37,7 @@ void Container::tick() {
     }
 
     while (child_iterator != m_children.end()) {
-        Button& button_ref = static_cast<Button&>(**child_iterator);
+        auto& button_ref = static_cast<Button&>(**child_iterator);
         if (m_active_index == index) {
             button_ref.set_active(true);
         }

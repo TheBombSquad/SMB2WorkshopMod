@@ -1,9 +1,9 @@
 #pragma once
 
-#include "mkb/mkb.h"
 #include "etl/memory.h"
 #include "etl/vector.h"
 #include "internal/ui/widget.h"
+#include "mkb/mkb.h"
 
 namespace ui {
 
@@ -16,7 +16,7 @@ public:
     const WidgetVec& get_widgets() const { return m_widgets; };
     void push(etl::unique_ptr<Widget>&& widget) { m_widgets.emplace_back(std::move(widget)); }
     void tick() {
-        for (const auto& widget : m_widgets) {
+        for (const auto& widget: m_widgets) {
             widget->tick();
         }
     }
