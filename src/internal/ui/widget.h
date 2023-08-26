@@ -52,6 +52,27 @@ public:
         auto& ptr_ref = m_children.emplace_back(std::move(widget));
         return static_cast<T&>(*ptr_ref);
     }
+
+    // Remove child widget by reference
+    void remove(Widget& widget) {
+        for (auto iter = m_children.begin(); iter != m_children.end();) {
+            if (&widget == iter->get()) {
+                m_children.erase(iter);
+                break;
+            }
+            else {
+                ++iter;
+            }
+        }
+    }
+
+    // Remove all child widgets
+    void clear() {
+        for (auto iter = m_children.begin(); iter != m_children.end();) {
+            m_children.erase(iter++);
+        }
+    }
+
     uint32_t get_m_id() const {
         return m_id;
     }
