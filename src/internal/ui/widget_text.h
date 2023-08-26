@@ -10,6 +10,7 @@ constexpr mkb::Rgb24 DEFAULT_ORANGE = {0xFF, 0x80, 0x00};
 
 class Text : public Widget {
 public:
+    Text(const char* text) : Widget(), m_text(text) { m_scale = Vec2d{0.7, 1.0}; }
     Text(const Vec2d pos, const char* text) : Widget(pos), m_text(text) { m_scale = Vec2d{0.7, 1.0}; }
     virtual void disp() override;
 
