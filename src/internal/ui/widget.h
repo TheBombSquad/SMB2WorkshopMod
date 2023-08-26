@@ -43,9 +43,14 @@ public:
     virtual void tick();
     virtual void disp() = 0;
     virtual ~Widget() { mkb::OSReport("destroy\n"); };
+    Widget (const Widget&) = delete;
+    Widget& operator = (const Widget&) = delete;
 
-    void add_child(etl::unique_ptr<Widget>&& widget) {
-        m_children.emplace_back(std::move(widget));
+    // Add child widget, and return a reference to the added child
+    template<typename T>
+    T& add(T* widget) {
+        auto& ptr_ref = m_children.emplace_back(std::move(widget));
+        return static_cast<T&>(*ptr_ref);
     }
     uint32_t get_m_id() const {
         return m_id;

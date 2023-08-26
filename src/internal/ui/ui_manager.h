@@ -14,7 +14,14 @@ class WidgetManager {
 public:
     typedef etl::vector<etl::unique_ptr<Widget>, WIDGET_CAPACITY> WidgetVec;
     const WidgetVec& get_widgets() const { return m_widgets; };
-    void push(etl::unique_ptr<Widget>&& widget) { m_widgets.emplace_back(std::move(widget)); }
+
+    // Add child widget, and return a reference to the added child
+    template<typename T>
+    T& add(T* widget) {
+        auto& ptr_ref = m_widgets.emplace_back(std::move(widget));
+        return static_cast<T&>(*ptr_ref);
+    }
+
     void tick() {
         for (const auto& widget: m_widgets) {
             widget->tick();
