@@ -79,7 +79,7 @@ public:
     const Vec2d& get_dimensions() const { return m_dimensions; }
     void set_dimensions(const Vec2d& m_dimensions) { Widget::m_dimensions = m_dimensions; }
 
-    const Vec2d get_pos_center_point() const { return Vec2d{m_pos.x+(m_dimensions.x/2), m_pos.y+(m_dimensions.y/2)}; }
+    const Vec2d get_pos_center_point() const { return Vec2d{m_pos.x + (m_dimensions.x / 2), m_pos.y + (m_dimensions.y / 2)}; }
 
     const Vec2d& get_scale() const { return m_scale; }
     void set_scale(const Vec2d& m_scale) { Widget::m_scale = m_scale; }

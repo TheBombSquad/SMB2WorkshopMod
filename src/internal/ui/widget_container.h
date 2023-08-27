@@ -13,7 +13,7 @@ class Container : public Widget {
 public:
     Container(const Vec2d pos, const Vec2d dimensions) : Widget(pos, dimensions) {}
     virtual void tick() override;
-    virtual void disp() override {};
+    virtual void disp() override{};
 
 private:
     u32 m_active_index = 0;

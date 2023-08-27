@@ -44,7 +44,7 @@ void Container::tick() {
             child_vertical_pos = (slice_dim) * (index + 1);
         }
         else {
-            child_vertical_pos = (child->get_dimensions().y + m_layout_spacing*2)*(index+1);
+            child_vertical_pos = (child->get_dimensions().y + m_layout_spacing * 2) * (index + 1);
         }
 
         child->set_pos(Vec2d{center_point.x, m_pos.y + child_vertical_pos});
@@ -60,7 +60,6 @@ void Container::tick() {
         child_iterator++;
         index++;
     }
-
 
 
     Widget::tick();
