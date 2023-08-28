@@ -3,6 +3,7 @@
 #include "etl/delegate.h"
 #include "etl/list.h"
 #include "internal/ui/modifier.h"
+#include "log.h"
 #include "mkb/mkb.h"
 
 namespace ui {
@@ -26,7 +27,7 @@ protected:
     Vec2d m_pos = Vec2d{0.f, 0.f};
     Vec2d m_dimensions = Vec2d{0.f, 0.f};
     Vec2d m_scale = Vec2d{1.f, 1.f};
-    int32_t m_depth = 0;
+    float m_depth = 0.1;
     int32_t m_z_rotation = 0;
 
     static constexpr uint32_t WIDGET_MAX_CHILDREN = 8;
@@ -49,7 +50,9 @@ public:
     // Add child widget, and return a reference to the added child
     template<typename T>
     T& add(T* widget) {
+        widget->set_depth(m_depth-0.01);
         auto& ptr_ref = m_children.emplace_back(std::move(widget));
+        LOG_DEBUG("depth of added child: %f", ptr_ref->get_depth());
         return static_cast<T&>(*ptr_ref);
     }
 
@@ -84,8 +87,8 @@ public:
     const Vec2d& get_scale() const { return m_scale; }
     void set_scale(const Vec2d& m_scale) { Widget::m_scale = m_scale; }
 
-    int get_depth() const { return m_depth; }
-    void set_depth(int m_depth) { Widget::m_depth = m_depth; }
+    float get_depth() const { return m_depth; }
+    void set_depth(float m_depth) { Widget::m_depth = m_depth; }
 
     s32 get_z_rotation() const { return m_z_rotation; }
     void set_z_rotation(s32 m_z_rotation) { Widget::m_z_rotation = m_z_rotation; }

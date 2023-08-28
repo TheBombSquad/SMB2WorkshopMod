@@ -19,7 +19,7 @@ void ui::Window::disp() {
     mkb::set_ui_element_sprite_pos(centered_pos.x, centered_pos.y);
     mkb::set_ui_element_sprite_scale(1, 1);
     mkb::set_ui_element_sprite_scale(m_dimensions.x / 416, m_dimensions.y / 176);
-    mkb::set_ui_element_sprite_depth(0.10);
+    mkb::set_ui_element_sprite_depth(m_depth);
     draw_ui_box_ext(0x5);
 }
 

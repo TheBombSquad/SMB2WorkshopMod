@@ -17,14 +17,27 @@ public:
 protected:
     const char* m_text;
     mkb::FontStyle m_font_style = 0x0;
+    int m_spacing = 1;
     mkb::Rgb24 m_color = DEFAULT_ORANGE;
 
 public:
     mkb::FontStyle get_m_font_style() const {
         return m_font_style;
     }
-    void set_m_font_style(mkb::FontStyle m_font_style) {
+    void set_font_style(mkb::FontStyle m_font_style) {
         Text::m_font_style = m_font_style;
+    }
+    int get_spacing() const {
+        return m_spacing;
+    }
+    void set_spacing(int spacing) {
+        m_spacing = spacing;
+    }
+    const mkb::Rgb24& get_color() const {
+        return m_color;
+    }
+    void set_color(const mkb::Rgb24& color) {
+        m_color = color;
     }
 };
 
