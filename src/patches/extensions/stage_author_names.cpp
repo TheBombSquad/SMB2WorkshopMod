@@ -96,7 +96,7 @@ void init_main_loop() {
         MOD_ASSERT_MSG(author_file_length != 0,
                        "Author name file (stgname/authors.str) failed to load from disc");
 
-        mkb::OSReport("[mod] Now parsing stage author list file...\n");
+        LOG("Now parsing stage author list file...");
         u16 current_stage_id = 0;
 
         do {

@@ -1,5 +1,6 @@
 #include "widget_container.h"
 
+#include "internal/log.h"
 #include "internal/pad.h"
 #include "internal/ui/widget_button.h"
 
@@ -12,7 +13,7 @@ void Container::tick() {
 
     if (pad::dir_pressed(pad::DIR_DOWN)) {
         mkb::call_SoundReqID_arg_2(0x6f);
-        mkb::OSReport("active idx: %d\n", m_active_index);
+        LOG_DEBUG("active idx: %d", m_active_index);
         if (m_active_index == child_count - 1) {
             m_active_index = 0;
         }
@@ -23,7 +24,7 @@ void Container::tick() {
 
     if (pad::dir_pressed(pad::DIR_UP)) {
         mkb::call_SoundReqID_arg_2(0x6f);
-        mkb::OSReport("active idx: %d\n", m_active_index);
+        LOG_DEBUG("active idx: %d", m_active_index);
         if (m_active_index == 0) {
             m_active_index = child_count - 1;
         }

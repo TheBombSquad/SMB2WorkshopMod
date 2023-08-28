@@ -1,6 +1,7 @@
 #include "config/config.h"
 #include "internal/assembly.h"
 #include "internal/heap.h"
+#include "internal/log.h"
 #include "internal/modlink.h"
 #include "internal/pad.h"
 #include "internal/patch.h"
@@ -29,10 +30,10 @@ since it reports every frame, and thus clutters the console */
 }
 
 void init() {
-    mkb::OSReport("[wsmod] SMB2 Workshop Mod v%d.%d.%d loaded\n",
-                  version::WSMOD_VERSION.major,
-                  version::WSMOD_VERSION.minor,
-                  version::WSMOD_VERSION.patch);
+    LOG("SMB2 Workshop Mod v%d.%d.%d loaded",
+        version::WSMOD_VERSION.major,
+        version::WSMOD_VERSION.minor,
+        version::WSMOD_VERSION.patch);
 
     heap::init();
     modlink::write();
