@@ -1691,6 +1691,16 @@ struct WorldInfo {
     undefined field_0x4[0x38];
 } __attribute__((__packed__));
 
+enum { /* Requested parameter to be returned from textdraw_chara_load. */
+    RETURN_WIDTH=0,
+    RETURN_CHARACTER_COUNT=1,
+    G_RETURN_SOME_BOOL=2,
+    RETURN_LINE_COUNT=3,
+    G_LOAD_ARAM_FONT=4,
+    G_LOAD_ARAM_FONT_2=5
+};
+typedef undefined1 TextdrawCharaLoadReturnParameter;
+
 typedef struct SeesawInfo SeesawInfo, *PSeesawInfo;
 
 struct SeesawInfo { /* Allocated on the heap for an itemgroup if it's a seesaw. Points to another struct also allocated on the heap that contains physics state info like current rotation angle. */
@@ -9101,13 +9111,13 @@ extern "C" {
     void draw_text_sprite(struct Sprite * sprite);
     void draw_bmp_sprite(struct Sprite * sprite);
     void draw_texture_sprite(struct Sprite * sprite);
-    void g_textdraw_print_with_width(double width, char * string);
-    void g_textdraw_printf_with_width(double g_width, char * format, ...);
+    void textdraw_print_and_fit_to_width(double width, char * string);
+    void textdraw_printf_and_fit_to_width(double g_width, char * format, ...);
     int g_get_font_def_aram_flag(int param_1);
     void g_get_string_sprite_width_2(byte * param_1);
     void g_call_get_string_sprite_width_3_discard_result(byte * param_1);
     void g_call_call_smth_with_fonts_chara_load_w_defaults(byte * param_1);
-    float g_call_get_string_sprite_width(char * str);
+    float textdraw_get_pixel_width_of_string(char * str);
     void g_smth_with_fonts_chara_load_wrapper_discard_result(char * param_1);
     void g_smth_with_screen_fading(void);
     void fade_screen_to_color(uint flags, u32 color, uint frames);
@@ -9122,11 +9132,11 @@ extern "C" {
     undefined4 parse_avtext_color_codes(char * string, struct SpriteDrawRequest * sprite_draw_req);
     uint g_some_avtext_array_lookup(ushort next_two_chars, float some_float, short * float_as_short_ptr);
     int g_get_tex_id(undefined4 param_1, ushort param_2, ushort * param_3, int param_4);
-    void g_smth_with_font_drawing(byte * string);
-    float g_load_or_draw_font(char * string, int g_some_flag_2, byte g_some_flag);
+    void g_some_textdraw_print_internal_func(byte * string);
+    float textdraw_chara_load(char * string, BOOL32 stop_on_newline, TextdrawCharaLoadReturnParameter  return_parameter);
     double g_get_string_sprite_width_3(byte * param_1);
     void g_call_smth_with_fonts_chara_load_w_defaults(byte * string);
-    float g_get_string_sprite_width(char * string);
+    float textdraw_get_pixel_width_of_string_child(char * string);
     int g_smth_with_fonts_chara_load_wrapper(char * param_1);
     void g_display_playpoint_or_gift_message_child(int param_1, int param_2, int * param_3);
     void g_smth_with_playpoint_or_gift_msg(int param_1, char * param_2);
