@@ -13,7 +13,8 @@ void Button::tick() {
     if (m_is_active) {
         m_color = DEFAULT_YELLOW;
 
-        if (pad::button_pressed(mkb::PAD_BUTTON_A)) {
+        if (pad::button_pressed(m_input)) {
+            mkb::call_SoundReqID_arg_2(0x6e);
             m_callback();
         }
     }

@@ -19,6 +19,8 @@ protected:
     mkb::FontStyle m_font_style = 0x0;
     int m_spacing = 1;
     mkb::Rgb24 m_color = DEFAULT_ORANGE;
+    bool m_drop_shadow = true;
+    mkb::SpriteAlignment m_alignment = mkb::ALIGN_CENTER;
 
 public:
     mkb::FontStyle get_m_font_style() const {
@@ -38,6 +40,18 @@ public:
     }
     void set_color(const mkb::Rgb24& color) {
         m_color = color;
+    }
+    bool has_drop_shadow() const {
+        return m_drop_shadow;
+    }
+    void set_drop_shadow(bool drop_shadow) {
+        m_drop_shadow = drop_shadow;
+    }
+    mkb::SpriteAlignment get_alignment() const {
+        return m_alignment;
+    }
+    void set_alignment(mkb::SpriteAlignment alignment) {
+        m_alignment = alignment;
     }
 };
 

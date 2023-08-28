@@ -11,14 +11,15 @@ void Text::disp() {
     mkb::textdraw_set_font_style(m_font_style);
     mkb::textdraw_set_depth(m_depth);
     mkb::textdraw_set_pos(m_pos.x, m_pos.y);
-    mkb::textdraw_set_alignment(mkb::ALIGN_CENTER);
+    mkb::textdraw_set_alignment(m_alignment);
+    m_drop_shadow ? mkb::textdraw_set_drop_shadow() : mkb::textdraw_clear_drop_shadow();
 
     // Vertically fit text to dimensions
     const float str_height = mkb::textdraw_get_pixel_height_of_string(const_cast<char*>(m_text));
-    const float str_height_scaled = str_height*m_scale.y;
+    const float str_height_scaled = str_height * m_scale.y;
 
     if (str_height_scaled > m_dimensions.y) {
-        m_scale.y = m_dimensions.y/str_height_scaled;
+        m_scale.y = m_dimensions.y / str_height_scaled;
     }
 
     mkb::textdraw_set_scale(m_scale.x, m_scale.y);

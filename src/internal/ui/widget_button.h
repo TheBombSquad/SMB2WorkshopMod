@@ -18,9 +18,16 @@ public:
     void set_active(bool is_active) {
         Button::m_is_active = is_active;
     }
+    mkb::PadDigitalInput get_input() const {
+        return m_input;
+    }
+    void set_input(mkb::PadDigitalInput input) {
+        m_input = input;
+    }
 
 private:
     bool m_is_active = false;
+    mkb::PadDigitalInput m_input = mkb::PAD_BUTTON_A;
 };
 
 }// namespace ui

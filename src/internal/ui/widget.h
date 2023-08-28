@@ -50,7 +50,7 @@ public:
     // Add child widget, and return a reference to the added child
     template<typename T>
     T& add(T* widget) {
-        widget->set_depth(m_depth-0.01);
+        widget->set_depth(m_depth - 0.005);
         auto& ptr_ref = m_children.emplace_back(std::move(widget));
         LOG_DEBUG("depth of added child: %f", ptr_ref->get_depth());
         return static_cast<T&>(*ptr_ref);
