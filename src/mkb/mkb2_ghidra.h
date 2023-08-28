@@ -8319,7 +8319,7 @@ extern "C" {
     void g_calc_frames_since_last_input_change(void);
     void merge_inputs(void);
     TplBuffer * load_bmp(char * filepath);
-    void g_something_with_bmp_bmp_com(int g_idx);
+    void load_bmp_by_id_child(int g_idx);
     void g_something_with_freeing_memory(int param_1);
     void free_nl2ngc_tpl_buf_to_heap(struct TplBuffer * param_1);
     void g_zero_some_sprite_related_state(void);
@@ -9072,7 +9072,7 @@ extern "C" {
     void event_sprite_dest(void);
     void g_smth_with_drawing_all_sprites(int param_1);
     void draw_sprite(struct Sprite * sprite);
-    void call_something_with_bmp_bmp_com(int param_1);
+    void load_bmp_by_id(int param_1);
     void g_call_smth_with_freeing_memory(int param_1);
     void g_something_with_iteratively_freeing_memory(void);
     Sprite * create_sprite(void);
@@ -9116,9 +9116,11 @@ extern "C" {
     int g_get_font_def_aram_flag(int param_1);
     void g_get_string_sprite_width_2(byte * param_1);
     void g_call_get_string_sprite_width_3_discard_result(byte * param_1);
-    void g_call_call_smth_with_fonts_chara_load_w_defaults(byte * param_1);
+    double textdraw_get_pixel_width_of_string_as_double(char * string);
     float textdraw_get_pixel_width_of_string(char * str);
+    double textdraw_get_pixel_height_of_string(char * param_1);
     void g_smth_with_fonts_chara_load_wrapper_discard_result(char * param_1);
+    int textdraw_get_line_count_of_string(char * str);
     void g_smth_with_screen_fading(void);
     void fade_screen_to_color(uint flags, u32 color, uint frames);
     undefined4 draw_sprite_draw_request(struct SpriteDrawRequest * request);
@@ -9135,9 +9137,10 @@ extern "C" {
     void g_some_textdraw_print_internal_func(byte * string);
     float textdraw_chara_load(char * string, BOOL32 stop_on_newline, TextdrawCharaLoadReturnParameter  return_parameter);
     double g_get_string_sprite_width_3(byte * param_1);
-    void g_call_smth_with_fonts_chara_load_w_defaults(byte * string);
+    double textdraw_get_pixel_width_of_string_as_double_child(char * string);
     float textdraw_get_pixel_width_of_string_child(char * string);
     int g_smth_with_fonts_chara_load_wrapper(char * param_1);
+    int textdraw_get_line_count_of_string_child(char * param_1);
     void g_display_playpoint_or_gift_message_child(int param_1, int param_2, int * param_3);
     void g_smth_with_playpoint_or_gift_msg(int param_1, char * param_2);
     void g_some_printf_function_4(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, int param_9, char * param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
@@ -9208,6 +9211,8 @@ extern "C" {
     undefined4 g_smth_with_get_active_monkey_icon(undefined4 param_1, int param_2, int param_3);
     void g_create_how_to_sprite(void);
     void g_sprite_how_to_tick(u8 * status, struct Sprite * sprite);
+    void g_how_to_sprite_draw_controller_tooltips(int param_1, int param_2, struct SpriteDrawRequest * param_3);
+    void g_how_to_sprite_draw_rules_page(char param_1, struct Sprite * sprite, struct SpriteDrawRequest * req, char param_4, char param_5, char param_6, char param_7);
     void g_sprite_how_to_disp(struct Sprite * sprite);
     void g_sprite_how_to_dest(void);
     void create_hud_sprites(void);
