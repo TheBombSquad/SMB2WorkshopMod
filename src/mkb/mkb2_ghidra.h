@@ -11,6 +11,7 @@ typedef long long    longlong;
 typedef unsigned long long    qword;
 typedef unsigned char    uchar;
 typedef unsigned int    uint;
+typedef unsigned long long    uint16;
 typedef unsigned int    uint3;
 typedef unsigned long    ulong;
 typedef unsigned long long    ulonglong;
@@ -111,7 +112,7 @@ enum {
     WATER_SURFACE_STORY=40,
     BOWLING_STORY=41
 };
-typedef undefined1 WorldTheme;
+typedef undefined2 WorldTheme;
 
 typedef struct GoalTape GoalTape, *PGoalTape;
 
@@ -342,7 +343,7 @@ typedef undefined1 MenuScreenID;
 
 struct MenuScreen {
     struct MenuEntry * menu_entries; /* Nullable */
-    void * g_enter_submenu_func;
+    void * tick;
     u32 g_some_bitflag; /* 0x40 repositions stuff and makes stuff up/down controls */
     undefined field_0xc[0x4];
 } __attribute__((__packed__));
@@ -1643,7 +1644,7 @@ struct SpriteDrawRequest { /* Used by Sprite disp() functions to render a textur
     SpriteDrawReqFlags  flags;
     u32 mult_color; /* RGB24 multiply blend color */
     u32 add_color; /* RGB24 add blend color */
-    s16 g_some_x_value;
+    s16 widescreen_translation_x;
     undefined field_0x42[0xe];
 } __attribute__((__packed__));
 
@@ -1690,6 +1691,16 @@ struct WorldInfo {
     s16 stage_tilt_z;
     undefined field_0x4[0x38];
 } __attribute__((__packed__));
+
+enum { /* Requested parameter to be returned from textdraw_chara_load. */
+    RETURN_WIDTH=0,
+    RETURN_CHARACTER_COUNT=1,
+    G_RETURN_SOME_BOOL=2,
+    RETURN_LINE_COUNT=3,
+    G_LOAD_ARAM_FONT=4,
+    G_LOAD_ARAM_FONT_2=5
+};
+typedef undefined1 TextdrawCharaLoadReturnParameter;
 
 typedef struct SeesawInfo SeesawInfo, *PSeesawInfo;
 
@@ -1744,6 +1755,7 @@ enum {
     MF_PLAYING_MASTER_NOEX_COURSE=16,
     MF_0x20=32,
     MF_ADDITIONAL_REL_LOADED=512,
+    MG_G_NO_BANANAS=4096,
     MF_0x2000=8192,
     MF_OPTION_MODE=262144,
     MF_G_STOP_GAME_LOOP=2097152,
@@ -2179,6 +2191,32 @@ enum {
 };
 typedef undefined2 ScenMode;
 
+typedef struct FontDefinition FontDefinition, *PFontDefinition;
+
+struct FontDefinition {
+    short g_aram_flag;
+    byte width;
+    byte height;
+    int g_start_index;
+    int g_end_index;
+    char field5_0xc;
+    undefined field_0xd[0x3];
+    float field9_0x10;
+    float field10_0x14;
+    float field11_0x18;
+    float field12_0x1c;
+    char field13_0x20;
+    char field14_0x21;
+    char field15_0x22;
+    char field16_0x23;
+    char * name;
+    ushort g_some_size;
+    undefined field_0x2a[0x2];
+    ushort * g_some_avtext_lookup; /* Some short that usually always begins with '8' */
+    short * g_aram_char_lookup;
+    float field23_0x34;
+} __attribute__((__packed__));
+
 typedef struct Itemgroup Itemgroup, *PItemgroup;
 
 struct Itemgroup { /* Contains the current animation-related state of each item group in a stage (each thing corresponding to a collision header in the stagedef) */
@@ -2205,6 +2243,8 @@ struct GSoundGroupEntry {
     undefined field_0xa[0x2];
     char * g_name;
 } __attribute__((__packed__));
+
+typedef char CharPair[2];
 
 typedef struct StoryModeSaveFile StoryModeSaveFile, *PStoryModeSaveFile;
 
@@ -2283,6 +2323,12 @@ struct OptiGXChanSettings { /* Opti = For optimization */
     u32 light_mask;
     GXDiffuseFn  diff_fn;
     GXAttnFn  attn_fn;
+} __attribute__((__packed__));
+
+typedef struct GSomeLightStruct GSomeLightStruct, *PGSomeLightStruct;
+
+struct GSomeLightStruct {
+    undefined field_0x0[0x12b];
 } __attribute__((__packed__));
 
 typedef struct CmListEntry CmListEntry, *PCmListEntry;
@@ -2745,6 +2791,13 @@ struct DigitalInputGroup { /* Consolidated bitfields for digital button inputs c
     PadDigitalInput  repeated;
 } __attribute__((__packed__));
 
+enum { /* Some flags that get set during render loops, perhaps? */
+    RENDERFLAG_NONE=0,
+    RENDERFLAG_DISP=8,
+    RENDERFLAG_MINIMAP=1024
+};
+typedef undefined4 GRenderringFlags;
+
 typedef struct AnalogInputGroup AnalogInputGroup, *PAnalogInputGroup;
 
 enum { /* Thresholded analog input bits used by SMB2 */
@@ -2982,6 +3035,32 @@ enum {
 };
 typedef undefined4 MinimapMode;
 
+typedef struct theme_light theme_light, *Ptheme_light;
+
+typedef short int16_t;
+
+struct theme_light { /* A struct used for each theme ID's lighting */
+    float unk_float; /* Usually 0.6 */
+    float light_group_r;
+    float light_group_g;
+    float light_group_b;
+    float light_group_null;
+    float unk_one_1;
+    float unk_one_2;
+    float unk_one_3;
+    float unk_one_null;
+    float unk_half_1;
+    float unk_half_2;
+    float unk_half_3;
+    float unk_half_null;
+    float light_param_r;
+    float light_param_g;
+    float light_param_b;
+    int16_t xa;
+    int16_t ya;
+    float null;
+} __attribute__((__packed__));
+
 typedef struct DipSwitchesOld DipSwitchesOld, *PDipSwitchesOld;
 
 struct DipSwitchesOld { /* Unused struct - maybe I'll use it once Ghidra supports bitfields a bit nicer in the decompilation */
@@ -3185,6 +3264,13 @@ struct ytgut {
     undefined field_0x0[0x4];
 } __attribute__((__packed__));
 
+typedef struct GDialogStruct GDialogStruct, *PGDialogStruct;
+
+struct GDialogStruct {
+    undefined4 g_test_dialog_ptr;
+    undefined field_0x4[0x138];
+} __attribute__((__packed__));
+
 typedef struct PoolInfo PoolInfo, *PPoolInfo;
 
 struct PoolInfo { /* Metadata and status info for lists of "tickable" objects like the sprite, effect, stobj, and item lists */
@@ -3288,9 +3374,9 @@ typedef struct _IO_FILE __FILE;
 
 typedef struct _IO_FILE FILE;
 
-typedef int bool_t;
-
 typedef signed char int8_t;
+
+typedef int bool_t;
 
 typedef int int32_t;
 
@@ -3342,7 +3428,8 @@ struct StagedefAnimKeyframe {
     Easing  easing;
     float time;
     float value;
-    undefined field_0xc[0x8];
+    float tangent_in;
+    float tangent_out;
 } __attribute__((__packed__));
 
 typedef struct StagedefEffectHeader StagedefEffectHeader, *PStagedefEffectHeader;
@@ -3550,7 +3637,7 @@ struct StagedefColiCylinder {
 } __attribute__((__packed__));
 
 struct StagedefBackgroundModel {
-    undefined field_0x0[0x4];
+    uint g_model_flag;
     char * model_name;
     struct GmaModel * gma_model; /* Created by retype action */
     struct Vec position;
@@ -5171,7 +5258,7 @@ extern "C" {
     extern undefined thermal_management_interrupt_exception_handler;
     extern undefined4 osStringTablePtr;
     extern pointer switchdataD_80081a8c;
-    extern undefined2 g_some_font_array;
+    extern struct FontDefinition FONT_DEFINITIONS[64];
     extern undefined fullscreen_texture_buf;
     extern pointer switchdataD_80110c1c;
     extern undefined * switchdataD_80111e20;
@@ -5232,6 +5319,10 @@ extern "C" {
     extern struct DigitalInputGroup merged_digital_inputs;
     extern struct AnalogInputGroup analog_inputs[4];
     extern dword frames_since_last_input_change;
+    extern undefined4 g_some_arq_request_src;
+    extern undefined g_aram_font_file_buffer;
+    extern undefined g_aram_font_source_location;
+    extern struct ARQRequest arq_task_struct;
     extern struct GXTexObj sega_splash_tex;
     extern undefined synthGlobalVariable;
     extern undefined shdwRegs;
@@ -5297,6 +5388,9 @@ extern "C" {
     extern undefined4 g_some_func_ptr1;
     extern undefined4 g_some_OSTime;
     extern u32 (* console_reset_callback)(void);
+    extern undefined4 aram_ptr;
+    extern undefined4 aram_font_to_mram_font_spinlock;
+    extern undefined4 g_some_arq_req_spinlock;
     extern undefined4 BootInfo;
     extern undefined4 BI2DebugFlag;
     extern undefined4 AreWeInitialized;
@@ -5316,6 +5410,7 @@ extern "C" {
     extern undefined2 displayOffsetV;
     extern undefined4 showChangeMode;
     extern undefined4 shdwChanged;
+    extern undefined4 g_arq_chunk_size;
     extern undefined4 CPUFifo;
     extern undefined4 GPFifo;
     extern undefined4 TokenCB;
@@ -5383,6 +5478,7 @@ extern "C" {
     extern double camera_height;
     extern double camera_pivot_height;
     extern float camera_distance;
+    extern undefined4 g_some_array_related_to_lights_2;
     extern undefined4 g_some_light_color;
     extern float FLOAT20000;
     extern float FLOAT0_2;
@@ -5405,11 +5501,19 @@ extern "C" {
     extern double jamabar_friction;
     extern double jamabar_lower_bound;
     extern float jamabar_lower_bound_2;
+    extern undefined g_some_font_value_lookup_table;
+    extern char g_some_avtext_array[344][2];
     extern undefined BTM_SetDefaultLinkSuperTout;
     extern undefined THPSimpleGetCurrentFrame;
     extern undefined THPSimpleGetCurrentFrame;
     extern undefined THPSimpleGetCurrentFrame;
-    extern undefined1 G_ICE_THEME_ID;
+    extern undefined1 ICE_FOG_THEME_ID;
+    extern undefined1 ICE_FOG_TYPE;
+    extern float ICE_FOG_START;
+    extern float ICE_FOG_END;
+    extern undefined1 ICE_FOG_RED;
+    extern undefined1 ICE_FOG_GREEN;
+    extern undefined1 ICE_FOG_BLUE;
     extern undefined8 divisor;
     extern undefined8 base;
     extern struct HeapConfig heap_configs[19];
@@ -5439,6 +5543,7 @@ extern "C" {
     extern undefined * switchdataD_803727e4;
     extern undefined * switchdataD_80372878;
     extern pointer switchdataD_80374aac;
+    extern pointer g_some_submode_file_name_list;
     extern u8 g_active_players[4];
     extern void (* camera_funcs[93])(struct Camera *, struct Ball *);
     extern undefined * switchdataD_80374e54;
@@ -5461,9 +5566,11 @@ extern "C" {
     extern undefined * switchdataD_80391ad8;
     extern undefined * switchdataD_80391be8;
     extern undefined * switchdataD_80391e70;
-    extern undefined1 g_fifo_use_color;
+    extern undefined1 g_debug_textdraw_color;
     extern undefined * switchdataD_8039b19c;
     extern undefined * switchdataD_8039b280;
+    extern pointer g_debug_text_buffers;
+    extern pointer g_debug_color_bufers;
     extern char s_RateIntp[12];
     extern char s_CalcIntp[12];
     extern char s_Face_Dir[12];
@@ -5493,14 +5600,17 @@ extern "C" {
     extern void (* effect_disp_funcs[71])(struct Effect *);
     extern void (* effect_dest_funcs[71])(struct Effect *);
     extern WorldTheme  world_theme;
-    extern float tex_scroll_timer;
+    extern float g_bg_related_timer;
     extern struct GXColor g_some_theme_color;
     extern undefined4 g_something_with_world_theme_2;
     extern undefined4 g_something_with_world_theme_3;
     extern s32 g_smth_for_drawing;
+    extern undefined4 g_maybe_some_bg_effect_func_ptr;
+    extern void * * g_some_bg_struct_ptr;
     extern undefined2 g_something_with_world_theme_4;
     extern undefined2 g_something_with_world_theme_5;
     extern struct Ape * * BGApeTable;
+    extern undefined4 g_smth_with_bg_models;
     extern undefined bg_init_funcs;
     extern undefined bg_tick_funcs;
     extern undefined bg_dest_funcs;
@@ -5557,6 +5667,8 @@ extern "C" {
     extern pointer switchdataD_803a7210;
     extern pointer switchdataD_803a7234;
     extern undefined * switchdataD_803a7258;
+    extern undefined * FONT_NAME_LIST;
+    extern undefined * FONT_STYLE_NAME_LIST;
     extern undefined * switchdataD_803a8264;
     extern pointer switchdataD_803a83dc;
     extern pointer switchdataD_803a84b8;
@@ -5577,6 +5689,7 @@ extern "C" {
     extern char LOADIN_TEXT_BONUS_STAGE[12];
     extern char LOADIN_TEXT_FINAL_ROUND[12];
     extern char LOADIN_TEXT_FINAL_STAGE[12];
+    extern undefined stage_name_tilde_fmt_string;
     extern undefined * switchdataD_803a96f8;
     extern undefined * switchdataD_803a9e6c;
     extern pointer switchdataD_803a9ea4;
@@ -5640,12 +5753,15 @@ extern "C" {
     extern pointer switchdataD_803dca38;
     extern undefined * switchdataD_803dca6c;
     extern undefined * g_some_chara_anim_funcs;
+    extern undefined4 g_active_scene_category;
     extern pointer switchdataD_803dd32c;
     extern undefined * switchdataD_803dd37c;
     extern pointer switchdataD_803dd3c0;
     extern char * CUTSCENE_BIN_FILE_NAMES[16];
     extern undefined * switchdataD_803de11c;
     extern pointer switchdataD_803de8f8;
+    extern undefined * scene_filenames;
+    extern undefined * dialog_locale_suffix;
     extern pointer switchdataD_803ded34;
     extern undefined * switchdataD_803ded7c;
     extern undefined * switchdataD_803dedc4;
@@ -5685,22 +5801,23 @@ extern "C" {
     extern undefined4 num_players;
     extern MainGameMode  main_game_mode;
     extern undefined4 curr_player_idx;
-    extern undefined4 g_set_when_enter_cm1;
-    extern undefined2 g_set_when_enter_cm2;
+    extern undefined4 mode_number_of_players;
+    extern undefined2 g_has_started_a_game;
     extern undefined1 g_3player_camera_setting;
     extern bool stage_complete;
     extern WidescreenMode  widescreen_mode;
     extern char * g_curr_main_mode_name;
     extern char * g_curr_sub_mode_name;
     extern undefined4 g_some_func_ptr_related_to_sub_mode2;
-    extern undefined4 g_some_func_ptr_related_to_sub_mode;
+    extern void * sub_mode_destination;
+    extern undefined4 test_draw_func_ptr;
     extern undefined1 g_repause_cooldown_counter;
-    extern undefined4 g_some_bitflag2;
+    extern undefined4 g_some_status_bitflag;
     extern undefined4 g_current_focused_pause_menu_entry;
     extern undefined4 g_current_pause_menu_entry_count;
     extern PauseMenuType  pausemenu_type;
     extern Status  g_pause_status;
-    extern undefined4 g_some_other_flags;
+    extern GRenderringFlags  g_some_render_flag;
     extern struct Vec g_mirror_pos1;
     extern struct Vec g_some_scale_vec3;
     extern struct Vec g_mirror_pos2;
@@ -5726,7 +5843,10 @@ extern "C" {
     extern bool stageselect_is_storymode;
     extern s8 stageselect_course_idx[2];
     extern s8 stageselect_course_stage_idx[2][10];
-    extern undefined4 g_some_func_ptr4;
+    extern undefined1 g_last_selected_bowling_difficulty;
+    extern undefined4 menu_tick_func;
+    extern undefined4 menu_draw_func;
+    extern struct RelBufferInfo g_some_sel_ngc_rel_buffer;
     extern undefined4 g_something_with_camera3;
     extern struct Camera * g_current_camera;
     extern struct Camera cameras[5];
@@ -5734,7 +5854,8 @@ extern "C" {
     extern undefined1 g_related_to_fov2;
     extern undefined4 g_minigame_camera_func;
     extern s16 g_camera_standstill_counters[5];
-    extern undefined4 g_maybe_something_with_lights;
+    extern undefined4 g_active_light_group;
+    extern undefined2 g_some_array_related_to_lights_1;
     extern undefined4 g_light_group_stack;
     extern u8 num_light_groups;
     extern undefined4 next_fifo_use_array_idx;
@@ -5745,8 +5866,11 @@ extern "C" {
     extern struct ModeInfo mode_info;
     extern struct GmaBuffer * g_bg_gma;
     extern struct TplBuffer * g_bg_tpl;
-    extern undefined4 g_related_to_sprite_draw_req;
-    extern undefined g_some_buf_related_to_sprites;
+    extern undefined4 active_sprite_draw_req_count;
+    extern undefined4 g_smth_with_sprite_draw_reqs_widescreen;
+    extern undefined4 g_smth_with_widescreen;
+    extern undefined2 g_global_widescreen_translation_x;
+    extern struct SpriteDrawRequest sprite_draw_req_buffer[640];
     extern u32 g_profile_timer_start_times[9];
     extern undefined4 g_something_with_perf_profiling;
     extern BOOL32 g_enable_perf;
@@ -5781,16 +5905,19 @@ extern "C" {
     extern undefined4 g_something_with_sound5;
     extern undefined4 g_smth_with_sound;
     extern undefined4 g_player_id_for_sound;
-    extern char g_debugtext_unknown_buf1[1961];
-    extern char g_debugtext_unknown_buf2[1961];
-    extern char g_debugtext_unknown_buf3[1961];
-    extern char g_debugtext_colorbuf1[1961];
+    extern undefined4 g_debug_textdraw_pos_x_2;
+    extern undefined4 g_debug_textdraw_pos_x_1;
+    extern undefined4 g_debug_textdraw_pos_y;
+    extern char g_debug_text_buffer_0[1961];
+    extern char g_debug_text_buffer_1[1961];
+    extern char g_debug_text_color_buffer_0[1961];
+    extern char g_debug_text_color_buffer_1[1961];
     extern undefined2 g_debugtext_unknown7;
     extern undefined2 g_debugtext_unknown8;
     extern undefined2 g_debugtext_unknown9;
     extern undefined2 g_debugtext_unknown10;
-    extern char g_debugtext_unknown_buf5[1961];
-    extern char g_debugtext_colorbuf2[1961];
+    extern char g_debug_text_buffer_2[1961];
+    extern char g_debug_text_color_buffer_2[1961];
     extern u16 os_font_encoding;
     extern DipSwitch  dip_switches;
     extern GOtherFlags  g_some_other_flags;
@@ -5815,6 +5942,7 @@ extern "C" {
     extern struct Ball balls[8];
     extern struct Ball * current_ball;
     extern uint active_monkey_id[4];
+    extern undefined4 g_some_menu_func_1;
     extern u32 player_pad_map[4];
     extern struct WorldInfo world_infos[4];
     extern struct Vec g_gravity_dir;
@@ -5829,7 +5957,7 @@ extern "C" {
     extern undefined4 stage_tpl;
     extern struct GmaBuffer * stage_gma;
     extern undefined2 current_stage_id;
-    extern char g_current_stage_name[128];
+    extern char current_stage_name[128];
     extern undefined4 worm_surface_gma_model;
     extern struct GmaModel * wormhole_gma_model;
     extern struct GmaModel * continue_gma_model;
@@ -5849,6 +5977,7 @@ extern "C" {
     extern undefined4 g_loaded_player_score;
     extern undefined2 next_effect_id;
     extern struct Effect effects[512];
+    extern undefined g_some_bg_mtx;
     extern Mtx g_related_to_texture_UV_map;
     extern undefined1 cm_unlock_entries[18];
     extern struct CourseCommand * current_cm_entry;
@@ -5876,9 +6005,10 @@ extern "C" {
     extern u32 g_screenfade_color;
     extern undefined4 g_screenfading1;
     extern undefined4 g_screenfading2;
-    extern undefined4 g_something_with_fonts3[512];
-    extern float g_global_font_sprite_pos_x;
-    extern struct Vec2d g_global_font_sprite_pos;
+    extern void * g_some_font_ptr_array[512];
+    extern s32 g_related_to_aram_font_pages[145];
+    extern float textdraw_pos_x;
+    extern struct Vec2d textdraw_pos;
     extern Font16  textdraw_font;
     extern undefined4 textdraw_mul_color;
     extern undefined4 textdraw_add_color;
@@ -5902,6 +6032,8 @@ extern "C" {
     extern undefined4 g_textdraw_unk8;
     extern undefined4 g_font_char_var_1;
     extern undefined4 g_font_char_var_2;
+    extern undefined4 g_how_to_bg_scale_x;
+    extern undefined4 g_how_to_bg_scale_y;
     extern u8 g_banana_disp_efc_req_count;
     extern undefined g_banana_disp_efc_stack[10];
     extern undefined4 global_ape_lod;
@@ -5913,6 +6045,7 @@ extern "C" {
     extern struct GCachedFileEntry g_cached_file_entries[128];
     extern undefined4 g_last_filename_attempted_to_open;
     extern undefined4 g_minigame_tick_func;
+    extern undefined4 g_mini_draw_func_ptr;
     extern undefined1 g_haze_type;
     extern undefined1 g_override_clear_r;
     extern undefined1 g_override_clear_g;
@@ -5951,9 +6084,10 @@ extern "C" {
     extern undefined4 total_apes_registered;
     extern undefined4 g_ptr_to_something;
     extern undefined1 g_some_gift_menu_flags;
-    extern undefined4 g_something_with_cutscenes3;
+    extern undefined4 scene_data;
+    extern undefined4 dialog_tbl;
     extern undefined2 g_author_frame;
-    extern undefined2 g_author_frame_max;
+    extern undefined2 scene_length;
     extern undefined4 g_some_author_related_data;
     extern undefined4 g_author_scene;
     extern undefined4 g_new_main_mode_req;
@@ -5963,6 +6097,7 @@ extern "C" {
     extern undefined4 g_some_author_cutscene_flag;
     extern undefined4 g_playpoint_msg_counter;
     extern struct UnlockInfo unlock_info;
+    extern undefined4 view_stage_aspect_ratio;
     extern pointer switchdataD_804ee064;
     extern undefined * story_mode_funcs;
     extern pointer switchdataD_804eee68;
@@ -6043,7 +6178,7 @@ extern "C" {
     extern undefined4 g_scen_stage_names_loaded;
     extern float some_ape_float;
     extern float some_ape_float2;
-    extern undefined4 some_ape_float3;
+    extern float some_ape_float3;
     extern struct SpriteTex g_storymode_preview_textures;
     extern StoryModeStageSelectState  g_storymode_stageselect_state;
     extern undefined2 g_storymode_stageselect_framecounter;
@@ -6067,19 +6202,89 @@ extern "C" {
     extern undefined2 view_stage_camera_rot_y;
     extern undefined2 view_stage_camera_rot_z;
     extern s16 view_stage_timer;
+    extern undefined4 view_stage_camera_zoom;
+    extern u16 view_stage_camera_horizontal_rotation;
+    extern undefined2 view_stage_camera_vertical_pan;
+    extern undefined2 view_stage_camera_horizontal_pan;
     extern undefined * switchdataD_80574504;
     extern undefined * switchdataD_80574614;
     extern pointer switchdataD_805747cc;
     extern pointer switchdataD_805748e8;
     extern pointer switchdataD_805749f8;
     extern pointer switchdataD_80574bb0;
-    extern struct MenuEntry main_menu_list;
+    extern struct MenuEntry menu_mode_select_entries;
     extern char CAN_PLAY_NUM_PARTY_GAMES_STRING[49];
-    extern undefined party_game_menu_list;
+    extern undefined menu_party_game_select_entries;
     extern char CAN_PURCHASE_PARTY_GAME_STRING[93];
     extern char CANNOT_SELECT_PARTY_GAME_STRING[84];
-    extern undefined options_menu_list;
-    extern struct MenuEntry main_game_menu_list[3];
+    extern undefined menu_option_entries;
+    extern struct MenuEntry menu_number_of_players_entries;
+    extern struct MenuEntry menu_character_select_1_entries;
+    extern struct MenuEntry menu_character_select_2_entries;
+    extern struct MenuEntry menu_main_game_select_entries[3];
+    extern undefined menu_level_select_1_entries;
+    extern undefined menu_level_select_2_entries;
+    extern undefined menu_stage_select_entries;
+    extern undefined menu_gameplay_settings_entries;
+    extern undefined menu_race_mode_select_entries;
+    extern undefined menu_race_course_select_one_course_race_entries;
+    extern struct MenuEntry menu_race_course_select_time_trial_entries[6];
+    extern undefined menu_race_gameplay_settings_one_course_race_entries;
+    extern undefined menu_race_gameplay_settings_grand_prix_entries;
+    extern undefined menu_fight_mode_select_entries;
+    extern undefined menu_fight_no_of_wins_entries;
+    extern undefined menu_fight_stage_select_entries;
+    extern undefined menu_fight_gameplay_settings_normal_entries;
+    extern undefined menu_fight_gameplay_settings_survival_entries;
+    extern undefined menu_target_empty_entries;
+    extern undefined menu_target_gameplay_settings_entries;
+    extern undefined menu_billiards_mode_select_entries;
+    extern undefined menu_billiards_rule_select_entries;
+    extern undefined menu_billiards_game_settings_multiplayer_entries;
+    extern undefined menu_billiards_game_settings_1p_entries;
+    extern undefined menu_bowling_mode_select_entries;
+    extern undefined menu_bowling_rule_select_entries;
+    extern undefined menu_bowling_level_select_entries;
+    extern undefined menu_golf_mode_select_entries;
+    extern undefined menu_golf_gameplay_settings_entries;
+    extern undefined menu_boat_mode_select_entries;
+    extern undefined menu_boat_course_select_one_course_race_entries;
+    extern undefined menu_boat_course_select_time_attack_entries;
+    extern undefined menu_boat_game_settings_one_course_race_entries;
+    extern undefined menu_boat_game_settings_grand_prix_entries;
+    extern undefined menu_shot_empty_entries;
+    extern undefined menu_shot_stage_select_entries;
+    extern undefined menu_shot_gameplay_settings_1p_entries;
+    extern undefined menu_shot_gameplay_settings_2p_entries;
+    extern undefined menu_shot_gameplay_settings_3p_entries;
+    extern undefined menu_shot_gameplay_settings_4p_entries;
+    extern undefined menu_dogfight_mode_select_entries;
+    extern undefined menu_dogfight_stage_select_entries;
+    extern undefined menu_dogfight_game_settings_normal_entries;
+    extern undefined menu_dogfight_game_settings_survival_entries;
+    extern undefined menu_soccer_mode_select_entries;
+    extern undefined menu_soccer_team_select_entries;
+    extern undefined menu_soccer_game_settings_no_com_entries;
+    extern undefined menu_soccer_game_settings_com_entries;
+    extern undefined menu_baseball_mode_select_entries;
+    extern undefined menu_baseball_character_select_entries;
+    extern undefined menu_baseball_stadium_select_entries;
+    extern undefined menu_baseball_game_settings_com_entries;
+    extern undefined menu_baseball_game_settings_no_com_entries;
+    extern undefined menu_tennis_mode_select_entries;
+    extern undefined menu_tennis_pair_select_2p_entries;
+    extern undefined menu_tennis_pair_select_3p_entries;
+    extern undefined menu_tennis_pair_select_4p_entries;
+    extern undefined menu_tennis_court_select_entries;
+    extern undefined menu_tennis_game_settings_com_entries;
+    extern undefined menu_tennis_game_settings_no_com_entries;
+    extern undefined menu_option_replay_entries;
+    extern undefined menu_option_play_points_entries;
+    extern undefined menu_option_gift_entries;
+    extern undefined menu_option_ranking_entries;
+    extern undefined menu_option_game_data_entries;
+    extern undefined menu_option_controller_entries;
+    extern undefined menu_option_screen_entries;
     extern struct MenuScreen menu_screen_list[87];
     extern pointer switchdataD_80580b70;
     extern undefined * switchdataD_805837fc;
@@ -6134,8 +6339,17 @@ extern "C" {
     extern undefined1 g_debug_sound_ics_pan_R;
     extern undefined2 g_debug_stream_bgm_id;
     extern undefined1 g_debug_sound_efc;
-    extern u16 g_something_with_cutscenes2;
-    extern u16 g_something_with_cutscenes;
+    extern Font16  test_aram_font_type;
+    extern undefined1 test_aram_font_proportional;
+    extern undefined1 test_aram_font_style;
+    extern undefined1 test_aram_font_page;
+    extern undefined4 test_aram_font_char;
+    extern u16 g_something_with_test_cutscenes;
+    extern u16 test_scene_number;
+    extern undefined2 g_test_dialog_category_idx;
+    extern undefined2 g_test_dialog_data_idx;
+    extern struct GDialogStruct g_test_dialog_ptr;
+    extern struct Ape * g_test_ape_ptr;
     extern undefined * switchdataD_8065c7a0;
     extern pointer switchdataD_80685ba0;
     extern pointer switchdataD_80686b64;
@@ -6298,9 +6512,13 @@ extern "C" {
     u32 (* get_console_reset_callback(void))(void);
     void * OSAlloc(u32 size);
     void OSFree(void * ptr);
+    void g_some_arq_request_callback(void);
+    void aram_font_to_mram_font_callback(void);
     void g_load_aram_font(void);
     void gARAMFont_DVDRead(struct DVDFileInfo * param_1, int param_2, int param_3);
-    void g_fancy_memcpy(void * dest, void * src, size_t count);
+    void g_some_arq_request(void * source);
+    void aram_font_to_mram_font(Font8  font, int g_char_idx, void * dest);
+    void memcpy_handler(void * dest, void * src, size_t count);
     void g_something_with_video_progressive_mode(void);
     void bootup_draw_sega_splash(void);
     void init_sega_splash_tex(struct GXTexObj * tex_obj);
@@ -6382,7 +6600,7 @@ extern "C" {
     void DMAErrorHandler(undefined4 param_1, undefined4 * param_2);
     void __OSCacheInit(void);
     undefined8 __OSLoadFPUContext(undefined8 param_1, undefined4 param_2, int param_3);
-    void __OSSaveFPUContext(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, undefined8 param_9, undefined8 param_10, undefined8 param_11_00, undefined8 param_12, undefined8 param_13, undefined4 param_14, undefined4 param_15, int param_16);
+    void __OSSaveFPUContext(double param_1, double param_2, double param_3, double param_4, double param_5, double param_6, double param_7, double param_8, undefined4 param_9_00, undefined4 param_10_00, int param_11);
     void OSSetCurrentContext(struct OSContext * context);
     OSContext * OSGetCurrentContext(void);
     undefined4 OSSaveContext(int param_1);
@@ -6530,20 +6748,20 @@ extern "C" {
     void __DBExceptionDestination(void);
     uint __DBIsExceptionMarked(uint param_1);
     void DBPrintf(void);
-    undefined8 PSMTXIdentity(int param_1);
-    undefined8 PSMTXCopy(int param_1, int param_2);
-    undefined8 PSMTXConcat(int param_1, int param_2, int param_3);
-    undefined4 PSMTXInverse(int param_1, int param_2);
+    undefined8 PSMTXIdentity(undefined4 * param_1);
+    undefined8 PSMTXCopy(float * param_1, float * param_2);
+    undefined8 PSMTXConcat(float * param_1, float * param_2, float * param_3);
+    undefined4 PSMTXInverse(float * param_1, float * param_2);
     void PSMTXScale(double param_1, double param_2, double param_3, float * param_4);
     void C_MTXLookAt(Mtx * mtx, struct Vec * cam_pos, struct Vec * cam_up, struct Vec * target);
     void C_MTXFrustum(double param_1, double param_2, double param_3, double param_4, double param_5, double param_6, float * param_7);
     void C_MTXPerspective(Mtx44 * m, double fovy, double aspect, double n, double f);
     void C_MTXOrtho(double param_1, double param_2, double param_3, double param_4, double param_5, double param_6, float * m);
-    void PSVECAdd(int param_1, int param_2, int param_3);
-    void PSVECSubtract(int param_1, int param_2, int param_3);
-    void PSVECScale(undefined8 param_1, int param_2, int param_3);
-    undefined8 PSVECNormalize(int param_1, int param_2);
-    undefined8 PSVECCrossProduct(int param_1, int param_2, int param_3);
+    void PSVECAdd(float * param_1, float * param_2, float * param_3);
+    void PSVECSubtract(float * param_1, float * param_2, float * param_3);
+    void PSVECScale(double param_1, float * param_2, float * param_3);
+    undefined8 PSVECNormalize(float * param_1, float * param_2);
+    undefined8 PSVECCrossProduct(float * param_1, float * param_2, float * param_3);
     void __DVDInitWA(void);
     void AlarmHandlerForTimeout(undefined4 param_1, struct OSContext * param_2);
     void Read(undefined4 param_1, uint param_2, uint param_3, undefined4 param_4);
@@ -6694,6 +6912,7 @@ extern "C" {
     void ARQInit(void);
     void ARQPostRequest(struct ARQRequest * request, u32 owner, u32 type, u32 priority, u32 source, u32 dest, u32 length, void (* callback)(u32));
     void ARQSetChunkSize(uint param_1);
+    undefined4 g_get_arq_chunk_size(void);
     void hwExit(void);
     void hwDisableIrq(void);
     void salExitAi(void);
@@ -6972,9 +7191,9 @@ extern "C" {
     void GXSetProjection(f32 mtx[4][4], GXProjectionType  type);
     void GXSetProjectionv(f32 * ptr);
     void GXGetProjectionv(float * ptr);
-    undefined8 WriteMTXPS4x3(int param_1, undefined4 param_2);
-    void WriteMTXPS3x3from3x4(int param_1, undefined4 * param_2);
-    undefined8 WriteMTXPS4x2(int param_1, undefined4 param_2);
+    undefined8 WriteMTXPS4x3(float * param_1, float * param_2);
+    void WriteMTXPS3x3from3x4(float * param_1, float * param_2);
+    undefined8 WriteMTXPS4x2(float * param_1, float * param_2);
     void GXLoadPosMtxImm(float mtxPtr[3][4], u32 id);
     void GXLoadNrmMtxImm(float mtxPtr[3][4], u32 id);
     void GXSetCurrentMtx(u32 id);
@@ -7324,7 +7543,7 @@ extern "C" {
     undefined4 g_something_with_sound8_wrapper(int param_1);
     undefined4 ReverbHICreate(double param_1, double param_2, double param_3, double param_4, double param_5, double param_6, void * param_7);
     undefined4 ReverbHIModify(double param_1, double param_2, double param_3, double param_4, double param_5, double param_6, void * param_7);
-    void DoCrossTalk(undefined8 param_1, undefined8 param_2, uint * param_3, uint * param_4);
+    void DoCrossTalk(double param_1, double param_2, uint * param_3, uint * param_4);
     void HandleReverb(uint * param_1, int param_2, int param_3);
     void ReverbHICallback(uint * param_1, uint * param_2, uint * param_3, int param_4);
     void ReverbHIFree(int param_1);
@@ -7395,7 +7614,7 @@ extern "C" {
     void mtxa_from_rotate_y(short angle);
     void mtxa_from_rotate_z(short angle);
     void mtxa_from_mtxb_translate(struct Vec * vec);
-    double mtxa_from_mtxb_translate_xyz(undefined8 param_1, undefined8 param_2, undefined8 param_3);
+    double mtxa_from_mtxb_translate_xyz(double param_1, double param_2, double param_3);
     void mtxa_normalize_basis(void);
     undefined8 mtxa_push(void);
     void mtxa_pop(void);
@@ -7438,7 +7657,7 @@ extern "C" {
     void mtxa_rotate_z_sin_cos(float sin_z_angle, float cos_z_angle);
     void mtxa_from_quat(struct Quat * quat);
     void quat_mult(struct Quat * dest, struct Quat * quat1, struct Quat * quat2);
-    undefined8 g_math_smth1(int param_1);
+    undefined8 g_math_smth1(float * param_1);
     void g_math_unk6(float * param_1);
     void g_math_unk7(double param_1, struct Quat * param_2, float * param_3, float * param_4);
     void g_math_unk8(double param_1, struct Quat * param_2, float * param_3, float * param_4);
@@ -7546,7 +7765,7 @@ extern "C" {
     void g_maybe_something_with_normals(int param_1);
     void g_init_gma(struct GmaBuffer * gma_buffer, struct Gma * gma_header, struct TplBuffer * tpl);
     int g_init_gma_model_materials(struct GmaModel * model, struct TplBuffer * tpl, struct GXTexObj * texobj_array);
-    void g_memcpy_using_locked_cache(void * dest, void * curr_src_1_1_1_1_1_1_1, size_t count);
+    void g_memcpy_using_locked_cache(void * dest, void * curr_src_1_1_1_1_1_1_1_1, size_t count);
     void g_something_with_locked_cache_2(void * param_1, uint param_2, uint param_3);
     void memcpy2(void * dest, void * src, size_t count);
     int * __va_arg(char * param_1, int param_2);
@@ -7647,7 +7866,7 @@ extern "C" {
     undefined4 __flush_all(void);
     void __close_all(void);
     uint * __find_unopened_file(void);
-    void __num2dec(double param_1, int param_2, char * param_3);
+    void __num2dec(int param_1, int param_2);
     void __num2dec_internal(double param_1, char * param_2);
     uint __equals_dec(int param_1, int param_2);
     void __two_exp(undefined4 * param_1, ushort param_2);
@@ -7685,7 +7904,7 @@ extern "C" {
     int __pformatter(void (* WriteProc)(void *, char *, size_t), void * WriteProcArg, char * format_str, va_list arg, int is_secure);
     byte * float2str(double param_1, int param_2, int param_3);
     void round_decimal(int param_1, int param_2);
-    char * double2hex(double param_1, int param_2, int param_3);
+    char * double2hex(ulonglong param_1, int param_2, int param_3);
     char * longlong2str(uint param_1, uint param_2, int param_3, char * param_4);
     char * long2str(uint param_1, int param_2, char * param_3);
     char * parse_format(int param_1, char * param_2, uint * param_3);
@@ -7898,8 +8117,8 @@ extern "C" {
     void handle_start_button_with_debug_mode(void);
     void handle_start_button_no_debug_mode(void);
     void smd_null(void);
-    void g_set_current_sub_mode_dest(undefined4 param_1);
-    void g_maybe_call_some_func_ptr_related_to_sub_mode(void);
+    void set_sub_mode_destination(void * func);
+    void call_then_reset_sub_mode_destination(void);
     uint get_next_player_idx(void);
     int g_get_next_stage_id(void);
     void g_construct_pause_menu_sprite(int param_1);
@@ -7914,11 +8133,16 @@ extern "C" {
     void event_restart(EventID  event_id);
     void dest_all_events(void);
     void polydisp_main(void);
-    void draw_mode(void);
-    void draw_mode_adv(void);
-    void g_draw_world(void);
+    void draw_func_handler(void);
+    void adv_draw_func_handler(void);
+    void game_main_draw_func(void);
+    void g_draw_world_child(void);
+    void game_extra_draw_func(void);
+    void game_result_draw_func(void);
+    void handle_test_camera(void);
     void g_set_clear_color(void);
     void g_smth_with_bg_color_drawing(struct GXColor param_1);
+    void g_draw_func_init(void);
     void g_something_with_view_stage(void);
     void take_pausemenu_screenshot(void * out_image_buffer, undefined4 src_left_px, undefined4 src_top_px, short width_px, short height_px, GXTexFmt  fmt);
     void init_pausemenu_screenshot_texobj(struct GXTexObj * param_1);
@@ -7930,7 +8154,7 @@ extern "C" {
     void smd_adv_logo_tick(void);
     void smd_adv_demo_init(void);
     void smd_adv_demo_tick(void);
-    void smd_adv_movie_init(void);
+    void test_mode_sub_mode_handler(void);
     void smd_adv_movie_return(void);
     void g_smth_with_adv_sprites_and_stage_loading(s32 param_1);
     void smd_adv_title_init(void);
@@ -7968,8 +8192,11 @@ extern "C" {
     void smd_sel_ngc_dest(void);
     void g_return_to_sel_mode(undefined4 param_1);
     void g_load_stage_for_menu_bg(char param_1, int param_2);
-    void smd_sel_stage_init_and_ngc_init_and_ngc_reinit(void);
-    void smd_sel_stage_and_ngc_tick(void);
+    void g_set_some_sel_ngc_global_func_ptrs(void * func1, void * func2, void * func3, void * func4);
+    void smd_sel_ngc_init(void);
+    void smd_sel_ngc_tick(void);
+    void g_sel_draw_func_handler(void);
+    void g_sel_ngc_sub_mode_destination(void);
     void init_cameras(void);
     void event_camera_init(void);
     void event_camera_tick(void);
@@ -7982,6 +8209,7 @@ extern "C" {
     void g_something_with_camera2(int player_number);
     void g_some_camera_setup_function(void);
     void g_smth_with_camera_and_reflective_objects(int param_1);
+    void g_something_with_cameras(void);
     void g_set_mode_of_all_cameras_optionally(u8 param_1);
     void g_set_camera_mode(uint param_1, byte mode);
     void g_camera_func27(struct Camera * camera, struct Ball * ball);
@@ -8067,10 +8295,10 @@ extern "C" {
     void g_init_lights(void);
     void g_something_to_do_with_lights(void);
     undefined4 g_some_stage_init_func(void * param_1);
-    void g_something_with_lights(int param_1);
-    undefined4 g_get_maybe_something_with_lights(void);
-    void g_push_light_group(void);
-    void g_pop_light_group(void);
+    void g_set_active_light_group(int g_smth_with_lights);
+    undefined4 get_active_light_group(void);
+    void push_light_group(void);
+    void pop_light_group(void);
     void g_set_light_color_maybe(double param_1, double param_2, double param_3, int param_4);
     void g_smth_with_avdisp_globals(double param_1, double param_2, double param_3);
     void g_something_with_gx_modes_and_compare(void);
@@ -8105,8 +8333,9 @@ extern "C" {
     void threshold_analog_inputs(void);
     void g_calc_frames_since_last_input_change(void);
     void merge_inputs(void);
+    void g_some_bmp_init_func(void);
     TplBuffer * load_bmp(char * filepath);
-    void g_something_with_bmp_bmp_com(int g_idx);
+    void load_bmp_by_id_child(int g_idx);
     void g_something_with_freeing_memory(int param_1);
     void free_nl2ngc_tpl_buf_to_heap(struct TplBuffer * param_1);
     void g_zero_some_sprite_related_state(void);
@@ -8220,14 +8449,14 @@ extern "C" {
     void draw_debugtext(void);
     void window_init(void);
     void g_something_with_replays3(void);
-    void g_maybe_align_text_to_be_printed(uint g_x_pos, uint g_y_pos);
+    void debug_textdraw_set_pos(uint g_x_pos, uint g_y_pos);
     void debug_window_printf(undefined param_1, char * format, ...);
-    void g_smth_with_fifo_color(uint8_t color);
-    void g_debug_text_put1(int param_1, char * param_2);
+    void debug_textdraw_set_color(uint8_t color);
+    void debug_textdraw_put(int buffer_idx, char * string);
     void g_set_up_debugtext_buffer(void);
-    undefined4 g_some_printf_function_1(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, char * param_9, undefined4 param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
-    void g_print_formatted_string_on_screen(char * format, ...);
-    void g_debug_text_put2(char * text);
+    undefined4 debug_textdraw_vsprintf_buf_0(char * fmt, ...);
+    void debug_textdraw_vsprintf_buf_1(char * format, ...);
+    void debug_textdraw_put_buf_1(char * text);
     undefined4 g_some_printf_function_2(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, undefined4 param_9, char * param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
     void draw_debugtext_char_en(u32 x, u32 y, char ch, u8 color_rrggbbaa);
     void draw_debugtext_char_jp(u32 x, u32 y, byte * ch, uint color_unknown_format);
@@ -8248,7 +8477,7 @@ extern "C" {
     void nl2ngc(struct NlBuffer * * out_nl_buffer, undefined4 out_tpl_buffer, char * p_lz_path, char * lz_path);
     undefined4 g_nl2ngc_gma_func(struct NlBuffer * nl_buf);
     void g_nl2ngc_tpl_func(struct NlBuffer * param_1, struct TplBuffer * param_2);
-    void g_smth_with_some_nl_model_buffer(struct GmaModel * param_1);
+    void g_nl_model_draw_func(struct GmaModel * param_1);
     void nl2ngc_set_fog_params(double param_1, double param_2, undefined4 param_3);
     void nl2ngc_set_fog_color(u8 r, u8 g, u8 b);
     void empty_function(void);
@@ -8324,6 +8553,7 @@ extern "C" {
     void event_world_init(void);
     void event_world_tick(void);
     void event_world_dest(void);
+    double evaluate_stagedef_keyframe(double g_anim_frame, int count, struct StagedefAnimKeyframe * keyframe);
     void event_stage_init(void);
     void event_stage_tick(void);
     void event_stage_dest(void);
@@ -8338,6 +8568,7 @@ extern "C" {
     void unload_stage(void);
     void queue_stage_load(uint stage_number);
     void g_load_stage_gma_tpl_lz(u32 stage_id);
+    undefined4 g_handle_bonus_wave_collision(float * param_1, float * param_2, float * param_3);
     WorldTheme get_stage_world_theme(int stage_id);
     WorldTheme get_stage_world_theme(int stage_id);
     void g_smth_with_stage_anim_groups(int anim_group_id, uint param_2);
@@ -8513,17 +8744,19 @@ extern "C" {
     void event_background_init(void);
     void event_background_tick(void);
     void event_background_dest(void);
+    void g_maybe_some_bg_effect_handler(void);
     void g_draw_bg(void);
     void g_something_with_world_themes(void);
     void g_something_with_init_or_maybe_leftover_from_smb1(int param_1);
     void g_something_with_stage_world_themes2(int theme_id);
     void g_something_with_view_stage_and_bg(void);
     void call_item_coin_coli_func_for_cur_world_theme(void);
-    void bg_e3_and_bow2_and_gol2_init(void);
-    void bg_e3_and_bow2_and_gol2_tick(void);
-    void bg_e3_and_bow2_and_gol2_dest(void);
-    void bg_e3_and_bow2_and_gol2_disp(void);
-    void bg_e3_and_bow2_and_gol2_item_coin_coli(void);
+    void bg_init_base(void);
+    void bg_tick_base(void);
+    void bg_dest_base(void);
+    void bg_disp_base(void);
+    void bg_item_coin_coli_base(void);
+    void g_handle_bg_fg_model_anim(struct StagedefBackgroundModel * bg_model_ptr, int bg_model_count);
     void g_render_foreground_objects(Mtx * g_stage_tilt_mtx, struct StagedefForegroundModel * fg_model, int foreground_model_count);
     void g_something_with_texture_scroll(struct StagedefTextureScroll * tex_scroll);
     void bg_nig_init(void);
@@ -8566,12 +8799,15 @@ extern "C" {
     void bg_boat_dest(void);
     void bg_boat_disp(void);
     void bg_boat_item_coin_coli(void);
-    void bg_author_and_park_author_init(void);
-    void bg_author_and_park_author_tick(void);
-    void bg_author_and_park_author_dest(void);
-    void bg_author_and_park_author_disp(void);
-    void bg_author_and_park_author_item_coin_coli(void);
-    void g_init_stagedef_bg_fg_models(struct StagedefBackgroundModel * model, int count, struct GSomeBgStruct * some_bg_struct, undefined * param_4);
+    void bg_park_init(void);
+    void bg_park_tick(void);
+    void bg_park_dest(void);
+    void bg_park_disp(void);
+    void bg_park_item_coin_coli(void);
+    void g_smth_with_bg_model_names(struct GmaModelEntry * model, void * g_some_func);
+    void g_init_stagedef_bg_fg_models(struct StagedefBackgroundModel * model, int count, struct GSomeBgStruct * some_bg_struct, void * g_effect_func);
+    BOOL32 is_game_paused_and_in_view_stage(void);
+    int g_smth_with_challenge_mode_var_and_3p(void);
     void bg_jun_init(void);
     void bg_jun_tick(void);
     void bg_jun_dest(void);
@@ -8587,6 +8823,7 @@ extern "C" {
     void bg_wat_dest(void);
     void bg_wat_disp(void);
     void bg_wat_item_coin_coli(void);
+    undefined4 g_set_bgwat_bubble_effect(int param_1, uint * param_2);
     void bg_spa_init(void);
     void bg_spa_tick(void);
     void bg_spa_dest(void);
@@ -8627,19 +8864,20 @@ extern "C" {
     void bg_lava_dest(void);
     void bg_lava_disp(void);
     void bg_lava_item_coin_coli(void);
+    void g_draw_lava_particles(int param_1);
     void g_something_with_stage_heap_and_lava_theme(int * param_1);
-    void bg_wat2_and_wat2_author_init(void);
-    void bg_bg_init_wat2_and_wat2_author_tick(void);
-    void bg_wat2_and_wat2_author_dest(void);
-    void bg_wat2_and_wat2_author_disp(void);
-    void bg_wat2_and_wat2_author_item_coin_coli(void);
+    void bg_wat2_init(void);
+    void bg_wat2_tick(void);
+    void bg_wat2_dest(void);
+    void bg_wat2_disp(void);
+    void bg_wat2_item_coin_coli(void);
     void empty_function(void);
     void empty_function(void);
-    void bg_pil2_and_pil2_author_init(void);
-    void bg_pil2_and_pil2_author_tick(void);
-    void bg_pil2_and_pil2_author_dest(void);
-    void bg_pil2_and_pil2_author_disp(void);
-    void bg_pil2_and_pil2_author_item_coin_coli(void);
+    void bg_pil2_init(void);
+    void bg_pil2_tick(void);
+    void bg_pil2_dest(void);
+    void bg_pil2_disp(void);
+    void bg_pil2_item_coin_coli(void);
     void bg_spa2_init(void);
     void bg_spa2_tick(void);
     void bg_spa2_dest(void);
@@ -8679,18 +8917,18 @@ extern "C" {
     void empty_function(void);
     void empty_function(void);
     void empty_function(void);
-    void bg_bubble_and_bubble_author_init(void);
-    void bg_bubble_and_bubble_author_tick(void);
-    void bg_bubble_and_bubble_author_dest(void);
-    void bg_bubble_and_bubble_author_disp(void);
-    void bg_bubble_and_bubble_author_item_coin_coli(void);
+    void bg_bubble_init(void);
+    void bg_bubble_tick(void);
+    void bg_bubble_dest(void);
+    void bg_bubble_disp(void);
+    void bg_bubble_item_coin_coli(void);
     void empty_function(void);
     void empty_function(void);
-    void bg_gear_and_gear_author_init(void);
-    void bg_gear_and_gear_author_tick(void);
-    void bg_gear_and_gear_author_dest(void);
-    void bg_gear_and_gear_author_disp(void);
-    void bg_gear_and_gear_author_item_coin_coli(void);
+    void bg_gear_init(void);
+    void bg_gear_author_tick(void);
+    void bg_gear_author_dest(void);
+    void bg_gear_author_disp(void);
+    void bg_gear_item_coin_coli(void);
     void g_something_with_stage_heap_and_gear_theme(int param_1);
     void bg_jun2_init(void);
     void bg_jun2_tick(void);
@@ -8727,6 +8965,7 @@ extern "C" {
     s32 get_current_cm_stage_time_limit(void);
     u32 g_update_cm_course(Difficulty  difficulty, s32 course_stage_num, ModeFlag  mode_flags);
     int calc_course_idx(Difficulty  difficulty, ModeFlag  mode_flags);
+    int g_get_some_difficulty_count_2(int param_1, ModeFlag  mode_flags);
     bool g_are_on_final_course_level(int difficulty_id, int course_stage, uint difficulty_flags);
     bool is_bonus_stage(int stage_id);
     void g_something_with_cm_entries_practice_mode(void);
@@ -8849,7 +9088,7 @@ extern "C" {
     void event_sprite_dest(void);
     void g_smth_with_drawing_all_sprites(int param_1);
     void draw_sprite(struct Sprite * sprite);
-    void call_something_with_bmp_bmp_com(int param_1);
+    void load_bmp_by_id(int param_1);
     void g_call_smth_with_freeing_memory(int param_1);
     void g_something_with_iteratively_freeing_memory(void);
     Sprite * create_sprite(void);
@@ -8857,6 +9096,8 @@ extern "C" {
     void destroy_sprite_with_unique_id(SpriteUniqueID  unique_id);
     void dest_all_sprites(void);
     Sprite * get_sprite_with_unique_id(SpriteUniqueID  unique_id);
+    void g_get_font_char_width(char * character, Font32  font, struct FontDefinition * g_font_struct);
+    double g_get_font_char_width_scaling(char * character, Font32  font);
     void textdraw_reset(void);
     void textdraw_set_font(Font32  font_type);
     void textdraw_set_mul_color(uint param_1);
@@ -8878,32 +9119,44 @@ extern "C" {
     void textdraw_set_font_style(FontStyle  style);
     void textdraw_set_spacing(float x, float y);
     void g_textdraw_set_counter(undefined2 param_1);
-    void g_textdraw_set_smth_with_pos(double param_1, double param_2);
+    void textdraw_set_pos_for_aram_font_test(double x, double y);
     void textdraw_set_pos(float x, float y);
-    void textdraw_putchar(char ch);
+    void textdraw_put_char(char ch);
     void textdraw_print(char * string);
     void textdraw_printf(char * format, ...);
     void draw_text_sprite(struct Sprite * sprite);
     void draw_bmp_sprite(struct Sprite * sprite);
     void draw_texture_sprite(struct Sprite * sprite);
-    void g_draw_text_sprite_string_within_width(double width, char * string);
-    void g_some_printf_function_3(double param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, char * param_9, undefined4 param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
-    void g_get_string_sprite_width_2(byte * param_1);
-    void g_call_call_smth_with_fonts_chara_load_w_defaults(byte * param_1);
-    float g_call_get_string_sprite_width(char * str);
+    void textdraw_print_and_fit_to_width(double width, char * string);
+    void textdraw_printf_and_fit_to_width(double g_width, char * format, ...);
+    int g_get_font_def_aram_flag(int param_1);
+    void g_get_string_sprite_width_2(char * param_1);
+    void g_call_get_string_sprite_width_3_discard_result(char * param_1);
+    double textdraw_get_pixel_width_of_string_as_double(char * string);
+    float textdraw_get_pixel_width_of_string(char * str);
+    double textdraw_get_pixel_height_of_string(char * param_1);
+    void g_smth_with_fonts_chara_load_wrapper_discard_result(char * param_1);
+    int textdraw_get_line_count_of_string(char * str);
     void g_smth_with_screen_fading(void);
     void fade_screen_to_color(uint flags, u32 color, uint frames);
     undefined4 draw_sprite_draw_request(struct SpriteDrawRequest * request);
     void g_scale_sprite_for_widescreen(uint param_1);
-    void g_smth_calls_GXLoadPosMtxImm2(void);
-    void g_something_with_fonts2(void);
-    void g_something_with_load_fonts(int param_1);
-    void g_smth_with_sprite_draw_request(struct SpriteDrawRequest * request);
+    void g_reset_sprite_mtx_for_widescreen(void);
+    void g_something_loading_fonts(void);
+    void g_load_specific_font(Font32  font);
+    void g_draw_sprite_draw_request_unbuffered(struct SpriteDrawRequest * request);
+    uint g_parse_avtext_non_alphanumeric(u32 next_two_chars_as_uint);
+    undefined4 g_parse_avtext_other_codes(char * string, ushort * next_two_chars);
+    undefined4 parse_avtext_color_codes(char * string, struct SpriteDrawRequest * sprite_draw_req);
+    uint g_some_avtext_array_lookup(ushort next_two_chars, float some_float, short * float_as_short_ptr);
     int g_get_tex_id(undefined4 param_1, ushort param_2, ushort * param_3, int param_4);
-    void g_smth_with_font_drawing(byte * string);
-    float g_smth_with_fonts_chara_load(byte * string, int param_2, char param_3);
-    void g_call_smth_with_fonts_chara_load_w_defaults(byte * string);
-    float g_get_string_sprite_width(char * string);
+    void g_some_textdraw_print_internal_func(byte * string);
+    float textdraw_chara_load(char * string, BOOL32 stop_on_newline, TextdrawCharaLoadReturnParameter  return_parameter);
+    double g_get_string_sprite_width_3(char * param_1);
+    double textdraw_get_pixel_width_of_string_as_double_child(char * string);
+    float textdraw_get_pixel_width_of_string_child(char * string);
+    int g_smth_with_fonts_chara_load_wrapper(char * param_1);
+    int textdraw_get_line_count_of_string_child(char * param_1);
     void g_display_playpoint_or_gift_message_child(int param_1, int param_2, int * param_3);
     void g_smth_with_playpoint_or_gift_msg(int param_1, char * param_2);
     void g_some_printf_function_4(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, int param_9, char * param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
@@ -8974,6 +9227,8 @@ extern "C" {
     undefined4 g_smth_with_get_active_monkey_icon(undefined4 param_1, int param_2, int param_3);
     void g_create_how_to_sprite(void);
     void g_sprite_how_to_tick(u8 * status, struct Sprite * sprite);
+    void g_how_to_sprite_draw_controller_tooltips(int param_1, int param_2, struct SpriteDrawRequest * param_3);
+    void g_how_to_sprite_draw_rules_page(char param_1, struct Sprite * sprite, struct SpriteDrawRequest * req, char param_4, char param_5, char param_6, char param_7);
     void g_sprite_how_to_disp(struct Sprite * sprite);
     void g_sprite_how_to_dest(void);
     void create_hud_sprites(void);
@@ -9025,11 +9280,11 @@ extern "C" {
     void g_some_arq_callback(u32 pointerToARQRequest);
     void load_disc_queue(void);
     BOOL32 g_something_with_dvd(s32 entry_num, undefined4 * param_2);
-    BOOL32 g_open_file(char * file_path, struct GSomeFileStruct * fileStruct);
+    BOOL32 dvd_open_file(char * file_path, struct GSomeFileStruct * fileStruct);
     BOOL32 dvd_close(struct GSomeFileStruct * file);
     void g_some_ARQPostRequest_callback(void);
-    u32 g_something_with_reading_dvd_file(int * dvdEntrynum, void * buffer, u32 length, int offset);
-    int fileSize(struct GSomeFileStruct * fileStruct);
+    u32 dvd_read_file_into_buffer(int * dvdEntrynum, void * buffer, u32 length, int offset);
+    int get_file_size(struct GSomeFileStruct * file_struct);
     void g_some_dvd_callback(s32 result, struct DVDFileInfo * fileInfo);
     void g_something_with_dvd2(uint param_1, int param_2);
     int add_one_wrap_if_over127(int num);
@@ -9048,12 +9303,15 @@ extern "C" {
     void g_set_minigame_specific_funcs(undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4);
     void g_smd_mini_generic_init(void);
     void g_smd_mini_generic_tick(void);
+    void g_mini_draw_func_handler(void);
     void smd_mini_select_init(void);
     void smd_mini_select_tick(void);
     void smd_mini_ending_init(void);
     void smd_mini_ending_tick(void);
+    void mini_ending_draw_func(void);
     void smd_mini_s_roll_init(void);
     void smd_mini_s_roll_tick(void);
+    void mini_nameentry_draw_func(void);
     void event_mouse_init(void);
     void event_mouse_tick(void);
     void event_mouse_dest(void);
@@ -9068,6 +9326,7 @@ extern "C" {
     void g_reflective_object_draw_handler(int g_some_flag, int * g_some_ptr);
     void g_reflective_object_draw_handler_2(undefined4 param_1, int param_2);
     void g_some_rendefc_func_1(undefined * param_1);
+    void g_smth_with_pil2_ref(undefined * param_1);
     void g_something_with_stage_heap_and_target_theme(int param_1);
     void g_some_rendefc_func_2(int param_1, int param_2);
     void g_smth_with_reflective_models(undefined4 param_1, int param_2);
@@ -9076,6 +9335,7 @@ extern "C" {
     void g_set_something3(char param_1);
     void smd_mini_commend_init(void);
     void smd_mini_commend_tick(void);
+    void g_mini_commend_draw_func(void);
     void g_something_with_rotation_not_aiai(struct Ape * ape);
     void g_something_with_drawing_apes(void);
     void event_commend_init(void);
@@ -9087,9 +9347,12 @@ extern "C" {
     void g_something_with_card13(void);
     void g_something_with_card3(void);
     void print_card_submode_error(byte * param_1);
+    void g_memcard_func_1(struct MemCardInfo * info);
     void empty_function(void);
+    void g_memcard_func_2(struct MemCardInfo * info);
     void empty_function(void);
     void mount_memory_card(byte * param_1);
+    void g_memcard_func_4(struct MemCardInfo * info);
     void g_something_free_card_blocks(struct MemCardFile * param_1);
     void g_open_card_file(struct MemCardFile * file);
     void something_that_calls_CARDCreateAsync(byte * param_1);
@@ -9097,7 +9360,7 @@ extern "C" {
     void g_related_to_memcard_rw(byte * param_1);
     void g_something_with_card12(byte * param_1);
     void g_something_with_card(void);
-    void g_something_with_card10(byte * param_1);
+    void g_something_with_card10(char * param_1);
     void g_some_printf_function_5(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, char * param_9, undefined4 param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
     void g_something_with_card11(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8);
     void g_something_with_card9(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8);
@@ -9244,6 +9507,7 @@ extern "C" {
     void g_init_rankings_to_defaults(void);
     void g_NameEntry2_InitFirst(void);
     void g_nameentry2_init(void);
+    void game_nameentry_draw_func(void);
     void ape_assignment(void);
     void sprite_rank_tick(void);
     void sprite_rank_disp(void);
@@ -9252,8 +9516,9 @@ extern "C" {
     void set_ape_anim(struct Ape * ape, undefined animationType);
     void g_some_set_ape_anim(struct Ape * ape, undefined chara_anim_type, undefined2 param_3);
     void run_anim_funcs(struct Ape * ape);
-    void g_something_with_loading_cutscenes(int param_1_00);
-    uint g_something_to_do_with_cutscenes(int g_cutscene_id);
+    void load_scene_files(int scene_category);
+    uint load_scene_data(int scene_category);
+    void g_parse_scene_data(int * param_1);
     void empty_function(void);
     void empty_function(void);
     void g_something_freeing_heap_4(void);
@@ -9264,7 +9529,9 @@ extern "C" {
     void empty_function(void);
     void empty_function(void);
     void empty_function(void);
-    void g_SceneSoundLoad(char param_1_00);
+    OSHeapHandle * load_dialog_tbl(int scene_id);
+    undefined4 g_smth_with_dialog2(int * param_1, int param_2);
+    void load_scene_sound(char param_1_00);
     void empty_function(void);
     void empty_function(void);
     void empty_function(void);
@@ -9279,6 +9546,7 @@ extern "C" {
     void smd_author_play_from_sel(void);
     void smd_author_play_ret_sel(void);
     void md_author_func(void);
+    void author_draw_func(void);
     void g_assign_new_main_and_sub_mode_for_play_tick(MainMode  param_1, SubMode  param_2);
     void g_set_some_author_tick_func(undefined4 param_1);
     undefined4 g_get_some_author_related_data(void);
@@ -9383,6 +9651,7 @@ extern "C" {
     void smd_game_scenario_init_child(void);
     void smd_game_scenario_tick_child(void);
     void g_some_storymode_dest_function(void);
+    void game_scenario_draw_func(void);
     undefined4 get_storymode_score(void);
     void set_storymode_score(int value);
     undefined4 get_storymode_banana_count(void);
@@ -9455,11 +9724,15 @@ extern "C" {
     void dmd_scen_loadgame_main_child(void);
     int get_storymode_menu_state(void);
     void staff_roll_init(void);
+    void game_roll_draw_func(void);
+    void game_continue_draw_func(void);
     void event_view_init(void);
     void event_view_tick(void);
     void event_view_dest(void);
     void g_something_with_view_stage2(void);
     void draw_reflective_objects_in_viewstage(void);
+    void g_call_advance_stage_animation(void);
+    void g_increment_bg_related_timer(void);
     void view_stage_draw_bananas(void);
     void g_smth_with_rendering_models_for_reflective_surfaces(void);
     void g_draw_stobjs_in_viewstage(void);
@@ -9469,27 +9742,74 @@ extern "C" {
     void sel_ngc_unlinked_func(void);
     bool did_any_pad_press_input(PadInputID  input_id);
     void g_create_main_menu(void);
-    void smd_sel_ngc_init(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8);
-    void smd_sel_ngc_reinit(void);
+    void g_initialize_sel_ngc(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8);
+    void g_reinitialize_sel_ngc(void);
     undefined4 g_called_when_fading_to_storymode(void);
     void g_sel_ngc_item_selected(int play_menu_selction_sound);
     void g_b_button_pressed_on_menu(int param_1_00);
     BOOL32 g_is_screen_in_screen_stack(byte g_screen_id);
-    void g_some_menu_handling_func(void);
+    void menu_tick(void);
     void g_something_with_menus(int param_1);
-    void g_menu_main_handler(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8);
-    void g_menu_party_mode_handler(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8);
-    void switch_mode_to_smd_adv_title_reinit(void);
-    void g_something_with_menus2(void);
-    void g_something_with_menus3(void);
-    void g_on_main_menu_pressed(void);
-    void g_something_with_menus4(void);
-    void g_something_with_practice_stage_select_screen(void);
-    void enter_challenge_mode(void);
-    void enter_practice_mode(void);
+    void menu_mode_select_tick(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8);
+    void menu_party_game_select_tick(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8);
+    void menu_option_tick(void);
+    void menu_return_to_title(void);
+    void menu_number_of_players_tick(void);
+    void menu_character_select_tick(void);
+    void menu_gameplay_settings_tick(void);
+    void menu_main_game_select_tick(void);
+    void menu_level_select_tick(void);
+    void g_get_some_challenge_mode_difficulty_info(int param_1);
+    void g_get_some_category_count(int flag, undefined4 * g_out_1, int * g_out_2);
+    void menu_stage_select_tick(void);
+    void menu_start_story_mode(void);
+    void menu_start_challenge_mode(void);
+    void menu_start_practice_mode(void);
+    void menu_race_mode_select_tick(void);
+    void menu_race_course_select_tick(void);
+    void menu_start_race(void);
+    void menu_fight_mode_select_tick(void);
+    void menu_fight_no_of_wins_tick(void);
+    void menu_fight_stage_select_tick(void);
+    void menu_start_fight(void);
+    void menu_start_target(void);
+    void menu_billiards_mode_select_tick(void);
+    void menu_billiards_rule_select_tick(void);
+    void menu_start_billiards(void);
+    void menu_bowling_mode_select_tick(void);
+    void menu_bowling_rule_select_tick(void);
+    void menu_bowling_level_select_tick(void);
+    void menu_start_bowling(void);
+    void menu_golf_mode_select_tick(void);
+    void menu_start_golf(void);
+    void menu_boat_mode_select_entries_tick(void);
+    void menu_boat_course_select_tick(void);
+    void menu_start_boat(void);
+    void menu_shot_stage_select_tick(void);
+    void menu_start_shot(void);
+    void menu_dogfight_mode_select_tick(void);
+    void menu_dogfight_stage_select_tick(void);
+    void menu_start_dogfight(void);
+    void menu_soccer_mode_select_tick(void);
+    void menu_start_soccer(void);
+    void menu_baseball_mode_select_tick(void);
+    void menu_baseball_stadium_select_tick(void);
+    void menu_start_baseball(void);
+    void menu_tennis_mode_select_tick(void);
+    void menu_tennis_pair_select_tick(void);
+    void menu_tennis_court_select_tick(void);
+    void menu_start_tennis(void);
+    void menu_option_replay_tick(void);
+    void menu_option_play_points_tick(void);
+    void menu_option_gift_tick(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, undefined4 param_9, u32 param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
+    void menu_option_ranking_tick(void);
+    void menu_option_game_data_tick(void);
+    void menu_option_controller_tick(void);
+    void menu_option_screen_tick(void);
     char * g_handle_starting_monkeys_count(int param_1, int param_2);
     void create_main_menu_sprites(void);
     void g_display_game_settings_sprite(void);
+    void create_practice_mode_stage_select_sprite(void);
     void sprite_title_str_tick(u8 * status, struct Sprite * sprite);
     void sprite_title_str_disp(struct Sprite * sprite);
     void sprite_info_str_tick(u8 * status, struct Sprite * sprite);
@@ -9503,7 +9823,7 @@ extern "C" {
     void sprite_game_settings_tick(u8 * status, struct Sprite * sprite);
     void sprite_game_settings_disp(struct Sprite * param_1);
     void sprite_practice_stage_select_tick(u8 * status, struct Sprite * sprite);
-    void sprite_practice_stage_select_disp(int param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8);
+    void sprite_practice_stage_select_disp(int param_1);
     void sprite_fight_stage_select_tick(u8 * status, struct Sprite * sprite);
     void sprite_fight_stage_select_disp(struct Sprite * param_1);
     void sprite_button_tick(u8 * status, struct Sprite * sprite);
@@ -9512,7 +9832,7 @@ extern "C" {
     void g_something_with_menus5(void);
     void g_load_select_apes(void);
     void g_load_some_apes(void);
-    void handle_main_menu_bg(void);
+    void menu_draw_background(void);
     void g_draw_menu_bg_overlay(struct GXColor * param_1, GXTexFmt  param_2);
     void free_some_apes(void);
     void g_draw_stage_0x9f_for_menu_bg(void);
@@ -9521,7 +9841,7 @@ extern "C" {
     void sprite_practice_stage_preview_tick(u8 * status, struct Sprite * sprite);
     void sprite_practice_stage_preview_disp(struct Sprite * sprite);
     void sprite_practice_stage_preview_mask_disp(u8 * status, struct Sprite * sprite);
-    void g_create_some_practice_mode_preview_sprites(void);
+    void create_practice_mode_preview_sprites(void);
     void g_draw_controller_sprites(void);
     void g_draw_gift_menu(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, undefined4 param_9, u32 param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
     void empty_function(void);
@@ -9540,20 +9860,23 @@ extern "C" {
     void g_references_420_04(void);
     void sample_unlinked_func(void);
     void test_mode_prolog(void);
+    void test_mode_epilog(void);
     void test_mode_unlinked_func(void);
     void smd_test_select_init(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, undefined4 param_9, undefined4 param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
     void smd_test_select_main(void);
+    void test_select_draw_func(void);
     void smd_test_dip_init(void);
     void smd_test_dip_main(void);
     void smd_test_input_init(void);
     void smd_test_input_main(void);
     void smd_test_sound_init(void);
     void smd_test_sound_main(void);
-    void g_draw_debug_mode_sound_screen(void);
+    void test_sound_draw_func(void);
     void smd_test_adx_init(void);
     void smd_test_adx_main(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, undefined4 param_9, undefined4 param_10, uint * param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
     void smd_test_blur_init(void);
     void smd_test_blur_main(void);
+    void test_blur_draw_func(void);
     void smd_test_shadow_init(void);
     void smd_test_shadow_main(void);
     void smd_test_focus_init(void);
@@ -9564,10 +9887,13 @@ extern "C" {
     void smd_test_nlobject_main(void);
     void smd_test_bitmap_init(void);
     void smd_test_bitmap_main(void);
+    void test_bitmap_draw_func(void);
     void smd_test_font_init(void);
     void smd_test_font_main(void);
+    void test_font_draw_func(void);
     void smd_test_aram_font_init(void);
     void smd_test_aram_font_main(void);
+    void test_aram_font_draw_func(void);
     void smd_test_motion_init(void);
     void smd_test_motion_main(undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8);
     void smd_test_newmotion_init(void);
@@ -9575,41 +9901,59 @@ extern "C" {
     void smd_test_advreplay_init(void);
     void smd_test_model_init(void);
     void smd_test_model_main(void);
+    void test_model_draw_func(void);
     void smd_test_newmodel_init(void);
     void smd_test_newmodel_main(void);
+    void test_newmodel_draw_func(void);
     void smd_test_pattern_init(void);
     void smd_test_pattern_main(void);
+    void test_pattern_draw_func(void);
     void smd_test_romfont_init(void);
     void smd_test_romfont_main(void);
     void smd_test_prerend_init(void);
     void smd_test_prerend_main(void);
+    void test_prerend_draw_func(void);
     void smd_test_preview_init(void);
     void smd_test_preview_main(void);
     void smd_test_replay_init(void);
     void smd_test_replay_main(void);
     void smd_test_scene_play_init(void);
     void smd_test_scene_play_main(undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8);
+    void test_scene_play_draw_func(void);
     void smd_test_dialog_init(void);
     void smd_test_dialog_main(undefined4 param_1, undefined4 param_2, undefined2 * param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8);
+    void test_dialog_draw_func(void);
     void smd_test_difficulty_init(void);
     void smd_test_difficulty_main(void);
+    void test_difficulty_draw_func(void);
     void smd_test_chk_repsize_init(void);
     void smd_test_chk_repsize_main(void);
+    void test_draw_func_handler(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8);
     void smd_test_shadow_main_child(void);
+    void g_test_shadow_draw_func_1(void);
+    void g_test_shadow_draw_func_2(void);
     void empty_function(void);
     void empty_function(void);
     void empty_function(void);
     void smd_test_focus_main_child(void);
+    void test_focus_draw_func(void);
     void empty_function(void);
     void smd_test_indirect_main_child(void);
+    void test_indirect_draw_func(void);
     void empty_function(void);
     void g_some_printf_function_7(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, char * param_9, char * param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
+    undefined8 g_test_motion_main_draw_func(void);
+    void test_adx_draw_func(void);
+    void test_newmotion_draw_func(void);
     void g_something_freeing_something_from_main_heap_2(void);
     void gan_setanim_e5(struct ArcFileInfo * * param_1, char * param_2, void * * param_3);
     void gan_set_anim_e6(int param_1);
     void gan_setanim_e7(int param_1, undefined4 param_2, int param_3);
     void gan_setanim_e8(undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, int param_5);
+    void option_prolog(void);
+    void option_epilog(void);
     void option_unlinked_func(void);
+    void option_draw_func(void);
     void g_references_420_06(int param_1, short param_2);
     void race2_rel_prolog(void);
     void race2_rel_epilog(void);
@@ -9689,7 +10033,10 @@ extern "C" {
     double something_with_distance_sq(float * param_1, float * param_2);
     void GXResetOverflowCount(int param_1, undefined4 param_2);
     void ttyClearProperty(int param_1, undefined4 param_2);
+    void exoption_prolog(void);
+    void exoption_epilog(void);
     void exoption_unlinked_func(void);
+    void exoption_draw_func(void);
 #ifdef __cplusplus
 } // extern "C"
 #endif
