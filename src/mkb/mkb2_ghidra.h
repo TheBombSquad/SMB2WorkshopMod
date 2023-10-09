@@ -11,6 +11,7 @@ typedef long long    longlong;
 typedef unsigned long long    qword;
 typedef unsigned char    uchar;
 typedef unsigned int    uint;
+typedef unsigned long long    uint16;
 typedef unsigned int    uint3;
 typedef unsigned long    ulong;
 typedef unsigned long long    ulonglong;
@@ -1754,6 +1755,7 @@ enum {
     MF_PLAYING_MASTER_NOEX_COURSE=16,
     MF_0x20=32,
     MF_ADDITIONAL_REL_LOADED=512,
+    MG_G_NO_BANANAS=4096,
     MF_0x2000=8192,
     MF_OPTION_MODE=262144,
     MF_G_STOP_GAME_LOOP=2097152,
@@ -2321,6 +2323,12 @@ struct OptiGXChanSettings { /* Opti = For optimization */
     u32 light_mask;
     GXDiffuseFn  diff_fn;
     GXAttnFn  attn_fn;
+} __attribute__((__packed__));
+
+typedef struct GSomeLightStruct GSomeLightStruct, *PGSomeLightStruct;
+
+struct GSomeLightStruct {
+    undefined field_0x0[0x12b];
 } __attribute__((__packed__));
 
 typedef struct CmListEntry CmListEntry, *PCmListEntry;
@@ -5470,6 +5478,7 @@ extern "C" {
     extern double camera_height;
     extern double camera_pivot_height;
     extern float camera_distance;
+    extern undefined4 g_some_array_related_to_lights_2;
     extern undefined4 g_some_light_color;
     extern float FLOAT20000;
     extern float FLOAT0_2;
@@ -5574,7 +5583,6 @@ extern "C" {
     extern undefined * switchdataD_8039c560;
     extern undefined * switchdataD_8039c5a4;
     extern pointer switchdataD_8039c5dc;
-    extern struct GXColor ball_colors;
     extern undefined * switchdataD_8039c838;
     extern pointer switchdataD_8039ccf8;
     extern undefined1 g_fog_type;
@@ -5846,7 +5854,8 @@ extern "C" {
     extern undefined1 g_related_to_fov2;
     extern undefined4 g_minigame_camera_func;
     extern s16 g_camera_standstill_counters[5];
-    extern undefined4 g_maybe_something_with_lights;
+    extern undefined4 g_active_light_group;
+    extern undefined2 g_some_array_related_to_lights_1;
     extern undefined4 g_light_group_stack;
     extern u8 num_light_groups;
     extern undefined4 next_fifo_use_array_idx;
@@ -5857,8 +5866,11 @@ extern "C" {
     extern struct ModeInfo mode_info;
     extern struct GmaBuffer * g_bg_gma;
     extern struct TplBuffer * g_bg_tpl;
-    extern undefined4 g_related_to_sprite_draw_req;
-    extern undefined g_some_buf_related_to_sprites;
+    extern undefined4 active_sprite_draw_req_count;
+    extern undefined4 g_smth_with_sprite_draw_reqs_widescreen;
+    extern undefined4 g_smth_with_widescreen;
+    extern undefined2 g_global_widescreen_translation_x;
+    extern struct SpriteDrawRequest sprite_draw_req_buffer[640];
     extern u32 g_profile_timer_start_times[9];
     extern undefined4 g_something_with_perf_profiling;
     extern BOOL32 g_enable_perf;
@@ -5965,6 +5977,7 @@ extern "C" {
     extern undefined4 g_loaded_player_score;
     extern undefined2 next_effect_id;
     extern struct Effect effects[512];
+    extern undefined g_some_bg_mtx;
     extern Mtx g_related_to_texture_UV_map;
     extern undefined1 cm_unlock_entries[18];
     extern struct CourseCommand * current_cm_entry;
@@ -6019,6 +6032,8 @@ extern "C" {
     extern undefined4 g_textdraw_unk8;
     extern undefined4 g_font_char_var_1;
     extern undefined4 g_font_char_var_2;
+    extern undefined4 g_how_to_bg_scale_x;
+    extern undefined4 g_how_to_bg_scale_y;
     extern u8 g_banana_disp_efc_req_count;
     extern undefined g_banana_disp_efc_stack[10];
     extern undefined4 global_ape_lod;
@@ -6163,7 +6178,7 @@ extern "C" {
     extern undefined4 g_scen_stage_names_loaded;
     extern float some_ape_float;
     extern float some_ape_float2;
-    extern undefined4 some_ape_float3;
+    extern float some_ape_float3;
     extern struct SpriteTex g_storymode_preview_textures;
     extern StoryModeStageSelectState  g_storymode_stageselect_state;
     extern undefined2 g_storymode_stageselect_framecounter;
@@ -6503,7 +6518,7 @@ extern "C" {
     void gARAMFont_DVDRead(struct DVDFileInfo * param_1, int param_2, int param_3);
     void g_some_arq_request(void * source);
     void aram_font_to_mram_font(Font8  font, int g_char_idx, void * dest);
-    void g_fancy_memcpy(void * dest, void * src, size_t count);
+    void memcpy_handler(void * dest, void * src, size_t count);
     void g_something_with_video_progressive_mode(void);
     void bootup_draw_sega_splash(void);
     void init_sega_splash_tex(struct GXTexObj * tex_obj);
@@ -6585,7 +6600,7 @@ extern "C" {
     void DMAErrorHandler(undefined4 param_1, undefined4 * param_2);
     void __OSCacheInit(void);
     undefined8 __OSLoadFPUContext(undefined8 param_1, undefined4 param_2, int param_3);
-    void __OSSaveFPUContext(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, undefined8 param_9, undefined8 param_10, undefined8 param_11_00, undefined8 param_12, undefined8 param_13, undefined4 param_14, undefined4 param_15, int param_16);
+    void __OSSaveFPUContext(double param_1, double param_2, double param_3, double param_4, double param_5, double param_6, double param_7, double param_8, undefined4 param_9_00, undefined4 param_10_00, int param_11);
     void OSSetCurrentContext(struct OSContext * context);
     OSContext * OSGetCurrentContext(void);
     undefined4 OSSaveContext(int param_1);
@@ -6733,20 +6748,20 @@ extern "C" {
     void __DBExceptionDestination(void);
     uint __DBIsExceptionMarked(uint param_1);
     void DBPrintf(void);
-    undefined8 PSMTXIdentity(int param_1);
-    undefined8 PSMTXCopy(int param_1, int param_2);
-    undefined8 PSMTXConcat(int param_1, int param_2, int param_3);
-    undefined4 PSMTXInverse(int param_1, int param_2);
+    undefined8 PSMTXIdentity(undefined4 * param_1);
+    undefined8 PSMTXCopy(float * param_1, float * param_2);
+    undefined8 PSMTXConcat(float * param_1, float * param_2, float * param_3);
+    undefined4 PSMTXInverse(float * param_1, float * param_2);
     void PSMTXScale(double param_1, double param_2, double param_3, float * param_4);
     void C_MTXLookAt(Mtx * mtx, struct Vec * cam_pos, struct Vec * cam_up, struct Vec * target);
     void C_MTXFrustum(double param_1, double param_2, double param_3, double param_4, double param_5, double param_6, float * param_7);
     void C_MTXPerspective(Mtx44 * m, double fovy, double aspect, double n, double f);
     void C_MTXOrtho(double param_1, double param_2, double param_3, double param_4, double param_5, double param_6, float * m);
-    void PSVECAdd(int param_1, int param_2, int param_3);
-    void PSVECSubtract(int param_1, int param_2, int param_3);
-    void PSVECScale(undefined8 param_1, int param_2, int param_3);
-    undefined8 PSVECNormalize(int param_1, int param_2);
-    undefined8 PSVECCrossProduct(int param_1, int param_2, int param_3);
+    void PSVECAdd(float * param_1, float * param_2, float * param_3);
+    void PSVECSubtract(float * param_1, float * param_2, float * param_3);
+    void PSVECScale(double param_1, float * param_2, float * param_3);
+    undefined8 PSVECNormalize(float * param_1, float * param_2);
+    undefined8 PSVECCrossProduct(float * param_1, float * param_2, float * param_3);
     void __DVDInitWA(void);
     void AlarmHandlerForTimeout(undefined4 param_1, struct OSContext * param_2);
     void Read(undefined4 param_1, uint param_2, uint param_3, undefined4 param_4);
@@ -7176,9 +7191,9 @@ extern "C" {
     void GXSetProjection(f32 mtx[4][4], GXProjectionType  type);
     void GXSetProjectionv(f32 * ptr);
     void GXGetProjectionv(float * ptr);
-    undefined8 WriteMTXPS4x3(int param_1, undefined4 param_2);
-    void WriteMTXPS3x3from3x4(int param_1, undefined4 * param_2);
-    undefined8 WriteMTXPS4x2(int param_1, undefined4 param_2);
+    undefined8 WriteMTXPS4x3(float * param_1, float * param_2);
+    void WriteMTXPS3x3from3x4(float * param_1, float * param_2);
+    undefined8 WriteMTXPS4x2(float * param_1, float * param_2);
     void GXLoadPosMtxImm(float mtxPtr[3][4], u32 id);
     void GXLoadNrmMtxImm(float mtxPtr[3][4], u32 id);
     void GXSetCurrentMtx(u32 id);
@@ -7528,7 +7543,7 @@ extern "C" {
     undefined4 g_something_with_sound8_wrapper(int param_1);
     undefined4 ReverbHICreate(double param_1, double param_2, double param_3, double param_4, double param_5, double param_6, void * param_7);
     undefined4 ReverbHIModify(double param_1, double param_2, double param_3, double param_4, double param_5, double param_6, void * param_7);
-    void DoCrossTalk(undefined8 param_1, undefined8 param_2, uint * param_3, uint * param_4);
+    void DoCrossTalk(double param_1, double param_2, uint * param_3, uint * param_4);
     void HandleReverb(uint * param_1, int param_2, int param_3);
     void ReverbHICallback(uint * param_1, uint * param_2, uint * param_3, int param_4);
     void ReverbHIFree(int param_1);
@@ -7599,7 +7614,7 @@ extern "C" {
     void mtxa_from_rotate_y(short angle);
     void mtxa_from_rotate_z(short angle);
     void mtxa_from_mtxb_translate(struct Vec * vec);
-    double mtxa_from_mtxb_translate_xyz(undefined8 param_1, undefined8 param_2, undefined8 param_3);
+    double mtxa_from_mtxb_translate_xyz(double param_1, double param_2, double param_3);
     void mtxa_normalize_basis(void);
     undefined8 mtxa_push(void);
     void mtxa_pop(void);
@@ -7642,7 +7657,7 @@ extern "C" {
     void mtxa_rotate_z_sin_cos(float sin_z_angle, float cos_z_angle);
     void mtxa_from_quat(struct Quat * quat);
     void quat_mult(struct Quat * dest, struct Quat * quat1, struct Quat * quat2);
-    undefined8 g_math_smth1(int param_1);
+    undefined8 g_math_smth1(float * param_1);
     void g_math_unk6(float * param_1);
     void g_math_unk7(double param_1, struct Quat * param_2, float * param_3, float * param_4);
     void g_math_unk8(double param_1, struct Quat * param_2, float * param_3, float * param_4);
@@ -7750,7 +7765,7 @@ extern "C" {
     void g_maybe_something_with_normals(int param_1);
     void g_init_gma(struct GmaBuffer * gma_buffer, struct Gma * gma_header, struct TplBuffer * tpl);
     int g_init_gma_model_materials(struct GmaModel * model, struct TplBuffer * tpl, struct GXTexObj * texobj_array);
-    void g_memcpy_using_locked_cache(void * dest, void * curr_src_1_1_1_1_1_1_1, size_t count);
+    void g_memcpy_using_locked_cache(void * dest, void * curr_src_1_1_1_1_1_1_1_1, size_t count);
     void g_something_with_locked_cache_2(void * param_1, uint param_2, uint param_3);
     void memcpy2(void * dest, void * src, size_t count);
     int * __va_arg(char * param_1, int param_2);
@@ -7851,7 +7866,7 @@ extern "C" {
     undefined4 __flush_all(void);
     void __close_all(void);
     uint * __find_unopened_file(void);
-    void __num2dec(double param_1, int param_2, char * param_3);
+    void __num2dec(int param_1, int param_2);
     void __num2dec_internal(double param_1, char * param_2);
     uint __equals_dec(int param_1, int param_2);
     void __two_exp(undefined4 * param_1, ushort param_2);
@@ -7889,7 +7904,7 @@ extern "C" {
     int __pformatter(void (* WriteProc)(void *, char *, size_t), void * WriteProcArg, char * format_str, va_list arg, int is_secure);
     byte * float2str(double param_1, int param_2, int param_3);
     void round_decimal(int param_1, int param_2);
-    char * double2hex(double param_1, int param_2, int param_3);
+    char * double2hex(ulonglong param_1, int param_2, int param_3);
     char * longlong2str(uint param_1, uint param_2, int param_3, char * param_4);
     char * long2str(uint param_1, int param_2, char * param_3);
     char * parse_format(int param_1, char * param_2, uint * param_3);
@@ -8280,10 +8295,10 @@ extern "C" {
     void g_init_lights(void);
     void g_something_to_do_with_lights(void);
     undefined4 g_some_stage_init_func(void * param_1);
-    void g_something_with_lights(int param_1);
-    undefined4 g_get_maybe_something_with_lights(void);
-    void g_push_light_group(void);
-    void g_pop_light_group(void);
+    void g_set_active_light_group(int g_smth_with_lights);
+    undefined4 get_active_light_group(void);
+    void push_light_group(void);
+    void pop_light_group(void);
     void g_set_light_color_maybe(double param_1, double param_2, double param_3, int param_4);
     void g_smth_with_avdisp_globals(double param_1, double param_2, double param_3);
     void g_something_with_gx_modes_and_compare(void);
@@ -8318,6 +8333,7 @@ extern "C" {
     void threshold_analog_inputs(void);
     void g_calc_frames_since_last_input_change(void);
     void merge_inputs(void);
+    void g_some_bmp_init_func(void);
     TplBuffer * load_bmp(char * filepath);
     void load_bmp_by_id_child(int g_idx);
     void g_something_with_freeing_memory(int param_1);
@@ -8735,11 +8751,11 @@ extern "C" {
     void g_something_with_stage_world_themes2(int theme_id);
     void g_something_with_view_stage_and_bg(void);
     void call_item_coin_coli_func_for_cur_world_theme(void);
-    void bg_e3_and_bow2_and_gol2_init(void);
-    void bg_e3_and_bow2_and_gol2_tick(void);
-    void bg_e3_and_bow2_and_gol2_dest(void);
-    void bg_e3_and_bow2_and_gol2_disp(void);
-    void bg_e3_and_bow2_and_gol2_item_coin_coli(void);
+    void bg_init_base(void);
+    void bg_tick_base(void);
+    void bg_dest_base(void);
+    void bg_disp_base(void);
+    void bg_item_coin_coli_base(void);
     void g_handle_bg_fg_model_anim(struct StagedefBackgroundModel * bg_model_ptr, int bg_model_count);
     void g_render_foreground_objects(Mtx * g_stage_tilt_mtx, struct StagedefForegroundModel * fg_model, int foreground_model_count);
     void g_something_with_texture_scroll(struct StagedefTextureScroll * tex_scroll);
@@ -8783,11 +8799,11 @@ extern "C" {
     void bg_boat_dest(void);
     void bg_boat_disp(void);
     void bg_boat_item_coin_coli(void);
-    void bg_author_and_park_author_init(void);
-    void bg_author_and_park_author_tick(void);
-    void bg_author_and_park_author_dest(void);
-    void bg_author_and_park_author_disp(void);
-    void bg_author_and_park_author_item_coin_coli(void);
+    void bg_park_init(void);
+    void bg_park_tick(void);
+    void bg_park_dest(void);
+    void bg_park_disp(void);
+    void bg_park_item_coin_coli(void);
     void g_smth_with_bg_model_names(struct GmaModelEntry * model, void * g_some_func);
     void g_init_stagedef_bg_fg_models(struct StagedefBackgroundModel * model, int count, struct GSomeBgStruct * some_bg_struct, void * g_effect_func);
     BOOL32 is_game_paused_and_in_view_stage(void);
@@ -8850,18 +8866,18 @@ extern "C" {
     void bg_lava_item_coin_coli(void);
     void g_draw_lava_particles(int param_1);
     void g_something_with_stage_heap_and_lava_theme(int * param_1);
-    void bg_wat2_and_wat2_author_init(void);
-    void bg_bg_init_wat2_and_wat2_author_tick(void);
-    void bg_wat2_and_wat2_author_dest(void);
-    void bg_wat2_and_wat2_author_disp(void);
-    void bg_wat2_and_wat2_author_item_coin_coli(void);
+    void bg_wat2_init(void);
+    void bg_wat2_tick(void);
+    void bg_wat2_dest(void);
+    void bg_wat2_disp(void);
+    void bg_wat2_item_coin_coli(void);
     void empty_function(void);
     void empty_function(void);
-    void bg_pil2_and_pil2_author_init(void);
-    void bg_pil2_and_pil2_author_tick(void);
-    void bg_pil2_and_pil2_author_dest(void);
-    void bg_pil2_and_pil2_author_disp(void);
-    void bg_pil2_and_pil2_author_item_coin_coli(void);
+    void bg_pil2_init(void);
+    void bg_pil2_tick(void);
+    void bg_pil2_dest(void);
+    void bg_pil2_disp(void);
+    void bg_pil2_item_coin_coli(void);
     void bg_spa2_init(void);
     void bg_spa2_tick(void);
     void bg_spa2_dest(void);
@@ -8901,18 +8917,18 @@ extern "C" {
     void empty_function(void);
     void empty_function(void);
     void empty_function(void);
-    void bg_bubble_and_bubble_author_init(void);
-    void bg_bubble_and_bubble_author_tick(void);
-    void bg_bubble_and_bubble_author_dest(void);
-    void bg_bubble_and_bubble_author_disp(void);
-    void bg_bubble_and_bubble_author_item_coin_coli(void);
+    void bg_bubble_init(void);
+    void bg_bubble_tick(void);
+    void bg_bubble_dest(void);
+    void bg_bubble_disp(void);
+    void bg_bubble_item_coin_coli(void);
     void empty_function(void);
     void empty_function(void);
-    void bg_gear_and_gear_author_init(void);
-    void bg_gear_and_gear_author_tick(void);
-    void bg_gear_and_gear_author_dest(void);
-    void bg_gear_and_gear_author_disp(void);
-    void bg_gear_and_gear_author_item_coin_coli(void);
+    void bg_gear_init(void);
+    void bg_gear_author_tick(void);
+    void bg_gear_author_dest(void);
+    void bg_gear_author_disp(void);
+    void bg_gear_item_coin_coli(void);
     void g_something_with_stage_heap_and_gear_theme(int param_1);
     void bg_jun2_init(void);
     void bg_jun2_tick(void);
@@ -9114,8 +9130,8 @@ extern "C" {
     void textdraw_print_and_fit_to_width(double width, char * string);
     void textdraw_printf_and_fit_to_width(double g_width, char * format, ...);
     int g_get_font_def_aram_flag(int param_1);
-    void g_get_string_sprite_width_2(byte * param_1);
-    void g_call_get_string_sprite_width_3_discard_result(byte * param_1);
+    void g_get_string_sprite_width_2(char * param_1);
+    void g_call_get_string_sprite_width_3_discard_result(char * param_1);
     double textdraw_get_pixel_width_of_string_as_double(char * string);
     float textdraw_get_pixel_width_of_string(char * str);
     double textdraw_get_pixel_height_of_string(char * param_1);
@@ -9125,10 +9141,10 @@ extern "C" {
     void fade_screen_to_color(uint flags, u32 color, uint frames);
     undefined4 draw_sprite_draw_request(struct SpriteDrawRequest * request);
     void g_scale_sprite_for_widescreen(uint param_1);
-    void g_smth_calls_GXLoadPosMtxImm2(void);
+    void g_reset_sprite_mtx_for_widescreen(void);
     void g_something_loading_fonts(void);
     void g_load_specific_font(Font32  font);
-    void g_smth_with_sprite_draw_request(struct SpriteDrawRequest * request);
+    void g_draw_sprite_draw_request_unbuffered(struct SpriteDrawRequest * request);
     uint g_parse_avtext_non_alphanumeric(u32 next_two_chars_as_uint);
     undefined4 g_parse_avtext_other_codes(char * string, ushort * next_two_chars);
     undefined4 parse_avtext_color_codes(char * string, struct SpriteDrawRequest * sprite_draw_req);
@@ -9136,7 +9152,7 @@ extern "C" {
     int g_get_tex_id(undefined4 param_1, ushort param_2, ushort * param_3, int param_4);
     void g_some_textdraw_print_internal_func(byte * string);
     float textdraw_chara_load(char * string, BOOL32 stop_on_newline, TextdrawCharaLoadReturnParameter  return_parameter);
-    double g_get_string_sprite_width_3(byte * param_1);
+    double g_get_string_sprite_width_3(char * param_1);
     double textdraw_get_pixel_width_of_string_as_double_child(char * string);
     float textdraw_get_pixel_width_of_string_child(char * string);
     int g_smth_with_fonts_chara_load_wrapper(char * param_1);
@@ -9331,9 +9347,12 @@ extern "C" {
     void g_something_with_card13(void);
     void g_something_with_card3(void);
     void print_card_submode_error(byte * param_1);
+    void g_memcard_func_1(struct MemCardInfo * info);
     void empty_function(void);
+    void g_memcard_func_2(struct MemCardInfo * info);
     void empty_function(void);
     void mount_memory_card(byte * param_1);
+    void g_memcard_func_4(struct MemCardInfo * info);
     void g_something_free_card_blocks(struct MemCardFile * param_1);
     void g_open_card_file(struct MemCardFile * file);
     void something_that_calls_CARDCreateAsync(byte * param_1);
@@ -9341,7 +9360,7 @@ extern "C" {
     void g_related_to_memcard_rw(byte * param_1);
     void g_something_with_card12(byte * param_1);
     void g_something_with_card(void);
-    void g_something_with_card10(byte * param_1);
+    void g_something_with_card10(char * param_1);
     void g_some_printf_function_5(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, char * param_9, undefined4 param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
     void g_something_with_card11(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8);
     void g_something_with_card9(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8);
@@ -9781,7 +9800,7 @@ extern "C" {
     void menu_tennis_court_select_tick(void);
     void menu_start_tennis(void);
     void menu_option_replay_tick(void);
-    void menu_option_play_points_tick(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, undefined4 param_9, undefined4 param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
+    void menu_option_play_points_tick(void);
     void menu_option_gift_tick(undefined8 param_1, undefined8 param_2, undefined8 param_3, undefined8 param_4, undefined8 param_5, undefined8 param_6, undefined8 param_7, undefined8 param_8, undefined4 param_9, u32 param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16);
     void menu_option_ranking_tick(void);
     void menu_option_game_data_tick(void);
@@ -9804,7 +9823,7 @@ extern "C" {
     void sprite_game_settings_tick(u8 * status, struct Sprite * sprite);
     void sprite_game_settings_disp(struct Sprite * param_1);
     void sprite_practice_stage_select_tick(u8 * status, struct Sprite * sprite);
-    void sprite_practice_stage_select_disp(int param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8);
+    void sprite_practice_stage_select_disp(int param_1);
     void sprite_fight_stage_select_tick(u8 * status, struct Sprite * sprite);
     void sprite_fight_stage_select_disp(struct Sprite * param_1);
     void sprite_button_tick(u8 * status, struct Sprite * sprite);
