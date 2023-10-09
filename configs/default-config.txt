@@ -142,6 +142,11 @@
 // or not at all if they reside on an itemgroup whose index is >127. This patch
 // increases the limit to 256 total itemgroups.
 
+// fix-view-stage
+//
+// Fixes an issue where background animations play at twice their normal speed
+// on the 'View Stage' screen
+
 // ----------------------------------------------------------------------------
 
 // 'enabled' - Applies the patch
@@ -174,6 +179,7 @@
 	enable-menu-reflections: disabled
 	custom-world-count: 10
 	stobj-draw-fix: disabled
+	fix-view-stage: disabled
 }
 
 // Toggles which party games are accessible from the party game menu.
