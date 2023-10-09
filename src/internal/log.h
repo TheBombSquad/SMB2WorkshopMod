@@ -12,8 +12,8 @@ constexpr char* LOG_PREFIX_LINE = "[wsmod] At %s:%d: ";
 #define MOD_ASSERT(exp)                                                               \
     ({                                                                                \
         if (!(exp)) {                                                                 \
-            mkb::OSPanic(__FILE_NAME__, __LINE__, "Failed assertion " #exp);          \
-            LOG("Failed assertion in %s line %d: %s", __FILE_NAME__, __LINE__, #exp); \
+            mkb::OSPanic(__FILE__, __LINE__, "Failed assertion " #exp);          \
+            LOG("Failed assertion in %s line %d: %s", __FILE__, __LINE__, #exp); \
             while (true)                                                              \
                 ;                                                                     \
         }                                                                             \
@@ -22,8 +22,8 @@ constexpr char* LOG_PREFIX_LINE = "[wsmod] At %s:%d: ";
 #define MOD_ASSERT_MSG(exp, msg)                                                       \
     ({                                                                                 \
         if (!(exp)) {                                                                  \
-            mkb::OSPanic(__FILE_NAME__, __LINE__, msg);                                \
-            LOG("Failed assertion in %s line %d: %s", __FILE_NAME__, __LINE__, (msg)); \
+            mkb::OSPanic(__FILE__, __LINE__, msg);                                \
+            LOG("Failed assertion in %s line %d: %s", __FILE__, __LINE__, (msg)); \
             while (true)                                                               \
                 ;                                                                      \
         }                                                                              \
@@ -41,7 +41,7 @@ constexpr char* LOG_PREFIX_LINE = "[wsmod] At %s:%d: ";
 #define LOG_DEBUG(msg, ...)                                                       \
                                                                                   \
     {                                                                             \
-        mkb::printf(const_cast<char*>(LOG_PREFIX_LINE), __FILE_NAME__, __LINE__); \
+        mkb::printf(const_cast<char*>(LOG_PREFIX_LINE), __FILE__, __LINE__); \
         mkb::printf(const_cast<char*>(msg), ##__VA_ARGS__);                       \
         mkb::printf("\n");                                                        \
     }
