@@ -5701,6 +5701,7 @@ extern "C" {
     extern char HUD_TEXT_WORLD_STAGE_NO[6];
     extern char HUD_TEXT_STAGE_NO[3];
     extern char HUD_TEXT_STAGE_NAME[3];
+    extern char sprite_banana_count_fmt_string[5];
     extern MinimapMode  g_minimap_mode;
     extern undefined4 minimap_zoom_level;
     extern undefined2 minimap_scale;
@@ -8646,7 +8647,7 @@ extern "C" {
     void convert_replay_ptrs_to_offsets(struct Replay * replay, struct Replay * outReplay);
     void convert_replay_offsets_to_ptrs(struct Replay * replay);
     void increment_score(int g_some_flag, int score);
-    int get_goal_score(uint * param_1, int * param_2);
+    int get_goal_score(uint * g_jump_dist_ptr, int * g_score_ptr);
     void event_effect_init(void);
     void event_effect_tick(void);
     void event_effect_dest(void);

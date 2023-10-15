@@ -2,13 +2,13 @@
 
 #include "internal/patch.h"
 #include "internal/tickable.h"
+#include "utils/ppcutil.h"
 
 namespace four_digit_banana_counter {
 
 TICKABLE_DEFINITION((.name = "four-digit-banana-counter",
                      .description = "Four-digit banana counter",
                      .init_main_loop = init_main_loop))
-
 
 // Assigns our own parameters to the banana counter sprites to adapt their
 // positions for the extra digit and scale the wooden board underneath the
@@ -105,13 +105,16 @@ void create_new_banana_counter_sprites(u8* status, mkb::Sprite* pSVar1) {
 // the amount of digits to display with 4. Then, hooks into the banana counter
 // sprite create function calling our sprite create function instead.
 void init_main_loop() {
+    // In add_bananas, return if the current count after adding is less than 9999 instead of 999
+    patch::write_word(reinterpret_cast<void*>(0x802b8284), 0x2c00270f);// cmpwi r0, 9999
 
-    patch::write_word(reinterpret_cast<void*>(0x802b8284), 0x2c00270f);
-    patch::write_word(reinterpret_cast<void*>(0x802b828c), 0x3800270f);
-    patch::write_word(reinterpret_cast<void*>(0x8049440c), 0x25303464);// "%04d"
+    // In add_bananas, cap the max banana count to 9999 instead of 999
+    patch::write_word(reinterpret_cast<void*>(0x802b828c), PPC_INSTR_LI(PPC_R0, 9999));
 
-    patch::write_branch(reinterpret_cast<void*>(mkb::create_banana_counter_sprites),
-                        reinterpret_cast<void*>(create_new_banana_counter_sprites));
+    // Change format string
+    mkb::strcpy(mkb::sprite_banana_count_fmt_string, "%04d");
+
+    patch::write_branch(reinterpret_cast<void*>(mkb::create_banana_counter_sprites), reinterpret_cast<void*>(create_new_banana_counter_sprites));
 }
 
 }// namespace four_digit_banana_counter
