@@ -6293,7 +6293,7 @@ extern "C" {
     extern MenuScreenID  g_currently_visible_menu_screen;
     extern MenuScreenID  g_next_menu_screen;
     extern undefined1 g_menu_transition_frametimer;
-    extern undefined1 g_character_selected;
+    extern byte g_character_selected;
     extern char * g_menu_description_text;
     extern undefined4 g_active_pads_bitfield;
     extern undefined1 g_language_id;
