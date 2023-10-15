@@ -62,10 +62,10 @@ void death_counter_sprite_tick(u8* status, mkb::Sprite* sprite) {
 }
 
 // Clears the per-player death counter, then nops the instruction that
-// decrements the life counter on player death and the instruction that 
-// grants 1UPs. Then, hooks into the decrement life counter function, 
-// and runs the update_death_count func. Then, hooks into the monkey 
-// counter sprite tick function, and calls the death counter sprite 
+// decrements the life counter on player death and the instruction that
+// grants 1UPs. Then, hooks into the decrement life counter function,
+// and runs the update_death_count func. Then, hooks into the monkey
+// counter sprite tick function, and calls the death counter sprite
 // tick function instead.
 void init_main_game() {
     mkb::memset(death_count, 0, sizeof(death_count));
