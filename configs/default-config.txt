@@ -1,4 +1,4 @@
-// This is the config file for Workshop Mod 0.3.0!
+// This is the config file for Workshop Mod 0.3.1!
 // Place this in the root of your game directory, and name it config.txt
 // It should be in the same folder as the included REL file, mkb2.rel_sample.rel
 //
@@ -147,6 +147,20 @@
 // Fixes an issue where background animations play at twice their normal speed
 // on the 'View Stage' screen
 
+// four-digit-banana-counter
+//
+// Allows the banana counter to display four digits, maxing out at 9999
+
+// fix-minimap-color
+//
+// Fixes an inconsistency where Baby's minimap bubble would be tinted yellow
+
+// fix-widescreen
+//
+// Fixes an issue where widescreen would display less vertically compared to 
+// 4:3. Additionally fixes View Stage stretching and Sand's haze breaking in
+// widescreen. Sprites will be fixed in the future.
+
 // ----------------------------------------------------------------------------
 
 // 'enabled' - Applies the patch
@@ -180,6 +194,9 @@
 	custom-world-count: 10
 	stobj-draw-fix: disabled
 	fix-view-stage: disabled
+	four-digit-banana-counter: disabled
+	fix-minimap-color: disabled
+	fix-widescreen: disabled
 }
 
 // Toggles which party games are accessible from the party game menu.

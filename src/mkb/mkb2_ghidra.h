@@ -5701,6 +5701,7 @@ extern "C" {
     extern char HUD_TEXT_WORLD_STAGE_NO[6];
     extern char HUD_TEXT_STAGE_NO[3];
     extern char HUD_TEXT_STAGE_NAME[3];
+    extern char sprite_banana_count_fmt_string[5];
     extern MinimapMode  g_minimap_mode;
     extern undefined4 minimap_zoom_level;
     extern undefined2 minimap_scale;
@@ -6097,7 +6098,7 @@ extern "C" {
     extern undefined4 g_some_author_cutscene_flag;
     extern undefined4 g_playpoint_msg_counter;
     extern struct UnlockInfo unlock_info;
-    extern undefined4 view_stage_aspect_ratio;
+    extern float view_stage_aspect_ratio;
     extern pointer switchdataD_804ee064;
     extern undefined * story_mode_funcs;
     extern pointer switchdataD_804eee68;
@@ -6293,7 +6294,7 @@ extern "C" {
     extern MenuScreenID  g_currently_visible_menu_screen;
     extern MenuScreenID  g_next_menu_screen;
     extern undefined1 g_menu_transition_frametimer;
-    extern undefined1 g_character_selected;
+    extern byte g_character_selected;
     extern char * g_menu_description_text;
     extern undefined4 g_active_pads_bitfield;
     extern undefined1 g_language_id;
@@ -8646,7 +8647,7 @@ extern "C" {
     void convert_replay_ptrs_to_offsets(struct Replay * replay, struct Replay * outReplay);
     void convert_replay_offsets_to_ptrs(struct Replay * replay);
     void increment_score(int g_some_flag, int score);
-    int get_goal_score(uint * param_1, int * param_2);
+    int get_goal_score(uint * g_jump_dist_ptr, int * g_score_ptr);
     void event_effect_init(void);
     void event_effect_tick(void);
     void event_effect_dest(void);
