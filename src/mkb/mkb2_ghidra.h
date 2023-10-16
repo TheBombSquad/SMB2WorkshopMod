@@ -6098,7 +6098,7 @@ extern "C" {
     extern undefined4 g_some_author_cutscene_flag;
     extern undefined4 g_playpoint_msg_counter;
     extern struct UnlockInfo unlock_info;
-    extern undefined4 view_stage_aspect_ratio;
+    extern float view_stage_aspect_ratio;
     extern pointer switchdataD_804ee064;
     extern undefined * story_mode_funcs;
     extern pointer switchdataD_804eee68;

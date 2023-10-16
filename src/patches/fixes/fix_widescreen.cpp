@@ -17,17 +17,17 @@ TICKABLE_DEFINITION((
 
 void tick() {
     if (mkb::sub_mode == mkb::SMD_SEL_NGC_MAIN) {
-        patch::write_word(reinterpret_cast<void*>(0x80287cf8), 0x418200a8);
+        patch::write_word(reinterpret_cast<void*>(0x80287cf8), 0x418200a8); // original instruction
     }
     else {
-        patch::write_nop(reinterpret_cast<void*>(0x80287cf8));
+        patch::write_nop(reinterpret_cast<void*>(0x80287cf8)); // nops a branch to the FOV-modifying code
     }
     if (mkb::main_mode == mkb::MD_GAME) {
         if (mkb::widescreen_mode == 0) {
-            patch::write_word(reinterpret_cast<void*>(0x809155fc), (0x3faaaaab));
+            mkb::view_stage_aspect_ratio = 1.333333333f;
         }
         else {
-            patch::write_word(reinterpret_cast<void*>(0x809155fc), (0x3fe38e3b));
+            mkb::view_stage_aspect_ratio = 1.777777777f;
         }
     }
 }
