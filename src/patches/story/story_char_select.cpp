@@ -70,12 +70,13 @@ void tick() {
         patch::write_word(reinterpret_cast<void*>(0x80921a20), 0x6000000);
         patch::write_word(reinterpret_cast<void*>(0x80920ba0), 0xC000000);
         if (mkb::g_currently_visible_menu_screen == 0x6) {
-            mkb::sel_menu_info.menu_stack[1] = 7;
             if (pad::button_pressed(mkb::PAD_BUTTON_A)) {
                 mkb::sel_menu_info.menu_stack_ptr = 1;
+                mkb::sel_menu_info.menu_stack[1] = 7;
             }
             else if (pad::button_pressed(mkb::PAD_BUTTON_B) && mkb::g_character_selected != 1) {
                 mkb::sel_menu_info.menu_stack_ptr = 2;
+                mkb::sel_menu_info.menu_stack[1] = 7;
             }
         }
     }
