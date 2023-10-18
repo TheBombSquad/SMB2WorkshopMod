@@ -13,7 +13,7 @@ TICKABLE_DEFINITION((
         .description = "Story mode character select",
         .init_main_loop = init_main_loop,
         .init_main_game = init_main_game,
-        .tick = tick, ))
+        .init_sel_ngc = init_sel_ngc, ))
 
 static mkb::undefined4* AIAI[] = {&mkb::CHAR_A, &mkb::CHAR_I, &mkb::CHAR_A, &mkb::CHAR_I, &mkb::CHAR_SPACE,
                                   &mkb::CHAR_SPACE};
@@ -26,6 +26,8 @@ static mkb::undefined4* GONGON[] = {&mkb::CHAR_G, &mkb::CHAR_O, &mkb::CHAR_N, &m
 static mkb::undefined4* HIHI[] = {&mkb::CHAR_H, &mkb::CHAR_I, &mkb::CHAR_H, &mkb::CHAR_I, &mkb::CHAR_SPACE,
                                   &mkb::CHAR_SPACE};
 static mkb::undefined4** monkey_name_lookup[] = {AIAI, MEEMEE, BABY, GONGON, HIHI};
+
+static bool is_entering_story = false;
 
 // Overrides the return value of certain functions to force the chosen monkey to be
 // preloaded in place of AiAi
@@ -60,29 +62,56 @@ void init_main_game() {
     patch::write_nop(reinterpret_cast<void*>(0x80906370));
     patch::write_nop(reinterpret_cast<void*>(0x80906374));
     patch::write_nop(reinterpret_cast<void*>(0x80906378));
+
+    // Lets the sel_ngc portion of the patch know we aren't entering story anymore
+    // Also sets menu_stack_ptr to 1, ensuring we return to the Mode Select screen
+    is_entering_story = false;
+    mkb::sel_menu_info.menu_stack_ptr = 1;
 }
 
 // Assign the correct 'next screen' variables to redirect Story Mode to the
 // character select screen. Also handle input to prevent Story Mode from not
 // initializing if mode_cnt isn't set to 1.
-void tick() {
-    if (mkb::sub_mode == mkb::SMD_SEL_NGC_MAIN) {
-        patch::write_word(reinterpret_cast<void*>(0x80921a20), 0x6000000);
-        patch::write_word(reinterpret_cast<void*>(0x80920ba0), 0xC000000);
-        if (mkb::g_currently_visible_menu_screen == 0x6) {
-            mkb::sel_menu_info.menu_stack[1] = 7;
-            if (pad::button_pressed(mkb::PAD_BUTTON_A)) {
-                mkb::sel_menu_info.menu_stack_ptr = 1;
-            }
-            else if (pad::button_pressed(mkb::PAD_BUTTON_B) && mkb::g_character_selected != 1) {
-                mkb::sel_menu_info.menu_stack_ptr = 2;
-            }
-        }
+void init_sel_ngc() {
+    // Patches the 'next screen ID' for the 'STORY MODE' button in the Mode Select screen
+    mkb::menu_main_game_select_entries[0].next_screen_id = mkb::MENUSCREEN_CHARACTER_SELECT_2;
+    for (int i = 0; i < 4; i++) {
+        // Patches each of the character button's 'next screen ID' in the character select screen
+        mkb::menu_character_select_2_entries[i].next_screen_id = mkb::MENUSCREEN_STORY_MODE_SELECTED;
     }
-    if (mkb::sub_mode == mkb::SMD_GAME_SCENARIO_MAIN) {
-        mkb::sel_menu_info.menu_stack_ptr = 1;
-        mkb::sel_menu_info.menu_stack[1] = 7;
-    }
+    static patch::Tramp<decltype(&mkb::menu_character_select_tick)> s_character_select_tick;
+    patch::hook_function(
+        s_character_select_tick,
+        mkb::menu_character_select_tick, []() {
+            if (mkb::g_currently_visible_menu_screen == mkb::MENUSCREEN_CHARACTER_SELECT_2) {
+                // If we press A, then we are going to start the process of entering story mode
+                // We need to update our current position on the menu stack with the character select menu
+                constexpr size_t ORIGINAL_STACK_INDEX = 2;
+
+                if (pad::button_pressed(mkb::PAD_BUTTON_A)) {
+                    mkb::sel_menu_info.menu_stack[ORIGINAL_STACK_INDEX] = mkb::MENUSCREEN_CHARACTER_SELECT_2;
+                    is_entering_story = true;
+                }
+                // If we press B, then we are cancelling the process of entering story mode
+                // We need to clean up since the stack pointer is changed after calling the tick function
+                // So, we restore the pointer to the original '2'
+                if (pad::button_pressed(mkb::PAD_BUTTON_B)) {
+                    if (is_entering_story) {
+                        mkb::sel_menu_info.menu_stack_ptr = ORIGINAL_STACK_INDEX;
+                        mkb::g_next_menu_screen = mkb::MENUSCREEN_MAIN_GAME_SELECT;
+                    }
+                    is_entering_story = false;
+                }
+            }
+
+            s_character_select_tick.dest();
+
+            if (mkb::g_currently_visible_menu_screen == mkb::MENUSCREEN_CHARACTER_SELECT_2) {
+                // We have to do this hacky nonsense to get the game to think we are entering story mode
+                // Otherwise, it will display (or rather, attempt to display) the Practice Mode stage select screen
+                if (is_entering_story) mkb::sel_menu_info.menu_stack_ptr = 1;
+            }
+        });
 }
 
 }// namespace story_char_select
