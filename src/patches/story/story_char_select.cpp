@@ -65,8 +65,10 @@ void init_main_game() {
 
     // Lets the sel_ngc portion of the patch know we aren't entering story anymore
     // Also sets menu_stack_ptr to 1, ensuring we return to the Mode Select screen
-    is_entering_story = false;
-    mkb::sel_menu_info.menu_stack_ptr = 1;
+    if (is_entering_story) {
+        is_entering_story = false;
+        mkb::sel_menu_info.menu_stack_ptr = 1;
+    }
 }
 
 // Assign the correct 'next screen' variables to redirect Story Mode to the
