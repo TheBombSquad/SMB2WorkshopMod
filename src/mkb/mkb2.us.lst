@@ -10054,6 +10054,7 @@
 80949E38:menu_apes
 80949E50:g_menu_color_overlay_timer
 80949E58:g_something_with_preview_textures
+809527E4:g_replay_stage_id_to_load
 80952863:g_gift_menu_cursor_pos
 808F40B0:FUN_8058e5e0
 808F40FC:empty_function
@@ -14780,7 +14781,7 @@
 808F5378:FUN_809ef888
 808F543C:exoption_draw_func
 808F545C:create_replay_hud_sprites
-808F54C8:create_replay_stagename_sprites
+808F54C8:create_replay_stage_name_sprites
 808F5B78:FUN_809f0088
 808F5CA4:FUN_809f01b4
 808F6244:FUN_809f0754

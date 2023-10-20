@@ -13,7 +13,8 @@ namespace stage_author_names {
 TICKABLE_DEFINITION((
         .name = "stage-author-names",
         .description = "Stage author name display",
-        .init_main_loop = init_main_loop, ))
+        .init_main_loop = init_main_loop,
+        .init_exoption = init_exoption, ))
 
 static char author_file_path[] = "/stgname/authors.str";
 static char author_fallback_name = '\0';
@@ -26,7 +27,12 @@ void sprite_init(float x, float y) {
     char* author_name;
 
     if (mkb::current_stage_id >= 0 && mkb::current_stage_id < STAGE_COUNT) {
-        author_name = author_list[mkb::current_stage_id];
+        if (mkb::main_mode != mkb::MD_EXOPT) { 
+            author_name = author_list[mkb::current_stage_id]; // Handle the name to load in most cases
+        }
+        else {
+            author_name = author_list[mkb::g_replay_stage_id_to_load]; // Handle the name to load when loading a replay
+        }
     }
     else {
         author_name = &author_fallback_name;
@@ -121,6 +127,16 @@ void init_main_loop() {
     patch::hook_function(
         s_stage_name_tramp,
         mkb::create_hud_stage_name_sprites, [](float x, float y) {
+            s_stage_name_tramp.dest(x, y);
+            sprite_init(x, y);
+        });
+}
+
+void init_exoption() {
+    static patch::Tramp<decltype(&mkb::create_replay_stage_name_sprites)> s_stage_name_tramp;
+    patch::hook_function(
+        s_stage_name_tramp,
+        mkb::create_replay_stage_name_sprites, [](float x, float y) {
             s_stage_name_tramp.dest(x, y);
             sprite_init(x, y);
         });

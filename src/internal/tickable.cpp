@@ -96,7 +96,7 @@ void TickableManager::init() const {
             // Functions that need to be initialized when mkb2.exoption.rel is loaded
             else if (STREQ(rel_filepath, "mkb2.exoption.rel")) {
                 for (const auto& tickable: get_tickable_manager().get_tickables()) {
-                    if (tickable->enabled && tickable->init_sel_ngc) {
+                    if (tickable->enabled && tickable->init_exoption) {
                         // mkb::OSReport("Running init_exoption for %s\n", tickable->name);
                         (*tickable->init_exoption)();
                     }

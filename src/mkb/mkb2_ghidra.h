@@ -6307,6 +6307,7 @@ extern "C" {
     extern struct Ape * menu_apes[4];
     extern undefined4 g_menu_color_overlay_timer;
     extern undefined g_something_with_preview_textures;
+    extern undefined4 g_replay_stage_id_to_load;
     extern undefined1 g_gift_menu_cursor_pos;
     extern undefined * switchdataD_80590050;
     extern pointer switchdataD_805b1fc6;
@@ -10059,7 +10060,7 @@ extern "C" {
     void exoption_unlinked_func(void);
     void exoption_draw_func(void);
     void create_replay_hud_sprites(void);
-    void create_replay_stagename_sprites(double param_1, double param_2);
+    void create_replay_stage_name_sprites(float x, float y);
 #ifdef __cplusplus
 } // extern "C"
 #endif
