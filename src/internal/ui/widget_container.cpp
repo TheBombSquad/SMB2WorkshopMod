@@ -35,7 +35,39 @@ void Container::tick() {
 
     // Origin constraints for widgets
     Vec2d widget_origin;
-    widget_origin = m_pos;
+
+    switch(m_alignment) {
+        case mkb::ALIGN_UPPER_LEFT:
+            widget_origin = m_pos;
+            break;
+        case mkb::ALIGN_UPPER_CENTER:
+            widget_origin = Vec2d{get_pos_center_point().x, m_pos.y};
+            break;
+        case mkb::ALIGN_UPPER_RIGHT:
+            widget_origin = Vec2d{m_dimensions.x, m_pos.y};
+            break;
+        case mkb::ALIGN_CENTER_LEFT:
+            widget_origin = Vec2d{m_pos.x, get_pos_center_point().y};
+            break;
+        case mkb::ALIGN_CENTER:
+            widget_origin = get_pos_center_point();
+            break;
+        case mkb::ALIGN_CENTER_RIGHT:
+            widget_origin = Vec2d{m_dimensions.x, get_pos_center_point().y};
+            break;
+        case mkb::ALIGN_LOWER_LEFT:
+            widget_origin = Vec2d{m_pos.x, m_dimensions.y};
+            break;
+        case mkb::ALIGN_LOWER_CENTER:
+            widget_origin = Vec2d{get_pos_center_point().x, m_dimensions.y};
+            break;
+        case mkb::ALIGN_LOWER_RIGHT:
+            widget_origin = m_dimensions;
+            break;
+        default:
+            widget_origin = m_pos;
+            MOD_ASSERT_MSG(false, "how did we get here?");
+    }
 
     // Calculate the total dimensions of widgets once we add them
     Vec2d total_child_dimensions = {0.0f, 0.0f};
