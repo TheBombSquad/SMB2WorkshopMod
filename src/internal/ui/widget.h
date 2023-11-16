@@ -29,7 +29,12 @@ protected:
     Vec2d m_scale = Vec2d{1.f, 1.f};
     float m_depth = 0.1;
     int32_t m_z_rotation = 0;
+    bool m_interactable = false;
 
+public:
+    const bool get_interactable() const;
+
+protected:
     static constexpr uint32_t WIDGET_MAX_CHILDREN = 8;
     etl::list<etl::unique_ptr<Widget>, WIDGET_MAX_CHILDREN> m_children;
 
@@ -99,6 +104,8 @@ public:
 
     uint32_t is_visible() const { return m_visible; }
     void set_visible(uint32_t is_visible) { Widget::m_visible = is_visible; }
+
+    const bool is_interactable() const { return m_interactable; }
 };
 
 }// namespace ui

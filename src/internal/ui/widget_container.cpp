@@ -1,7 +1,6 @@
 #include "widget_container.h"
 
 #include "internal/log.h"
-#include "internal/pad.h"
 #include "internal/ui/widget_button.h"
 
 namespace ui {
@@ -10,33 +9,10 @@ void Container::tick() {
     const unsigned int child_count = m_children.size();
     u32 index = 0;
 
-    // TODO: Menu stuff - should be moved out!!
-    if (pad::dir_pressed(pad::DIR_DOWN)) {
-        mkb::call_SoundReqID_arg_2(0x6f);
-        LOG_DEBUG("active idx: %d", m_active_index);
-        if (m_active_index == child_count - 1) {
-            m_active_index = 0;
-        }
-        else {
-            m_active_index++;
-        }
-    }
-
-    if (pad::dir_pressed(pad::DIR_UP)) {
-        mkb::call_SoundReqID_arg_2(0x6f);
-        LOG_DEBUG("active idx: %d", m_active_index);
-        if (m_active_index == 0) {
-            m_active_index = child_count - 1;
-        }
-        else {
-            m_active_index--;
-        }
-    }
-
     // Origin constraints for widgets
     Vec2d widget_origin;
 
-    switch(m_alignment) {
+    switch (m_alignment) {
         case mkb::ALIGN_UPPER_LEFT:
             widget_origin = m_pos;
             widget_origin.x += m_margin;
@@ -92,11 +68,11 @@ void Container::tick() {
         if (m_layout == ContainerLayout::VERTICAL) {
             if (total_child_dimensions.x > dimensions.x) total_child_dimensions.x = dimensions.x;
             total_child_dimensions.y += dimensions.y;
-            if (child_index == child_count-1) total_child_dimensions.y += m_layout_spacing; // Add spacing, unless last element
+            if (child_index == child_count - 1) total_child_dimensions.y += m_layout_spacing;// Add spacing, unless last element
         }
         else {
             total_child_dimensions.x += dimensions.x;
-            if (child_index == child_count-1) total_child_dimensions.x += m_layout_spacing; // Add spacing, unless last element
+            if (child_index == child_count - 1) total_child_dimensions.x += m_layout_spacing;// Add spacing, unless last element
             if (total_child_dimensions.y > dimensions.y) total_child_dimensions.y = dimensions.y;
         }
         child_iterator++;
@@ -124,54 +100,9 @@ void Container::tick() {
             widget_origin.x += child->get_dimensions().x * child_scale.x;
         }
 
-        // TODO: move out of this
-        auto& button_ref = static_cast<Button&>(**child_iterator);
-        if (m_active_index == index) {
-            button_ref.set_active(true);
-        }
-        else {
-            button_ref.set_active(false);
-        }
         child_iterator++;
         index++;
     }
-    // Determines the max size a single widget can take up and still fit the container dimensions
-    /*
-    float max_slice_size;
-    if (m_layout == ContainerLayout::VERTICAL) {
-        max_slice_size = m_dimensions.y / (child_count + 1);
-    }
-    else {
-        max_slice_size = m_dimensions.x / (child_count + 1);
-    }
-    
-    // Lays out the widgets in the container
-    while (child_iterator != m_children.end()) {
-        auto& child = *child_iterator;
-        // TODO: padding
-        uint16_t padding_size = m_layout_spacing;
-
-        if (m_layout == ContainerLayout::VERTICAL) {
-            child->set_pos(Vec2d{widget_origin.x, widget_origin.y + child_dimension_scale});
-        }
-        else {
-            LOG_DEBUG("index: %d, child_dimension_scale: %d, x pos: %f, y pos: %f", index, child_dimension_scale, (widget_origin.x + child_dimension_scale), (widget_origin.y));
-            child->set_pos(Vec2d{widget_origin.x + child_dimension_scale, widget_origin.y});
-        }
-
-        // TODO: move out of this
-        auto& button_ref = static_cast<Button&>(**child_iterator);
-        if (m_active_index == index) {
-            button_ref.set_active(true);
-        }
-        else {
-            button_ref.set_active(false);
-        }
-        child_iterator++;
-        index++;
-    }
-     */
-
 
     Widget::tick();
 }

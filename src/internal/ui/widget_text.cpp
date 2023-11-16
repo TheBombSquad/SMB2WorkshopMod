@@ -28,7 +28,7 @@ void Text::disp() {
     m_dimensions.x = mkb::textdraw_get_pixel_width_of_string(const_cast<char*>(m_text));
     m_dimensions.y = mkb::textdraw_get_pixel_height_of_string(const_cast<char*>(m_text));
     mkb::textdraw_print(const_cast<char*>(m_text));
-    //mkb::textdraw_print_and_fit_to_width(m_dimensions.x, const_cast<char*>(m_text));
+    // mkb::textdraw_print_and_fit_to_width(m_dimensions.x, const_cast<char*>(m_text));
 }
 
 }// namespace ui

@@ -40,7 +40,7 @@ public:
         m_margin = margin;
     }
 
-private:
+protected:
     u32 m_active_index = 0;
 
     // The layout of widgets within the container.
