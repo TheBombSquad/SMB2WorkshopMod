@@ -39,30 +39,42 @@ void Container::tick() {
     switch(m_alignment) {
         case mkb::ALIGN_UPPER_LEFT:
             widget_origin = m_pos;
+            widget_origin.x += m_margin;
+            widget_origin.y += m_margin;
             break;
         case mkb::ALIGN_UPPER_CENTER:
             widget_origin = Vec2d{get_pos_center_point().x, m_pos.y};
+            widget_origin.y += m_margin;
             break;
         case mkb::ALIGN_UPPER_RIGHT:
             widget_origin = Vec2d{m_dimensions.x, m_pos.y};
+            widget_origin.x -= m_margin;
+            widget_origin.y += m_margin;
             break;
         case mkb::ALIGN_CENTER_LEFT:
             widget_origin = Vec2d{m_pos.x, get_pos_center_point().y};
+            widget_origin.x += m_margin;
             break;
         case mkb::ALIGN_CENTER:
             widget_origin = get_pos_center_point();
             break;
         case mkb::ALIGN_CENTER_RIGHT:
             widget_origin = Vec2d{m_dimensions.x, get_pos_center_point().y};
+            widget_origin.x -= m_margin;
             break;
         case mkb::ALIGN_LOWER_LEFT:
             widget_origin = Vec2d{m_pos.x, m_dimensions.y};
+            widget_origin.x += m_margin;
+            widget_origin.y -= m_margin;
             break;
         case mkb::ALIGN_LOWER_CENTER:
             widget_origin = Vec2d{get_pos_center_point().x, m_dimensions.y};
+            widget_origin.y -= m_margin;
             break;
         case mkb::ALIGN_LOWER_RIGHT:
             widget_origin = m_dimensions;
+            widget_origin.x -= m_margin;
+            widget_origin.y -= m_margin;
             break;
         default:
             widget_origin = m_pos;

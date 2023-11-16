@@ -33,6 +33,12 @@ public:
     void set_alignment(mkb::SpriteAlignment alignment) {
         m_alignment = alignment;
     }
+    u16 get_margin() const {
+        return m_margin;
+    }
+    void set_margin(u16 margin) {
+        m_margin = margin;
+    }
 
 private:
     u32 m_active_index = 0;
@@ -47,6 +53,9 @@ private:
 
     // Alignment of widgets in the container relative to the origin point of the container
     mkb::SpriteAlignment m_alignment = mkb::ALIGN_UPPER_LEFT;
+
+    // Margin around the container
+    u16 m_margin = 5;
 };
 
 }// namespace ui
