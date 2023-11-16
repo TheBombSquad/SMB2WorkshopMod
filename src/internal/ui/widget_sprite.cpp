@@ -6,8 +6,8 @@ void Sprite::disp() {
     mkb::SpriteDrawRequest req;
     mkb::GXSetZMode_cached('\x01', mkb::GX_LEQUAL, '\x01');
     req.id = m_sprite_id;
-    req.pos.x = m_pos.x;
-    req.pos.y = m_pos.y;
+    req.pos.x = m_pos.x + m_dimensions.x/2;
+    req.pos.y = m_pos.y + m_dimensions.y/2;
     req.pos.z = m_depth;
     req.scale.x = m_scale.x;
     req.scale.y = m_scale.y;
