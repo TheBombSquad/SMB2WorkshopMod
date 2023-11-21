@@ -37,7 +37,6 @@ public:
         mkb::textdraw_set_scale(m_scale.x, m_scale.y);
         m_dimensions.x = mkb::textdraw_get_pixel_width_of_string(const_cast<char*>(m_text));
         m_dimensions.y = mkb::textdraw_get_pixel_height_of_string(const_cast<char*>(m_text));
-
     }
     virtual void disp() override;
 

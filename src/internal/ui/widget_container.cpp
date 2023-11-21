@@ -63,7 +63,7 @@ void Container::tick() {
     while (child_iterator != m_children.end()) {
         const auto& child = *child_iterator;
         const auto& dimensions = Vec2d(child->get_dimensions().x * child->get_scale().x, child->get_dimensions().y * child->get_scale().y);
-        //LOG("child %d: pos: %f, %f dim %f, %f", child_index, child->get_pos().x, child->get_pos().y, dimensions.x, dimensions.y);
+        // LOG("child %d: pos: %f, %f dim %f, %f", child_index, child->get_pos().x, child->get_pos().y, dimensions.x, dimensions.y);
         if (m_layout == ContainerLayout::VERTICAL) {
             if (dimensions.x > total_child_dimensions.x) total_child_dimensions.x = dimensions.x;
             total_child_dimensions.y += dimensions.y;
@@ -80,21 +80,18 @@ void Container::tick() {
 
     // Scaling factor to fit all the widgets in the container space
     Vec2d child_scale = {1.0f, 1.0f};
-    LOG("Calc dims vs m_dims: %f, %f / %f, %f", total_child_dimensions.x, total_child_dimensions.y, m_dimensions.x, m_dimensions.y);
-    if (total_child_dimensions.x > m_dimensions.x) {
-        LOG("ADJUSTING SCALE!!!");
-        child_scale.x = m_dimensions.x / total_child_dimensions.x;
-    }
+    // LOG("Calc dims vs m_dims: %f, %f / %f, %f", total_child_dimensions.x, total_child_dimensions.y, m_dimensions.x, m_dimensions.y);
+    if (total_child_dimensions.x > m_dimensions.x) child_scale.x = m_dimensions.x / total_child_dimensions.x;
     if (total_child_dimensions.y > m_dimensions.y) child_scale.y = m_dimensions.y / total_child_dimensions.y;
 
-    //mkb::OSReport("total dimensions: %f, %f / scale: %f, %f\n", total_child_dimensions.x, total_child_dimensions.y, child_scale.x, child_scale.y);
+    // mkb::OSReport("total dimensions: %f, %f / scale: %f, %f\n", total_child_dimensions.x, total_child_dimensions.y, child_scale.x, child_scale.y);
 
     // Lays out the widgets in the container
     child_iterator = m_children.begin();
     while (child_iterator != m_children.end()) {
         auto& child = *child_iterator;
         child->set_pos(Vec2d{widget_origin.x, widget_origin.y});
-        LOG("scale for child: %f, %f", child->get_scale().x * child_scale.x, child->get_scale().y * child_scale.y);
+        // LOG("scale for child: %f, %f", child->get_scale().x * child_scale.x, child->get_scale().y * child_scale.y);
         child->set_scale({child->get_scale().x * child_scale.x, child->get_scale().y * child_scale.y});
 
         if (m_layout == ContainerLayout::VERTICAL) {

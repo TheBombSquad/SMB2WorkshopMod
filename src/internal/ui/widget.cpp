@@ -16,7 +16,7 @@ void Widget::tick() {
         // Clean up children if they are marked as inactive
         if (iter->get()->is_inactive()) {
             m_children.erase(iter);
-            LOG("In widget, inactive widget/child found and will be erased");
+            // LOG("In widget, inactive widget/child found and will be erased");
             ++iter;
             continue;
         }
