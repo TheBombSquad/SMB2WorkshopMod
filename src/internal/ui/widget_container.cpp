@@ -7,7 +7,6 @@ namespace ui {
 
 void Container::tick() {
     const unsigned int child_count = m_children.size();
-    u32 index = 0;
 
     // Origin constraints for widgets
     Vec2d widget_origin;
@@ -63,17 +62,17 @@ void Container::tick() {
     size_t child_index = 0;
     while (child_iterator != m_children.end()) {
         const auto& child = *child_iterator;
-        const auto& dimensions = child->get_dimensions();
-        LOG("child %d: pos: %f, %f dim %f, %f", child_index, child->get_pos().x, child->get_pos().y, dimensions.x, dimensions.y);
+        const auto& dimensions = Vec2d(child->get_dimensions().x * child->get_scale().x, child->get_dimensions().y * child->get_scale().y);
+        //LOG("child %d: pos: %f, %f dim %f, %f", child_index, child->get_pos().x, child->get_pos().y, dimensions.x, dimensions.y);
         if (m_layout == ContainerLayout::VERTICAL) {
-            if (total_child_dimensions.x > dimensions.x) total_child_dimensions.x = dimensions.x;
+            if (dimensions.x > total_child_dimensions.x) total_child_dimensions.x = dimensions.x;
             total_child_dimensions.y += dimensions.y;
-            if (child_index == child_count - 1) total_child_dimensions.y += m_layout_spacing;// Add spacing, unless last element
+            if (child_index != child_count - 1) total_child_dimensions.y += m_layout_spacing;// Add spacing, unless last element
         }
         else {
+            if (dimensions.y > total_child_dimensions.y) total_child_dimensions.y = dimensions.y;
             total_child_dimensions.x += dimensions.x;
-            if (child_index == child_count - 1) total_child_dimensions.x += m_layout_spacing;// Add spacing, unless last element
-            if (total_child_dimensions.y > dimensions.y) total_child_dimensions.y = dimensions.y;
+            if (child_index != child_count - 1) total_child_dimensions.x += m_layout_spacing;// Add spacing, unless last element
         }
         child_iterator++;
         child_index++;
@@ -81,27 +80,33 @@ void Container::tick() {
 
     // Scaling factor to fit all the widgets in the container space
     Vec2d child_scale = {1.0f, 1.0f};
-    if (total_child_dimensions.x > m_dimensions.x) child_scale.x = m_dimensions.x / total_child_dimensions.x;
+    LOG("Calc dims vs m_dims: %f, %f / %f, %f", total_child_dimensions.x, total_child_dimensions.y, m_dimensions.x, m_dimensions.y);
+    if (total_child_dimensions.x > m_dimensions.x) {
+        LOG("ADJUSTING SCALE!!!");
+        child_scale.x = m_dimensions.x / total_child_dimensions.x;
+    }
     if (total_child_dimensions.y > m_dimensions.y) child_scale.y = m_dimensions.y / total_child_dimensions.y;
 
-    mkb::OSReport("total dimensions: %f, %f / scale: %f, %f\n", total_child_dimensions.x, total_child_dimensions.y, child_scale.x, child_scale.y);
+    //mkb::OSReport("total dimensions: %f, %f / scale: %f, %f\n", total_child_dimensions.x, total_child_dimensions.y, child_scale.x, child_scale.y);
 
     // Lays out the widgets in the container
     child_iterator = m_children.begin();
     while (child_iterator != m_children.end()) {
         auto& child = *child_iterator;
         child->set_pos(Vec2d{widget_origin.x, widget_origin.y});
+        LOG("scale for child: %f, %f", child->get_scale().x * child_scale.x, child->get_scale().y * child_scale.y);
         child->set_scale({child->get_scale().x * child_scale.x, child->get_scale().y * child_scale.y});
 
         if (m_layout == ContainerLayout::VERTICAL) {
             widget_origin.y += child->get_dimensions().y * child_scale.y;
+            widget_origin.y += m_layout_spacing;
         }
         else {
             widget_origin.x += child->get_dimensions().x * child_scale.x;
+            widget_origin.x += m_layout_spacing;
         }
 
         child_iterator++;
-        index++;
     }
 
     Widget::tick();
