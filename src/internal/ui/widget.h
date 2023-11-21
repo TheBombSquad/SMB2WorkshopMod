@@ -2,6 +2,7 @@
 
 #include "etl/delegate.h"
 #include "etl/list.h"
+#include "etl/string.h"
 #include "internal/ui/modifier.h"
 #include "log.h"
 #include "mkb/mkb.h"
@@ -24,17 +25,15 @@ protected:
     Widget(Vec2d pos) : m_pos(pos){};
     Widget(Vec2d pos, Vec2d dimensions) : m_pos(pos), m_dimensions(dimensions){};
     alignas(4) bool m_visible = true;
+    alignas(4) bool m_active = true;
     Vec2d m_pos = Vec2d{0.f, 0.f};
     Vec2d m_dimensions = Vec2d{0.f, 0.f};
     Vec2d m_scale = Vec2d{1.f, 1.f};
     float m_depth = 0.1;
     int32_t m_z_rotation = 0;
     bool m_interactable = false;
+    etl::string<8> m_label;
 
-public:
-    const bool get_interactable() const;
-
-protected:
     static constexpr uint32_t WIDGET_MAX_CHILDREN = 8;
     etl::list<etl::unique_ptr<Widget>, WIDGET_MAX_CHILDREN> m_children;
 
@@ -48,7 +47,7 @@ protected:
 public:
     virtual void tick();
     virtual void disp() = 0;
-    virtual ~Widget() { mkb::OSReport("destroy\n"); };
+    virtual ~Widget() { LOG("Widget destructor called"); };
     Widget(const Widget&) = delete;
     Widget& operator=(const Widget&) = delete;
 
@@ -57,7 +56,7 @@ public:
     T& add(T* widget) {
         widget->set_depth(m_depth - 0.005);
         auto& ptr_ref = m_children.emplace_back(std::move(widget));
-        LOG_DEBUG("depth of added child: %f", ptr_ref->get_depth());
+        LOG("Adding child with depth: %f", ptr_ref->get_depth());
         return static_cast<T&>(*ptr_ref);
     }
 
@@ -65,13 +64,28 @@ public:
     void remove(Widget& widget) {
         for (auto iter = m_children.begin(); iter != m_children.end();) {
             if (&widget == iter->get()) {
-                m_children.erase(iter);
+                iter->get()->m_active = false;
                 break;
             }
             else {
                 ++iter;
             }
         }
+    }
+
+    // Marks the widget as inactive (queued to be removed)
+    static void set_inactive(Widget& widget) {
+        LOG("Setting widget and children as inactive");
+        widget.m_active = false;
+        for (auto iter = widget.m_children.begin(); iter != widget.m_children.end();) {
+            Widget::set_inactive(**iter);
+            ++iter;
+        }
+    }
+
+    // Checks if the widget is active
+    bool is_inactive() {
+        return !m_active;
     }
 
     // Remove all child widgets
@@ -106,6 +120,9 @@ public:
     void set_visible(uint32_t is_visible) { Widget::m_visible = is_visible; }
 
     const bool is_interactable() const { return m_interactable; }
+
+    const etl::string<8>& get_label() const { return m_label; }
+    void set_label(const char* mLabel) { m_label = mLabel; }
 };
 
 }// namespace ui
