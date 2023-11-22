@@ -34,7 +34,7 @@ protected:
     bool m_interactable = false;
     etl::string<8> m_label;
 
-    static constexpr uint32_t WIDGET_MAX_CHILDREN = 8;
+    static constexpr uint32_t WIDGET_MAX_CHILDREN = 12;
     etl::list<etl::unique_ptr<Widget>, WIDGET_MAX_CHILDREN> m_children;
 
     static constexpr uint32_t WIDGET_MAX_MODIFIERS = 4;
@@ -54,6 +54,7 @@ public:
     // Add child widget, and return a reference to the added child
     template<typename T>
     T& add(T* widget) {
+        MOD_ASSERT_MSG(m_children.size() < WIDGET_MAX_CHILDREN, "Tried to add more widget children than the capacity of the widget");
         widget->set_depth(m_depth - 0.005);
         auto& ptr_ref = m_children.emplace_back(std::move(widget));
         // LOG("Adding child with depth: %f", ptr_ref->get_depth());

@@ -23,15 +23,35 @@ public:
     }
 
     void tick() {
-        for (const auto& widget: m_widgets) {
-            widget->tick();
+        for (auto iter = m_widgets.begin(); iter != m_widgets.end();) {
+            if (iter->get()->is_inactive()) {
+                LOG("In manager, inactive widget found and will be erased");
+                m_widgets.erase(iter);
+                ++iter;
+                continue;
+            }
+            iter->get()->tick();
+            ++iter;
         }
     }
 
     void remove(Widget& widget) {
         for (auto iter = m_widgets.begin(); iter != m_widgets.end();) {
             if (&widget == iter->get()) {
-                m_widgets.erase(iter);
+                Widget::set_inactive(*iter->get());
+                break;
+            }
+            else {
+                ++iter;
+            }
+        }
+    }
+
+    void remove(const char* label) {
+        LOG("Setting widget %s as inactive from manager", label);
+        for (auto iter = m_widgets.begin(); iter != m_widgets.end();) {
+            if (strcmp(label, iter->get()->get_label().c_str()) == 0) {
+                Widget::set_inactive(*iter->get());
                 break;
             }
             else {
