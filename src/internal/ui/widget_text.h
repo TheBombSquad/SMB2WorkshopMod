@@ -82,23 +82,30 @@ public:
     mkb::SpriteAlignment get_alignment() const {
         return m_alignment;
     }
+    // Basic alignment helper
+    // Left - the text will be left-aligned and continue to the right of the widget origin
+    // Center - the text will be center-aligned and expand on both sides of the widget origin, and the widget origin is in the middle of the text
+    // Right - the text will be right-aligned and continue to the left of the widget origin
     void set_alignment(ui::TextAlignment alignment) {
         switch (alignment) {
             case LEFT:
-                // Yes, I know this looks wrong, but with the way the UI coordinate system is set up, it's correct
                 m_alignment = mkb::ALIGN_LOWER_RIGHT;
                 break;
             case CENTER:
                 // Ditto
-                m_alignment = mkb::ALIGN_LOWER_CENTER;
+                m_alignment = mkb::ALIGN_CENTER;
                 break;
             case RIGHT:
                 // Ditto
                 m_alignment = mkb::ALIGN_LOWER_LEFT;
                 break;
         }
+    }
+
+    void set_alignment(mkb::SpriteAlignment alignment) {
         m_alignment = alignment;
     }
+
 };
 
 }// namespace ui
