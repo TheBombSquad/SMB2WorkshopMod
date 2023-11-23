@@ -4,6 +4,12 @@
 
 namespace ui {
 
+enum TextAlignment {
+    LEFT,
+    CENTER,
+    RIGHT
+};
+
 constexpr mkb::Rgb24 DEFAULT_YELLOW = {0xFF, 0xFF, 0x00};
 constexpr mkb::Rgb24 UNSELECTED_YELLOW = {0x80, 0x80, 0x00};
 constexpr mkb::Rgb24 DEFAULT_ORANGE = {0xFF, 0x80, 0x00};
@@ -76,7 +82,21 @@ public:
     mkb::SpriteAlignment get_alignment() const {
         return m_alignment;
     }
-    void set_alignment(mkb::SpriteAlignment alignment) {
+    void set_alignment(ui::TextAlignment alignment) {
+        switch (alignment) {
+            case LEFT:
+                // Yes, I know this looks wrong, but with the way the UI coordinate system is set up, it's correct
+                m_alignment = mkb::ALIGN_LOWER_RIGHT;
+                break;
+            case CENTER:
+                // Ditto
+                m_alignment = mkb::ALIGN_LOWER_CENTER;
+                break;
+            case RIGHT:
+                // Ditto
+                m_alignment = mkb::ALIGN_LOWER_LEFT;
+                break;
+        }
         m_alignment = alignment;
     }
 };
