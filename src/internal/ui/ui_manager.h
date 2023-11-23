@@ -25,7 +25,7 @@ public:
     void tick() {
         for (auto iter = m_widgets.begin(); iter != m_widgets.end();) {
             if (iter->get()->is_inactive()) {
-                LOG("In manager, inactive widget found and will be erased");
+                // LOG("In manager, inactive widget %s found and will be erased", iter->get()->get_label().c_str());
                 m_widgets.erase(iter);
                 ++iter;
                 continue;
@@ -48,7 +48,6 @@ public:
     }
 
     void remove(const char* label) {
-        LOG("Setting widget %s as inactive from manager", label);
         for (auto iter = m_widgets.begin(); iter != m_widgets.end();) {
             if (strcmp(label, iter->get()->get_label().c_str()) == 0) {
                 Widget::set_inactive(*iter->get());
@@ -64,6 +63,15 @@ public:
         for (auto iter = m_widgets.begin(); iter != m_widgets.end();) {
             m_widgets.erase(iter++);
         }
+    }
+
+    Widget& find(const char* label) {
+        for (auto& widget: m_widgets) {
+            if (strcmp(label, widget->get_label().c_str()) == 0) {
+                return *widget;
+            }
+        }
+        MOD_ASSERT_MSG(false, "Failed to find widget!");
     }
 
 private:
