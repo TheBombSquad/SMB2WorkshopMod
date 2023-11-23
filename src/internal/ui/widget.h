@@ -24,8 +24,6 @@ protected:
     Widget(){};
     Widget(Vec2d pos) : m_pos(pos){};
     Widget(Vec2d pos, Vec2d dimensions) : m_pos(pos), m_dimensions(dimensions){};
-    alignas(4) bool m_visible = true;
-    alignas(4) bool m_active = true;
     Vec2d m_pos = Vec2d{0.f, 0.f};
     Vec2d m_dimensions = Vec2d{0.f, 0.f};
     Vec2d m_scale = Vec2d{1.f, 1.f};
@@ -43,6 +41,9 @@ protected:
     uint32_t m_counter = 0;
 
     etl::delegate<void()> m_callback;
+
+    bool m_visible = true;
+    bool m_active = true;
 
 public:
     virtual void tick();
@@ -72,21 +73,6 @@ public:
                 ++iter;
             }
         }
-    }
-
-    // Marks the widget as inactive (queued to be removed)
-    static void set_inactive(Widget& widget) {
-        // LOG("Setting widget and children as inactive");
-        widget.m_active = false;
-        for (auto iter = widget.m_children.begin(); iter != widget.m_children.end();) {
-            Widget::set_inactive(**iter);
-            ++iter;
-        }
-    }
-
-    // Checks if the widget is active
-    bool is_inactive() {
-        return !m_active;
     }
 
     // Remove all child widgets
@@ -124,6 +110,19 @@ public:
 
     const etl::string<8>& get_label() const { return m_label; }
     void set_label(const char* mLabel) { m_label = mLabel; }
+
+    // Marks the widget as inactive (queued to be removed)
+    static void set_inactive(Widget& widget) {
+        // LOG("Setting widget and children as inactive");
+        widget.m_active = false;
+        for (auto iter = widget.m_children.begin(); iter != widget.m_children.end();) {
+            Widget::set_inactive(**iter);
+            ++iter;
+        }
+    }
+
+    // Checks if the widget is active
+    bool is_inactive() { return !m_active; }
 };
 
 }// namespace ui
