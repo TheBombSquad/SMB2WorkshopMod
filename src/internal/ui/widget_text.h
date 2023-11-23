@@ -105,7 +105,6 @@ public:
     void set_alignment(mkb::SpriteAlignment alignment) {
         m_alignment = alignment;
     }
-
 };
 
 }// namespace ui

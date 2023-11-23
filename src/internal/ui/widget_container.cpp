@@ -82,8 +82,8 @@ void Container::tick() {
     Vec2d child_scale = {1.0f, 1.0f};
     // LOG("Calc dims vs m_dims: %f, %f / %f, %f", total_child_dimensions.x, total_child_dimensions.y, m_dimensions.x, m_dimensions.y);
     Vec2d calculated_dimensions = m_dimensions;
-    calculated_dimensions.x = calculated_dimensions.x - 2*m_margin;
-    calculated_dimensions.y = calculated_dimensions.y - 2*m_margin;
+    calculated_dimensions.x = calculated_dimensions.x - 2 * m_margin;
+    calculated_dimensions.y = calculated_dimensions.y - 2 * m_margin;
     if (total_child_dimensions.x > calculated_dimensions.x) child_scale.x = calculated_dimensions.x / total_child_dimensions.x;
     if (total_child_dimensions.y > calculated_dimensions.y) child_scale.y = calculated_dimensions.y / total_child_dimensions.y;
 
