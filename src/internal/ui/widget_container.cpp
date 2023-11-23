@@ -81,8 +81,11 @@ void Container::tick() {
     // Scaling factor to fit all the widgets in the container space
     Vec2d child_scale = {1.0f, 1.0f};
     // LOG("Calc dims vs m_dims: %f, %f / %f, %f", total_child_dimensions.x, total_child_dimensions.y, m_dimensions.x, m_dimensions.y);
-    if (total_child_dimensions.x > m_dimensions.x) child_scale.x = m_dimensions.x / total_child_dimensions.x;
-    if (total_child_dimensions.y > m_dimensions.y) child_scale.y = m_dimensions.y / total_child_dimensions.y;
+    Vec2d calculated_dimensions = m_dimensions;
+    calculated_dimensions.x = calculated_dimensions.x - 2*m_margin;
+    calculated_dimensions.y = calculated_dimensions.y - 2*m_margin;
+    if (total_child_dimensions.x > calculated_dimensions.x) child_scale.x = calculated_dimensions.x / total_child_dimensions.x;
+    if (total_child_dimensions.y > calculated_dimensions.y) child_scale.y = calculated_dimensions.y / total_child_dimensions.y;
 
     // mkb::OSReport("total dimensions: %f, %f / scale: %f, %f\n", total_child_dimensions.x, total_child_dimensions.y, child_scale.x, child_scale.y);
 
