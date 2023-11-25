@@ -54,43 +54,10 @@ public:
 
     // Add child widget, and return a reference to the added child
     template<typename T>
-    T& add(T* widget) {
-        MOD_ASSERT_MSG(m_children.size() < WIDGET_MAX_CHILDREN, "Tried to add more widget children than the capacity of the widget");
-        widget->set_depth(m_depth - 0.005);
-        auto& ptr_ref = m_children.emplace_back(std::move(widget));
-        // LOG("Adding child with depth: %f", ptr_ref->get_depth());
-        return static_cast<T&>(*ptr_ref);
-    }
-
-    // Remove child widget by reference
-    void remove(Widget& widget) {
-        for (auto iter = m_children.begin(); iter != m_children.end();) {
-            if (&widget == iter->get()) {
-                iter->get()->m_active = false;
-                break;
-            }
-            else {
-                ++iter;
-            }
-        }
-    }
-
-    // Remove child widget by label
-    void remove(const char* label) {
-        for (auto& widget: m_children) {
-            if (strcmp(label, widget->get_label().c_str()) == 0) {
-                widget->m_active = false;
-                break;
-            }
-        }
-    }
-
-    // Remove all child widgets
-    void clear() {
-        for (auto iter = m_children.begin(); iter != m_children.end();) {
-            m_children.erase(iter++);
-        }
-    }
+    T& add(T* widget);
+    void remove(Widget& widget);
+    void remove(const char* label);
+    void clear();
 
     const Vec2d& get_pos() const { return m_pos; }
     void set_pos(const Vec2d& m_pos) { Widget::m_pos = m_pos; }
@@ -122,14 +89,7 @@ public:
     void set_label(const char* mLabel) { m_label = mLabel; }
 
     // Marks the widget as inactive (queued to be removed)
-    static void set_inactive(Widget& widget) {
-        // LOG("Setting widget and children as inactive");
-        widget.m_active = false;
-        for (auto iter = widget.m_children.begin(); iter != widget.m_children.end();) {
-            Widget::set_inactive(**iter);
-            ++iter;
-        }
-    }
+    static void set_inactive(Widget& widget);
 
     // Checks if the widget is active
     bool is_inactive() { return !m_active; }
