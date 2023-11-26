@@ -5,6 +5,17 @@
 
 namespace ui {
 
+Button::Button(const char* text, etl::delegate<void()> callback) : Text(text) {
+    m_callback = callback;
+    m_interactable = true;
+}
+Button::Button(const char* text, const Vec2d pos, etl::delegate<void()> callback) : Text(text, pos) {
+    m_callback = callback;
+    m_interactable = true;
+}
+
+Button::~Button() = default;
+
 void Button::disp() {
     Text::disp();
 }

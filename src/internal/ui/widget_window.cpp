@@ -4,6 +4,12 @@
 
 namespace ui {
 
+Window::Window(const Vec2d pos, const Vec2d dimensions) : Container(pos, dimensions) {
+    m_margin = 8;// Bigger default margin for window borders
+}
+
+Window::~Window() = default;
+
 void ui::Window::disp() {
     Vec2d centered_pos;
     centered_pos.x = m_pos.x + (m_dimensions.x / 2);

@@ -16,34 +16,9 @@ constexpr mkb::Rgb24 DEFAULT_ORANGE = {0xFF, 0x80, 0x00};
 
 class Text : public Widget {
 public:
-    Text(const char* text) : Widget(), m_text(text) {
-        // Calculate dimensions
-        mkb::textdraw_reset();
-        mkb::textdraw_set_font(mkb::FONT32_ASC_24x24);
-        mkb::textdraw_set_flags(0x80000000);
-        mkb::textdraw_set_drop_shadow();
-        mkb::textdraw_set_font_style(m_font_style);
-        mkb::textdraw_set_depth(m_depth);
-        mkb::textdraw_set_pos(m_pos.x, m_pos.y);
-        mkb::textdraw_set_alignment(m_alignment);
-        mkb::textdraw_set_scale(m_scale.x, m_scale.y);
-        m_dimensions.x = mkb::textdraw_get_pixel_width_of_string(const_cast<char*>(m_text));
-        m_dimensions.y = mkb::textdraw_get_pixel_height_of_string(const_cast<char*>(m_text));
-    }
-    Text(const char* text, const Vec2d pos) : Widget(pos), m_text(text) {
-        // Calculate dimensions
-        mkb::textdraw_reset();
-        mkb::textdraw_set_font(mkb::FONT32_ASC_24x24);
-        mkb::textdraw_set_flags(0x80000000);
-        mkb::textdraw_set_drop_shadow();
-        mkb::textdraw_set_font_style(m_font_style);
-        mkb::textdraw_set_depth(m_depth);
-        mkb::textdraw_set_pos(m_pos.x, m_pos.y);
-        mkb::textdraw_set_alignment(m_alignment);
-        mkb::textdraw_set_scale(m_scale.x, m_scale.y);
-        m_dimensions.x = mkb::textdraw_get_pixel_width_of_string(const_cast<char*>(m_text));
-        m_dimensions.y = mkb::textdraw_get_pixel_height_of_string(const_cast<char*>(m_text));
-    }
+    Text(const char* text);
+    Text(const char* text, const Vec2d pos);
+    ~Text();
     virtual void disp() override;
 
 protected:

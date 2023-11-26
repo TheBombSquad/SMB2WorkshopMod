@@ -5,8 +5,9 @@
 namespace ui {
 class Sprite : public Widget {
 public:
-    Sprite(uint32_t sprite_id, const Vec2d dimensions) : Widget(), m_sprite_id(sprite_id) { m_dimensions = dimensions; }
-    Sprite(uint32_t sprite_id, const Vec2d pos, const Vec2d dimensions) : Widget(pos), m_sprite_id(sprite_id) { m_dimensions = dimensions; }
+    Sprite(uint32_t sprite_id, const Vec2d dimensions);
+    Sprite(uint32_t sprite_id, const Vec2d pos, const Vec2d dimensions);
+    ~Sprite();
     virtual void disp() override;
 
 protected:

@@ -7,7 +7,8 @@ namespace ui {
 
 class Menu : public Window {
 public:
-    Menu(const Vec2d pos, const Vec2d dimensions) : Window(pos, dimensions) {}
+    Menu(const Vec2d pos, const Vec2d dimensions);
+    ~Menu();
     virtual void tick() override;
 };
 

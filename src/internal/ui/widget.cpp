@@ -1,5 +1,13 @@
 #include "widget.h"
 
+#include "widget_button.h"
+#include "widget_container.h"
+#include "widget_input.h"
+#include "widget_menu.h"
+#include "widget_sprite.h"
+#include "widget_text.h"
+#include "widget_window.h"
+
 namespace ui {
 
 void Widget::tick() {
@@ -24,17 +32,26 @@ void Widget::tick() {
         if (m_visible) iter->get()->disp();
         ++iter;
     }
-
 }
 // Add child widget, and return a reference to the added child
 template<typename T>
 T& Widget::add(T* widget) {
     MOD_ASSERT_MSG(m_children.size() < WIDGET_MAX_CHILDREN, "Tried to add more widget children than the capacity of the widget");
-    widget->set_depth(m_depth - 0.005);
+    // widget->set_depth(m_depth - 0.005);
     auto& ptr_ref = m_children.emplace_back(std::move(widget));
     // LOG("Adding child with depth: %f", ptr_ref->get_depth());
     return static_cast<T&>(*ptr_ref);
 }
+
+// Template specializations to avoid vague linkage
+// This is a ELF section count optimization, only really relevant when compiling with -Os
+template Button& Widget::add<Button>(Button*);
+template Container& Widget::add<Container>(Container*);
+template Text& Widget::add<Text>(Text*);
+template Input& Widget::add<Input>(Input*);
+template Menu& Widget::add<Menu>(Menu*);
+template Sprite& Widget::add<Sprite>(Sprite*);
+template Window& Widget::add<Window>(Window*);
 
 // Remove child widget by reference
 void Widget::remove(Widget& widget) {

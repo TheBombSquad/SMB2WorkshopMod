@@ -2,6 +2,20 @@
 
 namespace ui {
 
+Input::Input(mkb::PadDigitalInput button, etl::delegate<void()> callback) : Widget() {
+    m_type = BUTTON;
+    m_input = button;
+    m_callback = callback;
+};
+
+Input::Input(pad::Dir direction, etl::delegate<void()> callback) : Widget() {
+    m_type = DIRECTION;
+    m_direction = direction;
+    m_callback = callback;
+};
+
+Input::~Input() = default;
+
 void Input::dispatch_callback() {
     if (m_play_sound_effect) mkb::call_SoundReqID_arg_2(m_sound_effect_id);
     m_callback();

@@ -11,9 +11,10 @@ enum class ContainerLayout {
 
 class Container : public Widget {
 public:
-    Container(const Vec2d pos, const Vec2d dimensions) : Widget(pos, dimensions) {}
+    Container(const Vec2d pos, const Vec2d dimensions);
     virtual void tick() override;
     virtual void disp() override{};
+    ~Container();
 
     ContainerLayout get_layout() const {
         return m_layout;

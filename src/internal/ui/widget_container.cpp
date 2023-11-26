@@ -5,6 +5,9 @@
 
 namespace ui {
 
+Container::Container(const Vec2d pos, const Vec2d dimensions) : Widget(pos, dimensions) {}
+Container::~Container() = default;
+
 void Container::tick() {
     const unsigned int child_count = m_children.size();
 

@@ -37,16 +37,9 @@ protected:
 
 public:
     Input() = delete;
-    Input(mkb::PadDigitalInput button, etl::delegate<void()> callback) : Widget() {
-        m_type = BUTTON;
-        m_input = button;
-        m_callback = callback;
-    };
-    Input(pad::Dir direction, etl::delegate<void()> callback) : Widget() {
-        m_type = DIRECTION;
-        m_direction = direction;
-        m_callback = callback;
-    };
+    Input(mkb::PadDigitalInput button, etl::delegate<void()> callback);
+    Input(pad::Dir direction, etl::delegate<void()> callback);
+    ~Input();
     virtual void tick() override;
     virtual void disp() override{};
 

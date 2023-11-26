@@ -4,6 +4,9 @@
 #include "widget_button.h"
 
 namespace ui {
+Menu::Menu(const Vec2d pos, const Vec2d dimensions) : Window(pos, dimensions) {}
+Menu::~Menu() = default;
+
 void Menu::tick() {
     Container::tick();
 
