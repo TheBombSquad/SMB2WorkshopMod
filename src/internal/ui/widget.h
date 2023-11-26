@@ -109,6 +109,10 @@ public:
         return m_callback;
     }
 
+    void do_callback() {
+        m_callback(*this, m_user_data);
+    }
+
     void* get_user_data() const {
         return m_user_data;
     }
