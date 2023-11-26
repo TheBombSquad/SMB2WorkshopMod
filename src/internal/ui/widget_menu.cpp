@@ -45,7 +45,7 @@ void Menu::tick() {
     }
 
     else if (pad::button_pressed(mkb::PAD_BUTTON_A)) {
-        mkb::call_SoundReqID_arg_1(0x6f);
+        mkb::call_SoundReqID_arg_1(0x6e);
         auto iter = m_children.begin();
         etl::advance(iter, *m_active_index);
         auto& button_ref = static_cast<Text&>(**iter);
