@@ -3,12 +3,14 @@
 namespace ui {
 
 Input::Input(mkb::PadDigitalInput button, WidgetCallback callback) : Widget() {
+    m_visible = false;
     m_type = BUTTON;
     m_input = button;
     m_callback = callback;
 };
 
 Input::Input(pad::Dir direction, WidgetCallback callback) : Widget() {
+    m_visible = false;
     m_type = DIRECTION;
     m_direction = direction;
     m_callback = callback;
