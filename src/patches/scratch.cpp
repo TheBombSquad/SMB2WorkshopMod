@@ -6,7 +6,6 @@
 #include "internal/ui/widget_container.h"
 #include "internal/ui/widget_text.h"
 #include "internal/ui/widget_window.h"
-#include "widget_button.h"
 
 namespace scratch {
 

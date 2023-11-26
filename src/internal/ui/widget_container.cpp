@@ -1,7 +1,6 @@
 #include "widget_container.h"
 
 #include "internal/log.h"
-#include "internal/ui/widget_button.h"
 
 namespace ui {
 
