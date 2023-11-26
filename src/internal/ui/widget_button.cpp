@@ -26,7 +26,7 @@ void Button::tick() {
 
         if (pad::button_pressed(m_input)) {
             mkb::call_SoundReqID_arg_2(0x6e);
-            m_callback(*this, nullptr);
+            m_callback(*this, m_user_data);
         }
     }
     else {

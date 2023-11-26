@@ -47,6 +47,10 @@ protected:
     bool m_visible = true;
     bool m_active = true;
 
+    void* m_user_data = nullptr;
+
+public:
+
 public:
     virtual void tick();
     virtual void disp() = 0;
@@ -93,8 +97,25 @@ public:
     // Marks the widget as inactive (queued to be removed)
     static void set_inactive(Widget& widget);
 
-    // Checks if the widget is active
+    // Checks if the widget is active (not queued to be removed
     bool is_inactive() { return !m_active; }
+
+    void set_callback(WidgetCallback callback) { m_callback = callback; }
+    void set_callback(WidgetCallback callback, void* user_data) {
+        m_callback = callback;
+        m_user_data = user_data;
+    }
+    const WidgetCallback& get_callback() const {
+        return m_callback;
+    }
+
+    void* get_user_data() const {
+        return m_user_data;
+    }
+    void set_user_data(void* user_data) {
+        m_user_data = user_data;
+    }
+
 };
 
 }// namespace ui

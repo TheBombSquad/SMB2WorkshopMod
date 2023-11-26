@@ -18,7 +18,7 @@ Input::~Input() = default;
 
 void Input::dispatch_callback() {
     if (m_play_sound_effect) mkb::call_SoundReqID_arg_2(m_sound_effect_id);
-    m_callback(*this, nullptr);
+    m_callback(*this, m_user_data);
 }
 
 void Input::tick() {
