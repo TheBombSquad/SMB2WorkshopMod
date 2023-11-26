@@ -12,7 +12,7 @@ void Menu::tick() {
 
     if (!m_active_index) {
         size_t index = 0;
-        for (const auto& child : m_children) {
+        for (const auto& child: m_children) {
             if (child->get_callback() && child->is_visible()) {
                 if (!m_first_valid_index) {
                     m_first_valid_index = index;
@@ -23,11 +23,9 @@ void Menu::tick() {
             index++;
         }
     }
-    LOG("first: %d last: %d current: %d", *m_first_valid_index, *m_last_valid_index, *m_active_index);
 
     if (pad::dir_pressed(pad::DIR_DOWN)) {
         mkb::call_SoundReqID_arg_1(0x6f);
-        LOG_DEBUG("down: active idx: %d", *m_active_index);
         if (*m_active_index == *m_last_valid_index) {
             *m_active_index = *m_first_valid_index;
         }
@@ -38,7 +36,6 @@ void Menu::tick() {
 
     else if (pad::dir_pressed(pad::DIR_UP)) {
         mkb::call_SoundReqID_arg_1(0x6f);
-        LOG_DEBUG("up: active idx: %d", *m_active_index);
         if (*m_active_index == *m_first_valid_index) {
             *m_active_index = *m_last_valid_index;
         }

@@ -50,8 +50,6 @@ protected:
     void* m_user_data = nullptr;
 
 public:
-
-public:
     virtual void tick();
     virtual void disp() = 0;
     virtual ~Widget(){/*LOG("Widget destructor called");*/};
@@ -119,7 +117,6 @@ public:
     void set_user_data(void* user_data) {
         m_user_data = user_data;
     }
-
 };
 
 }// namespace ui
