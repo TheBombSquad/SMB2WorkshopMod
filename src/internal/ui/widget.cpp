@@ -37,7 +37,7 @@ void Widget::tick() {
 template<typename T>
 T& Widget::add(T* widget) {
     MOD_ASSERT_MSG(m_children.size() < WIDGET_MAX_CHILDREN, "Tried to add more widget children than the capacity of the widget");
-    // widget->set_depth(m_depth - 0.005);
+    widget->set_depth(m_depth - 0.005);
     auto& ptr_ref = m_children.emplace_back(std::move(widget));
     // LOG("Adding child with depth: %f", ptr_ref->get_depth());
     return static_cast<T&>(*ptr_ref);
