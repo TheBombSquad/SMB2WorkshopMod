@@ -32,6 +32,7 @@ protected:
     bool m_play_sound_effect = true;
     uint32_t m_sound_effect_id = 0x6e;
     uint32_t m_frame_timer = 0;
+    uint16_t m_debounce_counter = 1;
 
     void dispatch_callback();
 

@@ -18,10 +18,16 @@ Input::~Input() = default;
 
 void Input::dispatch_callback() {
     if (m_play_sound_effect) mkb::call_SoundReqID_arg_2(m_sound_effect_id);
+    LOG("In cb %x w/ ud %x", this, m_user_data);
     m_callback(*this, m_user_data);
 }
 
 void Input::tick() {
+    if (m_debounce_counter > 0) {
+        m_debounce_counter--;
+        return;
+    }
+
     if (!m_repeating) {
         bool has_pressed_input = (m_type == BUTTON) ? pad::button_pressed(m_input) : pad::dir_pressed(m_direction);
         if (has_pressed_input) {
