@@ -34,6 +34,7 @@ Text::~Text() = default;
 
 void Text::disp() {
     mkb::textdraw_reset();
+    mkb::g_scale_sprite_for_widescreen(0x140);
     mkb::textdraw_set_font(mkb::FONT32_ASC_24x24);
     mkb::textdraw_set_flags(0x80000000);
     mkb::textdraw_set_drop_shadow();
@@ -58,6 +59,7 @@ void Text::disp() {
     m_dimensions.x = mkb::textdraw_get_pixel_width_of_string(const_cast<char*>(m_text));
     m_dimensions.y = mkb::textdraw_get_pixel_height_of_string(const_cast<char*>(m_text));
     mkb::textdraw_print(const_cast<char*>(m_text));
+    mkb::g_reset_sprite_mtx_for_widescreen();
     // mkb::textdraw_print_and_fit_to_width(m_dimensions.x, const_cast<char*>(m_text));
 }
 

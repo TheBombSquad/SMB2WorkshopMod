@@ -16,6 +16,7 @@ Sprite::~Sprite() = default;
 void Sprite::disp() {
     mkb::SpriteDrawRequest req;
     mkb::GXSetZMode_cached('\x01', mkb::GX_LEQUAL, '\x01');
+    mkb::g_scale_sprite_for_widescreen(0x140);
     req.id = m_sprite_id;
     req.pos.x = m_pos.x + m_dimensions.x / 2;
     req.pos.y = m_pos.y + m_dimensions.y / 2;
@@ -41,5 +42,6 @@ void Sprite::disp() {
 
     mkb::GXSetZMode_cached('\x01', mkb::GX_ALWAYS, '\x01');
     mkb::draw_sprite_draw_request(&req);
+    mkb::g_reset_sprite_mtx_for_widescreen();
 }
 }// namespace ui

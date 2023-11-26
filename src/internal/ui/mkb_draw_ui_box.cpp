@@ -74,7 +74,7 @@ void draw_ui_box_ext(u32 texture_id) {
     // Fill
     mkb::ui_sprite_draw_req.id = texture_id;
     req = mkb::ui_sprite_draw_req;
-
+    mkb::g_scale_sprite_for_widescreen(0x140);
     req.u1 = (6.0 / fill_width);
     req.v1 = (6.0 / fill_height);
     req.u2 = (1.0 - 6.0 / fill_width);
@@ -82,11 +82,12 @@ void draw_ui_box_ext(u32 texture_id) {
     req.scale.x = (scale_x - 12.0) / fill_width;
     req.scale.y = (scale_y - 12.0) / fill_height;
     mkb::draw_sprite_draw_request(&req);
+    mkb::g_reset_sprite_mtx_for_widescreen();
 
 
     // Top
     req = mkb::ui_sprite_draw_req;
-
+    mkb::g_scale_sprite_for_widescreen(0x140);
     req.pos.y = ((orig_pos.y - scale_y * 0.5) + 3.0);
 
     /*
@@ -102,11 +103,11 @@ void draw_ui_box_ext(u32 texture_id) {
     req.scale.x = (scale_x - 12.0) / fill_width;
     req.scale.y = (6.0 / fill_height);
     mkb::draw_sprite_draw_request(&req);
-
+    mkb::g_reset_sprite_mtx_for_widescreen();
 
     // Bottom
     req = mkb::ui_sprite_draw_req;
-
+    mkb::g_scale_sprite_for_widescreen(0x140);
     req.pos.y = ((orig_pos.y + scale_y * 0.5) - 3.0);
     /*
     dist_from_orig = orig_pos.y - ((orig_pos.y + scale_y * 0.5) - 3.0);
@@ -121,11 +122,11 @@ void draw_ui_box_ext(u32 texture_id) {
     req.scale.x = (scale_x - 12.0) / fill_width;
     req.scale.y = (6.0 / fill_height);
     mkb::draw_sprite_draw_request(&req);
-
+    mkb::g_reset_sprite_mtx_for_widescreen();
 
     // Left
     req = mkb::ui_sprite_draw_req;
-
+    mkb::g_scale_sprite_for_widescreen(0x140);
     req.pos.x = ((orig_pos.x - scale_x * 0.5) + 3.0);
     /*
     dist_from_orig = orig_pos.x - ((orig_pos.x - scale_x * 0.5) + 3.0);
@@ -140,11 +141,11 @@ void draw_ui_box_ext(u32 texture_id) {
     req.scale.x = (6.0 / fill_width);
     req.scale.y = (scale_y - 12.0) / fill_height;
     mkb::draw_sprite_draw_request(&req);
-
+    mkb::g_reset_sprite_mtx_for_widescreen();
 
     // Right
     req = mkb::ui_sprite_draw_req;
-
+    mkb::g_scale_sprite_for_widescreen(0x140);
     req.pos.x = ((orig_pos.x + scale_x * 0.5) - 3.0);
     /*
     dist_from_orig = orig_pos.x - ((orig_pos.x + scale_x * 0.5) - 3.0);
@@ -159,11 +160,11 @@ void draw_ui_box_ext(u32 texture_id) {
     req.scale.x = (6.0 / fill_width);
     req.scale.y = (scale_y - 12.0) / fill_height;
     mkb::draw_sprite_draw_request(&req);
-
+    mkb::g_reset_sprite_mtx_for_widescreen();
 
     // Top Left
     req = mkb::ui_sprite_draw_req;
-
+    mkb::g_scale_sprite_for_widescreen(0x140);
     req.pos.x = (mkb::ui_sprite_draw_req.pos.x - scale_x * 0.5) + 3.0;
     req.pos.y = (mkb::ui_sprite_draw_req.pos.y - scale_y * 0.5) + 3.0;
 
@@ -181,10 +182,10 @@ void draw_ui_box_ext(u32 texture_id) {
     req.scale.x = (6.0 / fill_width);
     req.scale.y = (6.0 / fill_height);
     mkb::draw_sprite_draw_request(&req);
-
+    mkb::g_reset_sprite_mtx_for_widescreen();
     // Top Right
     req = mkb::ui_sprite_draw_req;
-
+    mkb::g_scale_sprite_for_widescreen(0x140);
     req.pos.x = (mkb::ui_sprite_draw_req.pos.x + scale_x * 0.5) - 3.0;
     req.pos.y = (mkb::ui_sprite_draw_req.pos.y - scale_y * 0.5) + 3.0;
 
@@ -202,10 +203,10 @@ void draw_ui_box_ext(u32 texture_id) {
     req.scale.x = (6.0 / fill_width);
     req.scale.y = (6.0 / fill_height);
     mkb::draw_sprite_draw_request(&req);
-
+    mkb::g_reset_sprite_mtx_for_widescreen();
     // Bottom Left
     req = mkb::ui_sprite_draw_req;
-
+    mkb::g_scale_sprite_for_widescreen(0x140);
     req.pos.x = (mkb::ui_sprite_draw_req.pos.x - scale_x * 0.5) + 3.0;
     req.pos.y = (mkb::ui_sprite_draw_req.pos.y + scale_y * 0.5) - 3.0;
 
@@ -223,10 +224,10 @@ void draw_ui_box_ext(u32 texture_id) {
     req.scale.x = (6.0 / fill_width);
     req.scale.y = (6.0 / fill_height);
     mkb::draw_sprite_draw_request(&req);
-
+    mkb::g_reset_sprite_mtx_for_widescreen();
     // Bottom Right
     req = mkb::ui_sprite_draw_req;
-
+    mkb::g_scale_sprite_for_widescreen(0x140);
     req.pos.x = (mkb::ui_sprite_draw_req.pos.x + scale_x * 0.5) - 3.0;
     req.pos.y = (mkb::ui_sprite_draw_req.pos.y + scale_y * 0.5) - 3.0;
 
@@ -244,6 +245,7 @@ void draw_ui_box_ext(u32 texture_id) {
     req.scale.x = (6.0 / fill_width);
     req.scale.y = (6.0 / fill_height);
     mkb::draw_sprite_draw_request(&req);
+    mkb::g_reset_sprite_mtx_for_widescreen();
 }
 
 }// namespace ui
