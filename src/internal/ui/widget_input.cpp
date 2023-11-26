@@ -2,13 +2,13 @@
 
 namespace ui {
 
-Input::Input(mkb::PadDigitalInput button, etl::delegate<void()> callback) : Widget() {
+Input::Input(mkb::PadDigitalInput button, WidgetCallback callback) : Widget() {
     m_type = BUTTON;
     m_input = button;
     m_callback = callback;
 };
 
-Input::Input(pad::Dir direction, etl::delegate<void()> callback) : Widget() {
+Input::Input(pad::Dir direction, WidgetCallback callback) : Widget() {
     m_type = DIRECTION;
     m_direction = direction;
     m_callback = callback;
@@ -18,8 +18,9 @@ Input::~Input() = default;
 
 void Input::dispatch_callback() {
     if (m_play_sound_effect) mkb::call_SoundReqID_arg_2(m_sound_effect_id);
-    m_callback();
+    m_callback(*this, nullptr);
 }
+
 void Input::tick() {
     if (!m_repeating) {
         bool has_pressed_input = (m_type == BUTTON) ? pad::button_pressed(m_input) : pad::dir_pressed(m_direction);

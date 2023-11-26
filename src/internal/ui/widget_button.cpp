@@ -5,11 +5,11 @@
 
 namespace ui {
 
-Button::Button(const char* text, etl::delegate<void()> callback) : Text(text) {
+Button::Button(const char* text, WidgetCallback callback) : Text(text) {
     m_callback = callback;
     m_interactable = true;
 }
-Button::Button(const char* text, const Vec2d pos, etl::delegate<void()> callback) : Text(text, pos) {
+Button::Button(const char* text, const Vec2d pos, WidgetCallback callback) : Text(text, pos) {
     m_callback = callback;
     m_interactable = true;
 }
@@ -26,7 +26,7 @@ void Button::tick() {
 
         if (pad::button_pressed(m_input)) {
             mkb::call_SoundReqID_arg_2(0x6e);
-            m_callback();
+            m_callback(*this, nullptr);
         }
     }
     else {

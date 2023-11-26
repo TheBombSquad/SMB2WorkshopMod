@@ -7,8 +7,8 @@ namespace ui {
 
 class Button : public Text {
 public:
-    Button(const char* text, etl::delegate<void()> callback);
-    Button(const char* text, const Vec2d pos, etl::delegate<void()> callback);
+    Button(const char* text, WidgetCallback callback);
+    Button(const char* text, const Vec2d pos, WidgetCallback callback);
     ~Button();
     virtual void tick() override;
     virtual void disp() override;

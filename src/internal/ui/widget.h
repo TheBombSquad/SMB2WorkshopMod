@@ -17,6 +17,8 @@ enum class WidgetState {
     DESTROY,
 };
 
+typedef etl::delegate<void(Widget&, void*)> WidgetCallback;
+
 class Modifier;
 
 class Widget {
@@ -40,7 +42,7 @@ protected:
 
     uint32_t m_counter = 0;
 
-    etl::delegate<void()> m_callback;
+    WidgetCallback m_callback;
 
     bool m_visible = true;
     bool m_active = true;
