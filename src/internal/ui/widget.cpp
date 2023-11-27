@@ -16,7 +16,7 @@ void Widget::tick() {
     }
 
     // Display the widget
-    disp();
+    if (m_visible) disp();
 
     // Tick and disp all of our children
     for (auto iter = m_children.begin(); iter != m_children.end();) {
@@ -28,7 +28,6 @@ void Widget::tick() {
             continue;
         }
         iter->get()->tick();
-        if (m_visible) iter->get()->disp();
         ++iter;
     }
 }
@@ -36,7 +35,7 @@ void Widget::tick() {
 template<typename T>
 T& Widget::add(T* widget) {
     MOD_ASSERT_MSG(m_children.size() < WIDGET_MAX_CHILDREN, "Tried to add more widget children than the capacity of the widget");
-    widget->set_depth(m_depth - 0.005);
+    widget->set_depth(m_depth - m_child_depth_step);
     auto& ptr_ref = m_children.emplace_back(std::move(widget));
     // LOG("Adding child with depth: %f", ptr_ref->get_depth());
     return static_cast<T&>(*ptr_ref);
