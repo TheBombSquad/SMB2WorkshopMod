@@ -23,6 +23,18 @@ void Menu::tick() {
             index++;
         }
     }
+    else if (!m_first_valid_index || !m_last_valid_index) {
+        size_t index = 0;
+        for (const auto& child: m_children) {
+            if (child->get_callback() && child->is_visible()) {
+                if (!m_first_valid_index) {
+                    m_first_valid_index = index;
+                }
+                m_last_valid_index = index;
+            }
+            index++;
+        }
+    }
 
     if (pad::dir_pressed(pad::DIR_DOWN)) {
         mkb::call_SoundReqID_arg_1(0x6f);
