@@ -32,7 +32,7 @@ protected:
     float m_depth = 0.1;
     float m_child_depth_step = 0.005;// When we add a child sprite, by how many units should it be 'in front' of the parent?
     int32_t m_z_rotation = 0;
-    bool m_interactable = false;
+    alignas(4) bool m_interactable = false;
     etl::string<8> m_label;
 
     static constexpr uint32_t WIDGET_MAX_CHILDREN = 12;
@@ -45,8 +45,8 @@ protected:
 
     WidgetCallback m_callback;
 
-    bool m_visible = true;
-    bool m_active = true;
+    alignas(4) bool m_visible = true;
+    alignas(4) bool m_active = true;
 
     void* m_user_data = nullptr;
 

@@ -26,7 +26,7 @@ protected:
     mkb::FontStyle m_font_style = 0x0;
     int m_spacing = 1;
     mkb::Rgb24 m_color = DEFAULT_ORANGE;
-    bool m_drop_shadow = true;
+    alignas(4) bool m_drop_shadow = true;
     mkb::SpriteAlignment m_alignment = mkb::ALIGN_LOWER_CENTER;
 
 public:

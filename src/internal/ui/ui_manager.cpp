@@ -76,8 +76,8 @@ Widget& WidgetManager::find(const char* label) {
     MOD_ASSERT_MSG(false, "Failed to find widget!");
 }
 WidgetManager& get_widget_manager() {
-    static uint8_t s_widget_manager[sizeof(WidgetManager)];
-    static bool s_buf_init = false;
+    alignas(4) static uint8_t s_widget_manager[sizeof(WidgetManager)];
+    alignas(4) static bool s_buf_init = false;
 
     if (!s_buf_init) {
         new (s_widget_manager) WidgetManager();

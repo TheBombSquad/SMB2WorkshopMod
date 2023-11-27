@@ -17,7 +17,7 @@ protected:
 protected:
     mkb::Rgb24 m_mult_color = {0xff, 0xff, 0xff};
     mkb::Rgb24 m_add_color = {0x0, 0x0, 0x0};
-    bool m_mirror = false;
+    alignas(4) bool m_mirror = false;
 
 public:
     bool is_mirror() const {

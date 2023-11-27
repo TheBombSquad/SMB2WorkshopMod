@@ -26,10 +26,10 @@ protected:
     InputType m_type;
     mkb::PadDigitalInput m_input;
     pad::Dir m_direction;
-    uint16_t m_initial_delay = 1;
-    uint16_t m_repeat_delay = 1;
-    bool m_repeating = false;
-    bool m_play_sound_effect = true;
+    alignas(4) uint16_t m_initial_delay = 1;
+    alignas(4) uint16_t m_repeat_delay = 1;
+    alignas(4) bool m_repeating = false;
+    alignas(4) bool m_play_sound_effect = true;
     uint32_t m_sound_effect_id = 0x6e;
     uint32_t m_frame_timer = 0;
     uint16_t m_debounce_counter = 1;
