@@ -5,8 +5,9 @@
 namespace ui {
 
 enum class ContainerLayout {
-    HORIZONTAL,
-    VERTICAL,
+    HORIZONTAL, // Newly added widgets are placed in a horizontal row
+    VERTICAL, // Newly added widgets are placed in a vertical column
+    NONE, // Newly added widgets are not organized or auto-scaled
 };
 
 class Container : public Widget {
