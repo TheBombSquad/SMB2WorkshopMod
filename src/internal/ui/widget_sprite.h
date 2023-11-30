@@ -14,10 +14,10 @@ protected:
     Vec2d m_offset = Vec2d{0.f, 0.f};
     uint32_t m_sprite_id;
     float m_alpha = 1.0f;
-    mkb::Rgb24 m_mult_color = {0xff, 0xff, 0xff};
-    mkb::Rgb24 m_add_color = {0x0, 0x0, 0x0};
-    mkb::Vec2d m_uv_1 = Vec2d{0.f, 0.f};
-    mkb::Vec2d m_uv_2 = Vec2d{1.f, 1.f};
+    alignas(4) mkb::Rgb24 m_mult_color = {0xff, 0xff, 0xff};
+    alignas(4) mkb::Rgb24 m_add_color = {0x0, 0x0, 0x0};
+    alignas(4) mkb::Vec2d m_uv_1 = Vec2d{0.f, 0.f};
+    alignas(4) mkb::Vec2d m_uv_2 = Vec2d{1.f, 1.f};
     alignas(4) bool m_mirror = false;
 
 public:

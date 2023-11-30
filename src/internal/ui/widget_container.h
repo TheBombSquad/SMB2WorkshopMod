@@ -46,16 +46,17 @@ protected:
     // The layout of widgets within the container.
     // Vertical resizes child widgets to fit the height of the container, then stacks them on top of each other.
     // Horizontal resizes child widgets to fit the width of the container, then orders them left-to-right.
-    ContainerLayout m_layout = ContainerLayout::VERTICAL;
+    alignas(4) ContainerLayout m_layout = ContainerLayout::VERTICAL;
 
     // Spacing between widgets in the container.
     u16 m_layout_spacing = 5;
 
-    // Alignment of widgets in the container relative to the origin point of the container
-    mkb::SpriteAlignment m_alignment = mkb::ALIGN_UPPER_LEFT;
-
     // Margin around the container
     u16 m_margin = 5;
+
+    // Alignment of widgets in the container relative to the origin point of the container
+    alignas(4) mkb::SpriteAlignment m_alignment = mkb::ALIGN_UPPER_LEFT;
+
 };
 
 }// namespace ui

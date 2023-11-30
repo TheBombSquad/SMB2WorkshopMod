@@ -23,9 +23,9 @@ enum InputType {
 // Well, TODO for another time
 class Input : public Widget {
 protected:
-    InputType m_type;
-    mkb::PadDigitalInput m_input;
-    pad::Dir m_direction;
+    alignas(4) InputType m_type;
+    alignas(4) mkb::PadDigitalInput m_input;
+    alignas(4) pad::Dir m_direction;
     alignas(4) uint16_t m_initial_delay = 1;
     alignas(4) uint16_t m_repeat_delay = 1;
     alignas(4) bool m_repeating = false;
