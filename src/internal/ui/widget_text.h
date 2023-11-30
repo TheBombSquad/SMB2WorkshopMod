@@ -28,6 +28,7 @@ protected:
     mkb::Rgb24 m_color = DEFAULT_ORANGE;
     alignas(4) bool m_drop_shadow = true;
     mkb::SpriteAlignment m_alignment = mkb::ALIGN_LOWER_CENTER;
+    Vec2d m_offset = Vec2d{0.f, 0.f};
 
 public:
     mkb::FontStyle get_m_font_style() const {
@@ -79,6 +80,12 @@ public:
 
     void set_alignment(mkb::SpriteAlignment alignment) {
         m_alignment = alignment;
+    }
+    const Vec2d& get_offset() const {
+        return m_offset;
+    }
+    void set_offset(const Vec2d& offset) {
+        m_offset = offset;
     }
 };
 

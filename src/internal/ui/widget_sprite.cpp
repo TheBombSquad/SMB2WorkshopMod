@@ -25,10 +25,10 @@ void Sprite::disp() {
     req.scale.y = m_scale.y;
     req.mult_color = (m_mult_color.red << 16) + (m_mult_color.green << 8) + m_mult_color.blue;
     req.add_color = (m_add_color.red << 16) + (m_add_color.green << 8) + m_add_color.blue;
-    req.u1 = 0.0f;
-    req.v1 = 0.0f;
-    req.u2 = 1.0f;
-    req.v2 = 1.0f;
+    req.u1 = m_uv_1.x;
+    req.v1 = m_uv_1.y;
+    req.u2 = m_uv_2.x;
+    req.v2 = m_uv_2.y;
     req.rot_z = m_z_rotation;
     req.alpha = m_alpha;
     req.g_unk1 = -1;

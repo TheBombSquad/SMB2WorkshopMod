@@ -16,6 +16,8 @@ protected:
     float m_alpha = 1.0f;
     mkb::Rgb24 m_mult_color = {0xff, 0xff, 0xff};
     mkb::Rgb24 m_add_color = {0x0, 0x0, 0x0};
+    mkb::Vec2d m_uv_1 = Vec2d{0.f, 0.f};
+    mkb::Vec2d m_uv_2 = Vec2d{1.f, 1.f};
     alignas(4) bool m_mirror = false;
 
 public:
@@ -48,6 +50,18 @@ public:
     }
     void set_offset(const Vec2d& offset) {
         m_offset = offset;
+    }
+    const Vec2d& get_uv_1() const {
+        return m_uv_1;
+    }
+    void set_uv_1(const Vec2d& uv_1) {
+        m_uv_1 = uv_1;
+    }
+    const Vec2d& get_uv_2() const {
+        return m_uv_2;
+    }
+    void set_uv_2(const Vec2d& uv_2) {
+        m_uv_2 = uv_2;
     }
 };
 }// namespace ui

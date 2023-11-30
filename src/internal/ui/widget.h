@@ -45,6 +45,7 @@ protected:
 
     WidgetCallback m_callback;
 
+    alignas(4) bool m_sort = true;
     alignas(4) bool m_visible = true;
     alignas(4) bool m_active = true;
 
@@ -117,6 +118,13 @@ public:
     }
     void set_user_data(void* user_data) {
         m_user_data = user_data;
+    }
+
+    bool is_sort() const {
+        return m_sort;
+    }
+    void set_sort(bool sort) {
+        m_sort = sort;
     }
 };
 

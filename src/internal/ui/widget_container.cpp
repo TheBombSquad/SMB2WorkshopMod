@@ -100,13 +100,15 @@ void Container::tick() {
             // LOG("scale for child: %f, %f", child->get_scale().x * child_scale.x, child->get_scale().y * child_scale.y);
             child->set_scale({child->get_scale().x * child_scale.x, child->get_scale().y * child_scale.y});
 
-            if (m_layout == ContainerLayout::VERTICAL) {
-                widget_origin.y += child->get_dimensions().y * child_scale.y;
-                widget_origin.y += m_layout_spacing;
-            }
-            else {
-                widget_origin.x += child->get_dimensions().x * child_scale.x;
-                widget_origin.x += m_layout_spacing;
+            if (child->is_sort()) {
+                if (m_layout == ContainerLayout::VERTICAL) {
+                    widget_origin.y += child->get_dimensions().y * child_scale.y;
+                    widget_origin.y += m_layout_spacing;
+                }
+                else {
+                    widget_origin.x += child->get_dimensions().x * child_scale.x;
+                    widget_origin.x += m_layout_spacing;
+                }
             }
 
             child_iterator++;
