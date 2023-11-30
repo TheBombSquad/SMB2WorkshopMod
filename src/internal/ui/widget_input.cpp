@@ -20,7 +20,7 @@ Input::~Input() = default;
 
 void Input::dispatch_callback() {
     if (m_play_sound_effect) mkb::call_SoundReqID_arg_1(m_sound_effect_id);
-    //LOG("In cb %x w/ ud %x", this, m_user_data);
+    // LOG("In cb %x w/ ud %x", this, m_user_data);
     m_callback(*this, m_user_data);
 }
 
