@@ -11,10 +11,9 @@ public:
     virtual void disp() override;
 
 protected:
+    Vec2d m_offset = Vec2d{0.f, 0.f};
     uint32_t m_sprite_id;
     float m_alpha = 1.0f;
-
-protected:
     mkb::Rgb24 m_mult_color = {0xff, 0xff, 0xff};
     mkb::Rgb24 m_add_color = {0x0, 0x0, 0x0};
     alignas(4) bool m_mirror = false;
@@ -43,6 +42,12 @@ public:
     }
     void set_add_color(const mkb::Rgb24& add_color) {
         m_add_color = add_color;
+    }
+    const Vec2d& get_offset() const {
+        return m_offset;
+    }
+    void set_offset(const Vec2d& offset) {
+        m_offset = offset;
     }
 };
 }// namespace ui

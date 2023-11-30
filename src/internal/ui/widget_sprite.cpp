@@ -18,8 +18,8 @@ void Sprite::disp() {
     mkb::GXSetZMode_cached('\x01', mkb::GX_LEQUAL, '\x01');
     mkb::g_scale_sprite_for_widescreen(0x140);
     req.id = m_sprite_id;
-    req.pos.x = m_pos.x + m_dimensions.x / 2;
-    req.pos.y = m_pos.y + m_dimensions.y / 2;
+    req.pos.x = (m_pos.x + m_dimensions.x / 2) + m_offset.x;
+    req.pos.y = (m_pos.y + m_dimensions.y / 2) + m_offset.y;
     req.pos.z = m_depth;
     req.scale.x = m_scale.x;
     req.scale.y = m_scale.y;
