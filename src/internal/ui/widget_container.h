@@ -56,7 +56,6 @@ protected:
 
     // Alignment of widgets in the container relative to the origin point of the container
     alignas(4) mkb::SpriteAlignment m_alignment = mkb::ALIGN_UPPER_LEFT;
-
 };
 
 }// namespace ui
