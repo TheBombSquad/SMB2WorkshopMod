@@ -126,6 +126,7 @@ public:
     void set_sort(bool sort) {
         m_sort = sort;
     }
+    void free_inactive();
 };
 
 }// namespace ui
