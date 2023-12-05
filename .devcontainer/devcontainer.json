@@ -1,0 +1,17 @@
+{
+	"name": "SMB2WorkshopMod",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"postCreateCommand": "script/configure-clion-project.sh",
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.cpptools",
+				"llvm-vs-code-extensions.vscode-clangd"
+			]
+		}
+	}
+}
