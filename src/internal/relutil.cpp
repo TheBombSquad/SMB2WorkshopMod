@@ -1,7 +1,7 @@
 #include "relutil.h"
 
-#include "internal/utils.h"
 #include "mkb/mkb.h"
+#include "utils/mathutils.h"
 
 namespace relutil {
 
