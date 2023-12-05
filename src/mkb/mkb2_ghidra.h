@@ -2291,6 +2291,32 @@ struct GTableEntry {
     undefined field_0x4[0x8];
 } __attribute__((__packed__));
 
+typedef struct theme_light theme_light, *Ptheme_light;
+
+typedef short int16_t;
+
+struct theme_light { /* A struct used for each theme ID's lighting */
+    float unk_float; /* Usually 0.6 */
+    float light_group_r;
+    float light_group_g;
+    float light_group_b;
+    float light_group_null;
+    float unk_one_1;
+    float unk_one_2;
+    float unk_one_3;
+    float unk_one_null;
+    float unk_half_1;
+    float unk_half_2;
+    float unk_half_3;
+    float unk_half_null;
+    float light_param_r;
+    float light_param_g;
+    float light_param_b;
+    int16_t xa;
+    int16_t ya;
+    float null;
+} __attribute__((__packed__));
+
 typedef struct OptiGXChanSettings OptiGXChanSettings, *POptiGXChanSettings;
 
 typedef u8 GXBool;
@@ -3034,32 +3060,6 @@ enum {
     MINIMAP_INIT=4
 };
 typedef undefined4 MinimapMode;
-
-typedef struct theme_light theme_light, *Ptheme_light;
-
-typedef short int16_t;
-
-struct theme_light { /* A struct used for each theme ID's lighting */
-    float unk_float; /* Usually 0.6 */
-    float light_group_r;
-    float light_group_g;
-    float light_group_b;
-    float light_group_null;
-    float unk_one_1;
-    float unk_one_2;
-    float unk_one_3;
-    float unk_one_null;
-    float unk_half_1;
-    float unk_half_2;
-    float unk_half_3;
-    float unk_half_null;
-    float light_param_r;
-    float light_param_g;
-    float light_param_b;
-    int16_t xa;
-    int16_t ya;
-    float null;
-} __attribute__((__packed__));
 
 typedef struct DipSwitchesOld DipSwitchesOld, *PDipSwitchesOld;
 
@@ -5553,6 +5553,7 @@ extern "C" {
     extern undefined * switchdataD_8037ed54;
     extern pointer switchdataD_8037ed78;
     extern undefined * switchdataD_8037edf8;
+    extern struct theme_light theme_lights[41];
     extern char init_common_p_lz[17];
     extern char init_common_lz[15];
     extern struct BmpInfo bmp_infos[25];
@@ -6098,6 +6099,7 @@ extern "C" {
     extern undefined4 g_some_author_cutscene_flag;
     extern undefined4 g_playpoint_msg_counter;
     extern struct UnlockInfo unlock_info;
+    extern byte sprite_decoration_bar_tick[1];
     extern float view_stage_aspect_ratio;
     extern pointer switchdataD_804ee064;
     extern undefined * story_mode_funcs;
@@ -6177,6 +6179,9 @@ extern "C" {
     extern undefined * switchdataD_80543868;
     extern undefined4 scen_stgname_buffer;
     extern undefined4 g_scen_stage_names_loaded;
+    extern undefined4 g_are_story_select_sprites_visible;
+    extern undefined2 g_amount_of_stages_per_world;
+    extern undefined2 g_amount_of_beaten_stages_in_world;
     extern float some_ape_float;
     extern float some_ape_float2;
     extern float some_ape_float3;
@@ -6302,6 +6307,7 @@ extern "C" {
     extern struct Ape * menu_apes[4];
     extern undefined4 g_menu_color_overlay_timer;
     extern undefined g_something_with_preview_textures;
+    extern undefined4 g_replay_stage_id_to_load;
     extern undefined1 g_gift_menu_cursor_pos;
     extern undefined * switchdataD_80590050;
     extern pointer switchdataD_805b1fc6;
@@ -9562,6 +9568,7 @@ extern "C" {
     byte g_is_master_unlocked(void);
     void empty_function(void);
     void g_set_unlockables_status(void);
+    void g_handle_goal(void);
     void empty_function(void);
     void compare_play_points_with_99999_after_exit_game(void);
     dword get_play_point_count(void);
@@ -9699,10 +9706,24 @@ extern "C" {
     void empty_function(void);
     void g_create_storymode_select_sprites(uint param_1);
     void g_related_to_loading_story_stageselect(uint param_1);
-    void g_draw_ape_storymode_select_screen(int param_1);
-    void empty_function(void);
-    void sprite_scen_stagesel_stage_name_tick(undefined4 param_1, int param_2);
+    void sprite_story_stage_select_tick(u8 * status, struct Sprite * sprite);
+    void sprite_story_stage_select_disp(struct Sprite * sprite);
+    void g_handle_story_clear_stage_balls(short param_1);
+    void sprite_clear_floors_tick(u8 * status, struct Sprite * sprite);
+    void sprite_clear_floors_disp(struct Sprite * sprite);
+    void sprite_decoration_bar_disp(struct Sprite * sprite);
+    void sprite_world_tick(u8 * status, struct Sprite * sprite);
+    void sprite_world_disp(struct Sprite * sprite);
+    void g_animate_story_select_sprites(undefined2 param_1);
+    void g_sprite_world_info_tick(u8 * status, struct Sprite * sprite);
+    void g_sprite_world_info_disp(struct Sprite * sprite);
+    void sprite_scen_stagesel_stage_name_tick(u8 * param_1, struct Sprite * sprite);
     void sprite_scen_stagesel_stage_name_disp(struct Sprite * sprite);
+    void sprite_story_difficulty_tick(u8 * status, struct Sprite * sprite);
+    void sprite_story_difficulty_disp(struct Sprite * sprite);
+    void g_draw_story_stage_preview_ball(undefined2 param_1);
+    void g_sprite_story_stage_info_tick(u8 * status, struct Sprite * sprite);
+    void g_sprite_story_stage_info_disp(struct Sprite * sprite);
     void g_preload_all_story_preview_images(void);
     void g_draw_now_loading_text(void);
     uint g_get_storymode_next_world(void);
@@ -10038,6 +10059,8 @@ extern "C" {
     void exoption_epilog(void);
     void exoption_unlinked_func(void);
     void exoption_draw_func(void);
+    void create_replay_hud_sprites(void);
+    void create_replay_stage_name_sprites(float x, float y);
 #ifdef __cplusplus
 } // extern "C"
 #endif

@@ -41,6 +41,7 @@ struct Tickable {
     void (*init_main_loop)() = nullptr;
     void (*init_main_game)() = nullptr;
     void (*init_sel_ngc)() = nullptr;
+    void (*init_exoption)() = nullptr;
     void (*disp)() = nullptr;
     void (*tick)() = nullptr;
 };
