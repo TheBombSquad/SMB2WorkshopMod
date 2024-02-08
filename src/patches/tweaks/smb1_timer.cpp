@@ -1,9 +1,8 @@
 /* Classic bomb-style timer, ported from the SMB1 decompilation project
  * In order to use this, you must copy the bomb_fuse.gma and bomb_fuse.tpl
  * files to the root of the GameCube disc (the same directory that
- * mkb2.rel_sample.rel goes in), and also copy the test/bmp/bmp_nml.tpl file
- * from SMB1 into the test/bmp directory of SMB2, and name it bmp_nml1.tpl.
- * Do NOT overwrite the one that's already there.
+ * mkb2.rel_sample.rel goes in), and replace test/bmp/bmp_nml.tpl file
+ * with the modified one containing the old timer sprites.
  * It also must be enabled by having `smb1-timer: disabled` in the REL Patches
  * section of your config.txt. */
 #include "internal/patch.h"
@@ -39,82 +38,24 @@ enum BitmapGroupID
     BMP_ALL,
 };
 
-#define BMP_NML1 BMP_ADV  // we replace the BMP_ADV group with SMB1's BMP_NML
+//#define BMP_NML BMP_ADV  // we replace the BMP_ADV group with SMB1's BMP_NML
 
-// NML group from SMB1
+// NML group bomb images
 enum
 {
-    BMP_NML1_icon_bombtimer = (BMP_NML1 << 8),
-    BMP_NML1_icon_lv1234_j,
-    BMP_NML1_game_rank,
-    BMP_NML1_game_result_e3,
-    BMP_NML1_game_goal,
-    BMP_NML1_asc_ball22x22,
-    BMP_NML1_asc_komo16x16,
-    BMP_NML1_asc_tama32x32,
-    BMP_NML1_asc_ball18x16,
-    BMP_NML1_asc_ball20x20,
-    BMP_NML1_fukidashi,
-    BMP_NML1_game_player,
-    BMP_NML1_asc_ball26x38,
-    BMP_NML1_asc_ball16x22,
-    BMP_NML1_DUMMY14,
-    BMP_NML1_DUMMY15,
-    BMP_NML1_icon_bomb_hibi,  // 0x510
-    BMP_NML1_icon_bomb_part_a,
-    BMP_NML1_icon_bomb_part_b,
-    BMP_NML1_icon_bomb_part_c,
-    BMP_NML1_icon_bomb_part_d,
-    BMP_NML1_icon_bomb_part_e,
-    BMP_NML1_icon_bomb_part_f,
-    BMP_NML1_icon_bomb_part_g,
-    BMP_NML1_icon_bomb_part_h,
-    BMP_NML1_icon_bomb_part_i,
-    BMP_NML1_icon_bomb_part_j,
+    BMP_NML_icon_bombtimer = (BMP_NML << 8) | 0x18,
+    BMP_NML_icon_bomb_hibi,
+    BMP_NML_icon_bomb_part_a,
+    BMP_NML_icon_bomb_part_b,
+    BMP_NML_icon_bomb_part_c,
+    BMP_NML_icon_bomb_part_d,
+    BMP_NML_icon_bomb_part_e,
+    BMP_NML_icon_bomb_part_f,
+    BMP_NML_icon_bomb_part_g,
+    BMP_NML_icon_bomb_part_h,
+    BMP_NML_icon_bomb_part_i,
+    BMP_NML_icon_bomb_part_j,
 };
-
-static char *filepathOld = NULL;
-static char *categoryOld = NULL;
-
-// replaces some bitmaps in the NML bitmap group with ones from bmp_nml1.tpl
-// The TPL is freed in the sprite dest callback.
-static void load_smb1_nml_bmp(void)
-{
-	/*
-	// debug stuff
-	OSReport("Bitmap Groups:\n");
-	for (int i = 0; i < 25; i++)
-		OSReport("%i: file: %s, category: %s, loaded: %i\n", i, bmp_infos[i].filepath, bmp_infos[i].category, bmp_infos[i].is_loaded);
-	*/
-
-	// Replace the ADV bitmap group with our own. TODO: reset this when finished
-	if (bmp_infos[BMP_NML1].is_loaded)
-	{
-		if (mkb::strcmp(bmp_infos[BMP_NML1].category, "BMP_ADV") == 0)
-			FATAL("[smb1-timer] original ADV bitmap group is loaded. Not replacing it.\n");
-		if (mkb::strcmp(bmp_infos[BMP_NML1].category, "BMP_NML1") == 0)
-			return;  // already replaced, nothing to do
-	}
-	filepathOld = bmp_infos[BMP_NML1].filepath;
-	categoryOld = bmp_infos[BMP_NML1].category;
-	bmp_infos[BMP_NML1].filepath = "bmp/bmp_nml1.tpl";
-	bmp_infos[BMP_NML1].category = "BMP_NML1";
-	load_bmp_by_id_child(BMP_NML1);  // load it
-}
-
-static void free_smb1_nml_bmp(void)
-{
-	if (filepathOld == NULL || categoryOld == NULL)
-		FATAL("[smb1-timer] Tried to destroy bomb sprite, but SMB1 bitmaps aren't loaded somehow!\n");
-
-	// unload SMB1 bitmap group
-	g_something_with_freeing_memory(BMP_NML1);
-	// change it back to what it was before
-	bmp_infos[BMP_NML1].filepath = filepathOld;
-	bmp_infos[BMP_NML1].category = categoryOld;
-	filepathOld = NULL;
-	categoryOld = NULL;
-}
 
 /* from hud.c */
 
@@ -203,16 +144,16 @@ static void bomb_frag_sprite_main(u8 *status, struct Sprite *sprite)
 
 static s16 bombFragBitmapIds[] =
 {
-    BMP_NML1_icon_bomb_part_a,
-    BMP_NML1_icon_bomb_part_b,
-    BMP_NML1_icon_bomb_part_c,
-    BMP_NML1_icon_bomb_part_d,
-    BMP_NML1_icon_bomb_part_e,
-    BMP_NML1_icon_bomb_part_f,
-    BMP_NML1_icon_bomb_part_g,
-    BMP_NML1_icon_bomb_part_h,
-    BMP_NML1_icon_bomb_part_i,
-    BMP_NML1_icon_bomb_part_j
+    BMP_NML_icon_bomb_part_a,
+    BMP_NML_icon_bomb_part_b,
+    BMP_NML_icon_bomb_part_c,
+    BMP_NML_icon_bomb_part_d,
+    BMP_NML_icon_bomb_part_e,
+    BMP_NML_icon_bomb_part_f,
+    BMP_NML_icon_bomb_part_g,
+    BMP_NML_icon_bomb_part_h,
+    BMP_NML_icon_bomb_part_i,
+    BMP_NML_icon_bomb_part_j,
 };
 
 static float bombFragX[] = { 7.0f, 16.0f, 26.0f, 48.0f,  0.0f,  9.0f, 55.0f, 12.0f, 33.0f, 71.0f };
@@ -265,14 +206,6 @@ static void bomb_sprite_main(u8 *status, struct Sprite *sprite)
     }
 }
 
-// When the bomb sprite is destroyed, clean up the hacking we did earlier
-static void bomb_sprite_dest(struct Sprite *sprite)
-{
-	//OSReport("[smb1-timer] bomb_sprite_dest\n");
-
-	free_smb1_nml_bmp();
-}
-
 static void hud_show_bomb(float x, float y)
 {
     struct Sprite *sprite;
@@ -287,11 +220,10 @@ static void hud_show_bomb(float x, float y)
         sprite->pos.x = x;
         sprite->pos.y = y;
         sprite->font = FONT_ASCII;
-        sprite->bmp = BMP_NML1_icon_bombtimer;
+        sprite->bmp = BMP_NML_icon_bombtimer;
         sprite->alignment = ALIGN_CENTER;
         sprite->depth = 0.2f;
         sprite->tick_func = bomb_sprite_main;
-        sprite->dest_func = bomb_sprite_dest;
         sprintf(sprite->text, "timer.pic");
         crackY = sprite->pos.y;
         crackX = sprite->pos.x;
@@ -305,7 +237,7 @@ static void hud_show_bomb(float x, float y)
             sprite->pos.x = crackX;
             sprite->pos.y = crackY;
             sprite->font = FONT_ASCII;
-            sprite->bmp = BMP_NML1_icon_bomb_hibi;
+            sprite->bmp = BMP_NML_icon_bomb_hibi;
             sprite->alignment = ALIGN_CENTER;
             sprite->depth = 0.197f;
             sprite->alpha = 0.0f;
@@ -338,10 +270,6 @@ static void normal_timer_100th_seconds_sprite_main(u8 *arg0, struct Sprite *spri
 static void show_smb1_timer(float x, float y)
 {
 	struct Sprite *sprite;
-
-	//OSReport("[smb1-timer] show_smb1_timer(%.2f, %.2f)\n", x, y);
-
-	load_smb1_nml_bmp();
 
 	hud_show_bomb(320.0f, 68.0f);
 
@@ -450,7 +378,7 @@ static void debug_gma(struct GmaBuffer *gma)
 	}
 }
 
-static void load_smb1_common_assets(void)
+static void load_smb1_bombfuse_assets(void)
 {
 	if (customGma == NULL)
 	{
@@ -480,7 +408,7 @@ enum
 
 void draw_timer_bomb_fuse(void)
 {
-	load_smb1_common_assets();
+	load_smb1_bombfuse_assets();
 
     //struct NlModel *tempModel;
     struct Sprite *sprite;
@@ -727,7 +655,7 @@ void init_main_loop()
 {
 	// TODO: I would like to load stuff here, at the beginning, but for some reason, the custom GMA and
 	// TPL get overwritten with other stuff and cause the game to crash.
-	//load_smb1_common_assets();
+	//load_smb1_bombfuse_assets();
 	reset_spark_vars();
 	patch::hook_function(s_timerSpiteTramp, mkb::create_timer_sprites, show_smb1_timer);
 	patch::hook_function(s_bombFuseTramp, mkb::polydisp_main, polydisp_main_override);
