@@ -195,6 +195,8 @@ static void bomb_sprite_main(u8 *status, struct Sprite *sprite)
             ((s16 *)&fragSprite->para1)[0] = 1.2f * (bombFragX[i] - 30.0f);
             ((s16 *)&fragSprite->para1)[1] = 1.2f * (bombFragY[i] - 20.0f);
             sprintf(fragSprite->text, "bomb_scat%d.pic", i);
+            sprite->g_flags1 |= 0x01000000;
+            sprite->widescreen_translation_x = 320;
         }
     }
 }
@@ -218,6 +220,8 @@ static void hud_show_bomb(float x, float y)
         sprite->depth = 0.2f;
         sprite->tick_func = bomb_sprite_main;
         sprintf(sprite->text, "timer.pic");
+        sprite->g_flags1 |= 0x01000000;
+        sprite->widescreen_translation_x = 320;
         crackY = sprite->pos.y;
         crackX = sprite->pos.x;
 
@@ -237,6 +241,8 @@ static void hud_show_bomb(float x, float y)
             sprite->tick_func = bomb_crack_sprite_main;
             sprite->para1 = 0;
             sprintf(sprite->text, "hibi");
+            sprite->g_flags1 |= 0x01000000;
+            sprite->widescreen_translation_x = 320;
         }
     }
 }
@@ -277,6 +283,8 @@ static void show_smb1_timer(float x, float y)
         sprite->depth = 0.19f;
         sprite->tick_func = normal_timer_seconds_sprite_main;
         sprintf(sprite->text, "000");
+        sprite->g_flags1 |= 0x01000000;
+        sprite->widescreen_translation_x = 320;
         sprite = create_linked_sprite(sprite);
         if (sprite != NULL)
         {
@@ -286,6 +294,8 @@ static void show_smb1_timer(float x, float y)
             sprite->depth = 0.19f;
             sprite->tick_func = normal_timer_100th_seconds_sprite_main;
             sprintf(sprite->text, ":00");
+            sprite->g_flags1 |= 0x01000000;
+            sprite->widescreen_translation_x = 320;
         }
     }
 }
@@ -493,7 +503,11 @@ static void polydisp_main_override(void)
 // reposition the life icon as to not cover up the timer fuse
 void create_monkey_counter_sprites_override(double x, double y)
 {
-    s_lifeIconTramp.dest(52.0, 90.0);
+    x = 52.0;
+    y = 92.0;
+    if (widescreen_mode != NORMAL)
+        x -= 150;
+    s_lifeIconTramp.dest(x, y);
 }
 
 void init_main_loop()
