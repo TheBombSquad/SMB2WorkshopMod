@@ -268,11 +268,11 @@ static void normal_timer_100th_seconds_sprite_main(u8 *arg0, struct Sprite *spri
 // TODO: don't hardcode position. I don't know where else the timer can be drawn in SMB2.
 static void show_smb1_timer(float x, float y)
 {
-	struct Sprite *sprite;
+    struct Sprite *sprite;
 
-	hud_show_bomb(320.0f, 68.0f);
+    hud_show_bomb(320.0f, 68.0f);
 
-	// numbers
+    // numbers
     sprite = create_sprite();
     if (sprite != NULL)
     {
@@ -360,20 +360,20 @@ static char gmaName[] = "bomb_fuse.gma";
 
 static void load_smb1_bombfuse_assets(void)
 {
-	if (customGma == NULL)
-	{
-		if (customTpl == NULL)
-		{
-			customTpl = g_load_tpl(tplName);
-			if (customTpl == NULL)
-				FATAL("[smb1-timer] Could not load %s\n", tplName);
-			OSReport("[smb1-timer] Loaded %s\n", tplName);
-		}
-		customGma = g_load_gma(gmaName, customTpl);
-		if (customGma == NULL)
-			FATAL("[smb1-timer] Could not load %s\n", gmaName);
-		OSReport("[smb1-timer] Loaded %s\n", gmaName);
-	}
+    if (customGma == NULL)
+    {
+        if (customTpl == NULL)
+        {
+            customTpl = g_load_tpl(tplName);
+            if (customTpl == NULL)
+                FATAL("[smb1-timer] Could not load %s\n", tplName);
+            OSReport("[smb1-timer] Loaded %s\n", tplName);
+        }
+        customGma = g_load_gma(gmaName, customTpl);
+        if (customGma == NULL)
+            FATAL("[smb1-timer] Could not load %s\n", gmaName);
+        OSReport("[smb1-timer] Loaded %s\n", gmaName);
+    }
 }
 
 #define INFO_FLAG_TIMER_PAUSED (1 << 3)
@@ -387,7 +387,7 @@ enum
 
 void draw_timer_bomb_fuse(void)
 {
-	load_smb1_bombfuse_assets();
+    load_smb1_bombfuse_assets();
 
     struct Sprite *sprite;
     float t;  // portion of clock time remaining (from 0.0 to 1.0)
@@ -468,7 +468,7 @@ void draw_timer_bomb_fuse(void)
     mtxa_translate_xyz(0.00094f, 0.00519f, -0.01f);
     scale = 0.0007f;
     mtxa_scale_s(scale);
-	load_gx_pos_nrm_mtx(mtxa, 0);
+    load_gx_pos_nrm_mtx(mtxa, 0);
     //avdisp_set_bound_sphere_scale(scale);
     g_avdisp_bound_sphere_scale = scale;
     g_avdisp_draw_model_now1(customGma->model_entries[0].model);
@@ -482,10 +482,10 @@ void draw_timer_bomb_fuse(void)
     mtxa_rotate_z(bombSpark.angle);
     mtxa_scale_s(0.0149f);
     mtxa_scale_xyz(bombSpark.scale, bombSpark.scale, bombSpark.scale);
-	// SMB1 draws the spark as a Naomi model. However, SMB2 seems to also have the spark model in common.gma
-	load_gx_pos_nrm_mtx(mtxa, 0);
-	avdisp_set_post_mult_color(1, 1, 1, 1);
-	avdisp_draw_model_unculled_sort_never(init_common_gma->model_entries[88].model);
+    // SMB1 draws the spark as a Naomi model. However, SMB2 seems to also have the spark model in common.gma
+    load_gx_pos_nrm_mtx(mtxa, 0);
+    avdisp_set_post_mult_color(1, 1, 1, 1);
+    avdisp_draw_model_unculled_sort_never(init_common_gma->model_entries[88].model);
 }
 
 static patch::Tramp<decltype(&mkb::create_timer_sprites)> s_timerSpiteTramp;
@@ -495,9 +495,9 @@ static patch::Tramp<decltype(&mkb::create_monkey_counter_sprites)> s_lifeIconTra
 // insert code to draw the SMB1 bomb fuse model
 static void polydisp_main_override(void)
 {
-	s_bombFuseTramp.dest();
-	if (get_sprite_with_unique_id(2))
-		draw_timer_bomb_fuse();
+    s_bombFuseTramp.dest();
+    if (get_sprite_with_unique_id(2))
+        draw_timer_bomb_fuse();
 }
 
 // reposition the life icon as to not cover up the timer fuse
@@ -512,13 +512,13 @@ void create_monkey_counter_sprites_override(double x, double y)
 
 void init_main_loop()
 {
-	// TODO: I would like to load stuff here, at the beginning, but for some reason, the custom GMA and
-	// TPL get overwritten with other stuff and cause the game to crash.
-	//load_smb1_bombfuse_assets();
-	reset_spark_vars();
-	patch::hook_function(s_timerSpiteTramp, mkb::create_timer_sprites, show_smb1_timer);
-	patch::hook_function(s_bombFuseTramp, mkb::polydisp_main, polydisp_main_override);
-	patch::hook_function(s_lifeIconTramp, mkb::create_monkey_counter_sprites, create_monkey_counter_sprites_override);
+    // TODO: I would like to load stuff here, at the beginning, but for some reason, the custom GMA and
+    // TPL get overwritten with other stuff and cause the game to crash.
+    //load_smb1_bombfuse_assets();
+    reset_spark_vars();
+    patch::hook_function(s_timerSpiteTramp, mkb::create_timer_sprites, show_smb1_timer);
+    patch::hook_function(s_bombFuseTramp, mkb::polydisp_main, polydisp_main_override);
+    patch::hook_function(s_lifeIconTramp, mkb::create_monkey_counter_sprites, create_monkey_counter_sprites_override);
 }
 
 TICKABLE_DEFINITION((
