@@ -412,8 +412,8 @@ void draw_timer_bomb_fuse(void)
         y = (56.0f - sprite->pos.y) / 240.0f;
     }
 
-    C_MTXPerspective(mtx, 60.0f, 1.3333332538604736f, 0.00989999994635582f, 20000.0f);
-    mtx[0][2] -= mtx[0][0] * x * 1.3333332538604736f * 0.5773502588272095f;
+    C_MTXPerspective(mtx, 60.0f, g_current_camera->aspect, 0.00989999994635582f, 20000.0f);
+    mtx[0][2] -= mtx[0][0] * x * g_current_camera->aspect * 0.5773502588272095f;
     mtx[1][2] -= mtx[1][1] * y * 0.5773502588272095f;
     GXSetProjection(mtx, 0);
 
