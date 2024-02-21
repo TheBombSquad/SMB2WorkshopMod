@@ -195,8 +195,8 @@ static void bomb_sprite_main(u8 *status, struct Sprite *sprite)
             fragSprite->para1 = 1.2f * (bombFragX[i] - 30.0f);
             fragSprite->para2 = 1.2f * (bombFragY[i] - 20.0f);
             sprintf(fragSprite->text, "bomb_scat%d.pic", i);
-            sprite->g_flags1 |= 0x01000000;
-            sprite->widescreen_translation_x = 320;
+            fragSprite->g_flags1 |= 0x01000000;
+            fragSprite->widescreen_translation_x = 320;
         }
     }
 }
