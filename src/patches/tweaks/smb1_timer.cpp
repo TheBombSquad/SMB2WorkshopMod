@@ -38,8 +38,6 @@ enum BitmapGroupID
     BMP_ALL,
 };
 
-//#define BMP_NML BMP_ADV  // we replace the BMP_ADV group with SMB1's BMP_NML
-
 // NML group bomb images
 enum
 {
@@ -133,11 +131,6 @@ static void bomb_frag_sprite_main(u8 *status, struct Sprite *sprite)
     sprite->pos.x += dx;
     sprite->pos.y += dy;
 
-/*
-    // pointless, since the variables aren't modified
-    ((s16*)&sprite->para1)[0] = x;
-    ((s16*)&sprite->para1)[1] = y;
-*/
     if (sprite->alpha < 0.005f)
         *status = 0;
 }
@@ -279,7 +272,6 @@ static void show_smb1_timer(float x, float y)
     {
         sprite->pos.x = 320.0f;
         sprite->pos.y = 85.0f;
-        //sprite->font = FONT_NUM_24x37;
         sprite->font = FONT_NUM_NML_TIME;  // TODO: is the classic SMB1 FONT_NUM_24x37 font available?
         sprite->alignment = ALIGN_UPPER_CENTER;
         sprite->depth = 0.19f;
@@ -289,7 +281,6 @@ static void show_smb1_timer(float x, float y)
         if (sprite != NULL)
         {
             sprite->pos.x = -4.0f;
-            //sprite->font = FONT_NUM_12x19;
             sprite->font = FONT_NUM_NML_TIME_S;
             sprite->alignment = ALIGN_UPPER_CENTER;
             sprite->depth = 0.19f;
@@ -301,31 +292,23 @@ static void show_smb1_timer(float x, float y)
 
 /* from polydisp.c */
 
-struct
+static struct
 {
-    //u32 unk0;
-    //Vec unk4;
-    //Vec unk10;
-    //Vec unk1C;
-    //Vec unk28;
-    //Vec unk34;
-    //Vec unk40;
-    s32 unk4C;  // 5C
-    //u8 filler50[4];
-    u32 unk54;
-    s32 unk58;
-    float unk5C;
-    float unk60;
-    //u8 filler64[4];
-} polyDisp;  // TODO: see if this struct exists in SMB2
+    int state;
+    int unused;
+    u32 angle;
+    s32 angleDelta;
+    float scale;
+    float scaleDelta;
+} bombSpark;
 
 static void reset_spark_vars(void)
 {
-    polyDisp.unk4C = 0;
-    polyDisp.unk54 = 0;
-    polyDisp.unk58 = 0;
-    polyDisp.unk5C = 1.0f;
-    polyDisp.unk60 = 0.0f;
+    bombSpark.state = 0;
+    bombSpark.angle = 0;
+    bombSpark.angleDelta = 0;
+    bombSpark.scale = 1.0f;
+    bombSpark.scaleDelta = 0.0f;
 }
 
 struct StagedefAnimKeyframe bombSparkXKeyframes[] =
@@ -362,21 +345,8 @@ struct StagedefAnimKeyframe bombSparkYKeyframes[] =
 static struct TplBuffer *customTpl = NULL;
 static struct GmaBuffer *customGma = NULL;
 
-static /*const*/ char tplName[] = "bomb_fuse.tpl";
-static /*const*/ char gmaName[] = "bomb_fuse.gma";
-
-static void debug_gma(struct GmaBuffer *gma)
-{
-	OSReport("%i models:\n", gma->model_count);
-	for (int i = 0; i < gma->model_count; i++)
-	{
-		struct GmaModelEntry *entry = &gma->model_entries[i];
-		struct GmaModel *model = entry->model;
-		OSReport("%i: '%s' %p\n", i, entry->name, entry->model);
-		if (model != NULL)
-			OSReport("  attrs: 0x%X, header_size: 0x%X, tex_objs: %p\n", model->attrs, model->header_size, model->texobjs);
-	}
-}
+static char tplName[] = "bomb_fuse.tpl";
+static char gmaName[] = "bomb_fuse.gma";
 
 static void load_smb1_bombfuse_assets(void)
 {
@@ -393,7 +363,6 @@ static void load_smb1_bombfuse_assets(void)
 		if (customGma == NULL)
 			FATAL("[smb1-timer] Could not load %s\n", gmaName);
 		OSReport("[smb1-timer] Loaded %s\n", gmaName);
-		//debug_gma(customGma);
 	}
 }
 
@@ -410,27 +379,13 @@ void draw_timer_bomb_fuse(void)
 {
 	load_smb1_bombfuse_assets();
 
-    //struct NlModel *tempModel;
     struct Sprite *sprite;
     float t;  // portion of clock time remaining (from 0.0 to 1.0)
     float x;
     float y;
     float scale;
-    //Vec sp94;
     Mtx44 mtx;
-    //Vec sp48;
-    //Vec sp3C;
-    //Vec sp30;
-    //Vec sp24;
     Vec sparkPos;
-    //float f4;
-    //float f3;
-    //struct NlVtxTypeB *vtx;
-    //int i;
-    //int r7;
-    //int faceCount;
-    //float f1;
-    //struct NlMesh *mesh;
 
     if (events[EVENT_VIEW].status == EV_STATE_RUNNING || mode_info.stage_time_frames_remaining <= 0)
         return;
@@ -452,155 +407,47 @@ void draw_timer_bomb_fuse(void)
     mtx[1][2] -= mtx[1][1] * y * 0.5773502588272095f;
     GXSetProjection(mtx, 0);
 
-    /* NOTE: Most of the code here deals with manipulating vertices for the
-     * arcade fuse model, which is never drawn in-game.
-     */
-    //tempModel = lbl_802F1B4C;
     t = (float)mode_info.stage_time_frames_remaining / (float)mode_info.stage_time_limit;
-/*
-    // Make a temporary copy of the timer fuse, which we will modify
-    memcpy(
-        tempModel,
-        NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_OBJ_COLOR_BAR_03),
-        NLMODEL_HEADER(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_OBJ_COLOR_BAR_03))->unk4->modelSize);
 
-    mesh = (struct NlMesh *)tempModel->meshStart;
-    faceCount = ((struct NlDispList *)(((struct NlMesh *)tempModel->meshStart)->dispListStart))->faceCount;
-
-    f4 = 2.0 * (t - 0.5);
-    f4 = CLAMP(f4, 0.0, 1.0);
-
-    f3 = f4 * (faceCount - 2.0);
-    r7 = mathutil_floor(f3 * 0.5) * 2.0f;
-    f1 = (f3 - r7) * 0.5;
-
-    vtx = (struct NlVtxTypeB *)((struct NlDispList *)mesh->dispListStart)->vtxData;
-    for (i = faceCount - 1; i >= 0; i--, vtx++)
-    {
-        if (t < 0.5)
-            vtx->s = 0.25;
-        else if (i < r7)
-            vtx->s = 0.75f;
-        else if (i < r7 + 2)
-            vtx->s = f1 * 0.25 + 0.5;
-        else if (i < r7 + 4)
-            vtx->s = 0.25 + f1 * 0.25;
-        else
-            vtx->s = 0.25;
-    }
-
-    // Calculate something based on vertex positions?
-    // The result is never used, so this is pointless.
-    if (t >= 0.5)
-    {
-        int index = faceCount - 4 - r7;
-        float f2 = 1.0 - f1;
-
-        vtx = &((struct NlVtxTypeB *)((struct NlDispList *)mesh->dispListStart)->vtxData)[index];
-
-        sp48.x = vtx[0].x * f1 + vtx[2].x * f2;
-        sp48.y = vtx[0].y * f1 + vtx[2].y * f2;
-        sp48.z = vtx[0].z * f1 + vtx[2].z * f2;
-
-        sp3C.x = vtx[1].x * f1 + vtx[3].x * f2;
-        sp3C.y = vtx[1].y * f1 + vtx[3].y * f2;
-        sp3C.z = vtx[1].z * f1 + vtx[3].z * f2;
-
-        sp94.x = 0.5 * (sp48.x + sp3C.x);
-        sp94.y = 0.5 * (sp48.y + sp3C.y);
-        sp94.z = 0.001 + 0.5 * (sp48.z + sp3C.z);
-    }
-
-    // WTF??
-    mesh = (void *)((u32 *)mesh + (((s32)mesh->dispListSize >> 2) + 0x14));
-
-    faceCount = ((struct NlDispList *)mesh->dispListStart)->faceCount;
-
-    f4 = t * 2.0;
-    f4 = CLAMP(f4, 0.0, 1.0);
-
-    f3 = f4 * (faceCount - 2.0);
-    r7 = mathutil_floor(f3 * 0.5) * 2.0f;
-    f1 = (f3 - r7) * 0.5;
-
-    vtx = (void *)((struct NlDispList *)mesh->dispListStart)->vtxData;
-    for (i = faceCount - 1; i >= 0; i--, vtx++)
-    {
-        if (t > 0.5)
-            vtx->s = 0.75;
-        else if (i < r7)
-            vtx->s = 0.75;
-        else if (i < r7 + 2)
-            vtx->s = 0.5 + f1 * 0.25;
-        else if (i < r7 + 4)
-            vtx->s = 0.25 + f1 * 0.25;
-        else
-            vtx->s = 0.25;
-    }
-
-    // Calculate something based on vertex positions?
-    // The result is never used, so this is pointless.
-    if (t < 0.5)
-    {
-        int index = faceCount - 4 - r7;
-        float f2 = 1.0 - f1;
-
-        vtx = &((struct NlVtxTypeB *)((struct NlDispList *)mesh->dispListStart)->vtxData)[index];
-
-        sp30.x = vtx[0].x * f1 + vtx[2].x * f2;
-        sp30.y = vtx[0].y * f1 + vtx[2].y * f2;
-        sp30.z = vtx[0].z * f1 + vtx[2].z * f2;
-
-        sp24.x = vtx[1].x * f1 + vtx[3].x * f2;
-        sp24.y = vtx[1].y * f1 + vtx[3].y * f2;
-        sp24.z = vtx[1].z * f1 + vtx[3].z * f2;
-
-        sp94.x = 0.5 * (sp30.x + sp24.x);
-        sp94.y = 0.5 * (sp30.y + sp24.y);
-        sp94.z = 0.001 + 0.5 * (sp30.z + sp24.z);
-    }
-*/
-    switch (polyDisp.unk4C)
+    switch (bombSpark.state)
     {
     case 0:
         if (!(mode_info.ball_mode & INFO_FLAG_TIMER_PAUSED))
         {
-            polyDisp.unk4C = 1;
-            polyDisp.unk60 = 0.125f;
-            polyDisp.unk58 = -((rand() & 0x3FF) + 0x400);
+            bombSpark.state = 1;
+            bombSpark.scaleDelta = 0.125f;
+            bombSpark.angleDelta = -((rand() & 0x3FF) + 0x400);
         }
         break;
     case 1:
-        polyDisp.unk60 -= 0.0083333333333333332;
-        polyDisp.unk5C += polyDisp.unk60;
-        if (polyDisp.unk5C < 1.0)
+        bombSpark.scaleDelta -= 0.0083333333333333332;
+        bombSpark.scale += bombSpark.scaleDelta;
+        if (bombSpark.scale < 1.0)
         {
-            polyDisp.unk5C = 1.0f;
-            polyDisp.unk60 = 0.0f;
-            polyDisp.unk4C = 2;
+            bombSpark.scale = 1.0f;
+            bombSpark.scaleDelta = 0.0f;
+            bombSpark.state = 2;
         }
         break;
     case 2:
         if (mode_info.ball_mode & INFO_FLAG_TIMER_PAUSED)
-            polyDisp.unk4C = 3;
+            bombSpark.state = 3;
         break;
     case 3:
-        polyDisp.unk4C = 4;
+        bombSpark.state = 4;
         break;
     case 4:
-        polyDisp.unk4C = 0;
+        bombSpark.state = 0;
         break;
     }
     if (mode_info.ball_mode & INFO_FLAG_TIMER_PAUSED)
-        polyDisp.unk58 -= (polyDisp.unk58 >> 3);
+        bombSpark.angleDelta -= (bombSpark.angleDelta >> 3);
     else if (t > 0.5)
-        polyDisp.unk58 += (-768 - polyDisp.unk58) >> 4;
+        bombSpark.angleDelta += (-768 - bombSpark.angleDelta) >> 4;
     else
-        polyDisp.unk58 += (-1536 - polyDisp.unk58) >> 4;
+        bombSpark.angleDelta += (-1536 - bombSpark.angleDelta) >> 4;
     if (!(g_some_other_flags & 0xA))
-        polyDisp.unk54 += polyDisp.unk58;
-
-    //nlObjPutSetFadeColorBase(1.0f, 1.0f, 1.0f);
+        bombSpark.angle += bombSpark.angleDelta;
 
     avdisp_set_post_mult_color(1.0f, t, 0.0f, 1.0f);
     mtxa_from_translate_xyz(0.0f, (1.0 - t) - 0.5, 0.0f);
@@ -622,15 +469,13 @@ void draw_timer_bomb_fuse(void)
     sparkPos.z = 0.141f;
     mtxa_translate(&sparkPos);
     mtxa_sq_from_identity();
-    mtxa_rotate_z(polyDisp.unk54);
+    mtxa_rotate_z(bombSpark.angle);
     mtxa_scale_s(0.0149f);
-    mtxa_scale_xyz(polyDisp.unk5C, polyDisp.unk5C, polyDisp.unk5C);
-    //nlObjPutImm(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_TIMER_FIRE));
+    mtxa_scale_xyz(bombSpark.scale, bombSpark.scale, bombSpark.scale);
 	// SMB1 draws the spark as a Naomi model. However, SMB2 seems to also have the spark model in common.gma
 	load_gx_pos_nrm_mtx(mtxa, 0);
 	avdisp_set_post_mult_color(1, 1, 1, 1);
 	avdisp_draw_model_unculled_sort_never(init_common_gma->model_entries[88].model);
-	//fade_color_base_default();
 }
 
 static patch::Tramp<decltype(&mkb::create_timer_sprites)> s_timerSpiteTramp;
@@ -641,7 +486,6 @@ static patch::Tramp<decltype(&mkb::create_monkey_counter_sprites)> s_lifeIconTra
 static void polydisp_main_override(void)
 {
 	s_bombFuseTramp.dest();
-	//if (spriteClassMask & 4)
 	if (get_sprite_with_unique_id(2))
 		draw_timer_bomb_fuse();
 }
