@@ -604,24 +604,17 @@ void draw_timer_bomb_fuse(void)
 
     avdisp_set_post_mult_color(1.0f, t, 0.0f, 1.0f);
     mtxa_from_translate_xyz(0.0f, (1.0 - t) - 0.5, 0.0f);
-    //avdisp_set_custom_tex_mtx(0, mtxa);
-		mkb::memcpy(avdisp_tex_mtx, mtxa, sizeof(Mtx));
+    g_something_with_texture_scroll_3(0, mtxa);
 
     // Draw new bomb fuse
     mtxa_from_identity();
     mtxa_translate_xyz(0.00094f, 0.00519f, -0.01f);
     scale = 0.0007f;
     mtxa_scale_s(scale);
-    //u_gxutil_upload_some_mtx(mtxa, 0);
-		GXLoadPosMtxImm(*mtxa, 0);
-		GXLoadNrmMtxImm(*mtxa, 0);
+	load_gx_pos_nrm_mtx(mtxa, 0);
     //avdisp_set_bound_sphere_scale(scale);
-    //avdisp_enable_custom_tex_mtx(1);
-		//g_avdisp_func8(1);
-    //avdisp_draw_model_unculled_sort_translucent(init_common_gma->modelEntries[2].model);
-		avdisp_draw_model_unculled_sort_auto(customGma->model_entries[0].model);
-    //avdisp_enable_custom_tex_mtx(0);
-		//g_avdisp_func8(0);
+    g_avdisp_bound_sphere_scale = scale;
+    g_avdisp_draw_model_now1(customGma->model_entries[0].model);
 
     // Draw spark
     sparkPos.x = evaluate_stagedef_keyframe((1.0 - t) * 100.0, ARRAY_COUNT(bombSparkXKeyframes), bombSparkXKeyframes);
@@ -633,10 +626,10 @@ void draw_timer_bomb_fuse(void)
     mtxa_scale_s(0.0149f);
     mtxa_scale_xyz(polyDisp.unk5C, polyDisp.unk5C, polyDisp.unk5C);
     //nlObjPutImm(NLOBJ_MODEL(g_commonNlObj, NLMODEL_common_TIMER_FIRE));
-		GXLoadPosMtxImm(*mtxa, 0);
-		GXLoadNrmMtxImm(*mtxa, 0);
-		avdisp_set_post_mult_color(1, 1, 1, 1);
-		avdisp_draw_model_unculled_sort_never(init_common_gma->model_entries[88].model);
+	// SMB1 draws the spark as a Naomi model. However, SMB2 seems to also have the spark model in common.gma
+	load_gx_pos_nrm_mtx(mtxa, 0);
+	avdisp_set_post_mult_color(1, 1, 1, 1);
+	avdisp_draw_model_unculled_sort_never(init_common_gma->model_entries[88].model);
 	//fade_color_base_default();
 }
 
