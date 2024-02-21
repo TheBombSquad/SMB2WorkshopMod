@@ -249,20 +249,32 @@ static void hud_show_bomb(float x, float y)
 
 /* Time numbers */
 
-// TODO: these functions must already be in SMB2, right? Do we need func_80049E7C?
-static void normal_timer_seconds_sprite_main(u8 *arg0, struct Sprite *sprite)
+static void maingame_timer_seconds_sprite_main(u8 *status, struct Sprite *sprite)
 {
-    //int time = (int)func_80049E7C(replayInfo.unk0[replayInfo.unk14], replayInfo.unk10) + 1;
-    int time = mode_info.stage_time_frames_remaining;
-    sprintf(sprite->text, "%03d", time / 60);
+    sprintf(sprite->text, "%03d", mode_info.stage_time_frames_remaining / 60);
+    if (mode_info.stage_time_frames_remaining <= 0)
+    {
+        sprite->width *= 1.01f;
+        sprite->height *= 1.01f;
+        sprite->alpha *= 0.88f;
+        if (sprite->alpha < 0.05f)
+            *status = 0;
+    }
 }
 
-static void normal_timer_100th_seconds_sprite_main(u8 *arg0, struct Sprite *sprite)
+static void maingame_timer_100th_seconds_sprite_main(u8 *status, struct Sprite *sprite)
 {
-    //int time = (int)func_80049E7C(replayInfo.unk0[replayInfo.unk14], replayInfo.unk10) + 1;
-    int time = mode_info.stage_time_frames_remaining;
-    int val = 100.0 * ((float)(time % 60) / 60.0);
+    int val = 100.0 * ((float)(mode_info.stage_time_frames_remaining % 60) / 60.0);
+
     sprintf(sprite->text, ":%02d", val);
+    if (mode_info.stage_time_frames_remaining <= 0)
+    {
+        sprite->width *= 1.01f;
+        sprite->height *= 1.01f;
+        sprite->alpha *= 0.88f;
+        if (sprite->alpha < 0.05f)
+            *status = 0;
+    }
 }
 
 // TODO: don't hardcode position. I don't know where else the timer can be drawn in SMB2.
@@ -281,7 +293,7 @@ static void show_smb1_timer(float x, float y)
         sprite->font = FONT_NUM_NML_TIME;  // TODO: is the classic SMB1 FONT_NUM_24x37 font available?
         sprite->alignment = ALIGN_UPPER_CENTER;
         sprite->depth = 0.19f;
-        sprite->tick_func = normal_timer_seconds_sprite_main;
+        sprite->tick_func = maingame_timer_seconds_sprite_main;
         sprintf(sprite->text, "000");
         sprite->g_flags1 |= 0x01000000;
         sprite->widescreen_translation_x = 320;
@@ -292,7 +304,7 @@ static void show_smb1_timer(float x, float y)
             sprite->font = FONT_NUM_NML_TIME_S;
             sprite->alignment = ALIGN_UPPER_CENTER;
             sprite->depth = 0.19f;
-            sprite->tick_func = normal_timer_100th_seconds_sprite_main;
+            sprite->tick_func = maingame_timer_100th_seconds_sprite_main;
             sprintf(sprite->text, ":00");
             sprite->g_flags1 |= 0x01000000;
             sprite->widescreen_translation_x = 320;
