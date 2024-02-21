@@ -635,13 +635,21 @@ void draw_timer_bomb_fuse(void)
 
 static patch::Tramp<decltype(&mkb::create_timer_sprites)> s_timerSpiteTramp;
 static patch::Tramp<decltype(&mkb::polydisp_main)> s_bombFuseTramp;
+static patch::Tramp<decltype(&mkb::create_monkey_counter_sprites)> s_lifeIconTramp;
 
+// insert code to draw the SMB1 bomb fuse model
 static void polydisp_main_override(void)
 {
 	s_bombFuseTramp.dest();
 	//if (spriteClassMask & 4)
 	if (get_sprite_with_unique_id(2))
 		draw_timer_bomb_fuse();
+}
+
+// reposition the life icon as to not cover up the timer fuse
+void create_monkey_counter_sprites_override(double x, double y)
+{
+    s_lifeIconTramp.dest(52.0, 90.0);
 }
 
 void init_main_loop()
@@ -652,6 +660,7 @@ void init_main_loop()
 	reset_spark_vars();
 	patch::hook_function(s_timerSpiteTramp, mkb::create_timer_sprites, show_smb1_timer);
 	patch::hook_function(s_bombFuseTramp, mkb::polydisp_main, polydisp_main_override);
+	patch::hook_function(s_lifeIconTramp, mkb::create_monkey_counter_sprites, create_monkey_counter_sprites_override);
 }
 
 TICKABLE_DEFINITION((
