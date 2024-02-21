@@ -3,7 +3,7 @@
  * files to the root of the GameCube disc (the same directory that
  * mkb2.rel_sample.rel goes in), and replace test/bmp/bmp_nml.tpl file
  * with the modified one containing the old timer sprites.
- * It also must be enabled by having `smb1-timer: disabled` in the REL Patches
+ * It also must be enabled by having `smb1-timer: enabled` in the REL Patches
  * section of your config.txt. */
 #include "internal/patch.h"
 #include "internal/tickable.h"
