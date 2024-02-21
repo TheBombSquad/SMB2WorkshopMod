@@ -122,8 +122,8 @@ static void bomb_frag_sprite_main(u8 *status, struct Sprite *sprite)
     sprite->width *= 1.01f;
     sprite->height *= 1.01f;
 
-    x = ((s16*)&sprite->para1)[0];
-    y = ((s16*)&sprite->para1)[1];
+    x = sprite->para1;
+    y = sprite->para2;
 
     dx = (x * 0.9f) * (sprite->alpha * sprite->alpha);
     dy = (y * 0.97f) * (sprite->alpha * sprite->alpha) + (1.0f - (sprite->alpha * sprite->alpha));
@@ -192,8 +192,8 @@ static void bomb_sprite_main(u8 *status, struct Sprite *sprite)
             fragSprite->tick_func = bomb_frag_sprite_main;
             fragSprite->width = xscale;
             fragSprite->height = yscale;
-            ((s16 *)&fragSprite->para1)[0] = 1.2f * (bombFragX[i] - 30.0f);
-            ((s16 *)&fragSprite->para1)[1] = 1.2f * (bombFragY[i] - 20.0f);
+            fragSprite->para1 = 1.2f * (bombFragX[i] - 30.0f);
+            fragSprite->para2 = 1.2f * (bombFragY[i] - 20.0f);
             sprintf(fragSprite->text, "bomb_scat%d.pic", i);
             sprite->g_flags1 |= 0x01000000;
             sprite->widescreen_translation_x = 320;
