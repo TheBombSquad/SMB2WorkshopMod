@@ -10,7 +10,7 @@ namespace tickable {
 
 void TickableManager::push(Tickable* tickable) {
     auto tick_ptr = etl::unique_ptr<Tickable>(tickable);
-    m_tickables.push_back(std::move(tick_ptr));
+    m_tickables.push_back(etl::move(tick_ptr));
 }
 
 const TickableManager::TickableVec& TickableManager::get_tickables() const {
