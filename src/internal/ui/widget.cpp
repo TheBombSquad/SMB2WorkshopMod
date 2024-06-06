@@ -16,7 +16,7 @@ void Widget::tick() {
     }
 
     // Display the widget
-    if (m_visible) disp();
+    if (is_visible()) disp();
 
     // Tick and disp all of our children
     for (auto iter = m_children.begin(); iter != m_children.end();) {
@@ -54,7 +54,7 @@ template Window& Widget::add<Window>(Window*);
 void Widget::remove(Widget& widget) {
     for (auto iter = m_children.begin(); iter != m_children.end();) {
         if (&widget == iter->get()) {
-            iter->get()->m_active = false;
+            iter->get()->m_flags.set(WIDGET_FLAG_ACTIVE, false);
             break;
         }
         else {
@@ -67,7 +67,7 @@ void Widget::remove(Widget& widget) {
 void Widget::remove(const char* label) {
     for (auto& widget: m_children) {
         if (strcmp(label, widget->get_label().c_str()) == 0) {
-            widget->m_active = false;
+            widget->m_flags.set(WIDGET_FLAG_ACTIVE, false);
             break;
         }
     }
@@ -83,7 +83,7 @@ void Widget::clear() {
 // Marks the widget as inactive (queued to be removed)
 void Widget::set_inactive(Widget& widget) {
     // LOG("Setting widget and children as inactive");
-    widget.m_active = false;
+    widget.m_flags.set(WIDGET_FLAG_ACTIVE, false);
     for (auto iter = widget.m_children.begin(); iter != widget.m_children.end();) {
         Widget::set_inactive(**iter);
         ++iter;

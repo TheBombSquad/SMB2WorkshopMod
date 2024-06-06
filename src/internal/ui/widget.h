@@ -3,51 +3,49 @@
 #include "etl/delegate.h"
 #include "etl/list.h"
 #include "etl/string.h"
+#include "etl/bitset.h"
 #include "internal/ui/modifier.h"
 #include "log.h"
 #include "mkb/mkb.h"
 
 namespace ui {
 
-enum class WidgetState {
-    VISIBLE,
-    VISIBLE_NO_TICK,
-    INVISIBLE,
-    INVISIBLE_NO_TICK,
-    DESTROY,
-};
-
 typedef etl::delegate<void(Widget&, void*)> WidgetCallback;
 
 class Modifier;
 
-class Widget {
+// Base class for a widget.
+// Before optimization pass, the size was 444 bytes.
+class __attribute((aligned(4))) Widget {
 protected:
-    Widget(){};
-    Widget(Vec2d pos) : m_pos(pos){};
-    Widget(Vec2d pos, Vec2d dimensions) : m_pos(pos), m_dimensions(dimensions){};
-    Vec2d m_pos = Vec2d{0.f, 0.f};
-    Vec2d m_dimensions = Vec2d{0.f, 0.f};
-    Vec2d m_scale = Vec2d{1.f, 1.f};
-    float m_depth = 0.1;
-    float m_child_depth_step = 0.005;// When we add a child sprite, by how many units should it be 'in front' of the parent?
+    explicit Widget(Vec2d pos = Vec2d{0.f, 0.f}, Vec2d dimensions = Vec2d{0.f, 0.f}) : m_pos(pos), m_dimensions(dimensions){
+        m_flags.set(WIDGET_FLAG_VISIBLE, true);
+        m_flags.set(WIDGET_FLAG_ACTIVE, true);
+        m_flags.set(WIDGET_FLAG_SORT, true);
+    };
+    Vec2d m_pos = Vec2d{0.f, 0.f}; // Position of the widget
+    Vec2d m_dimensions = Vec2d{0.f, 0.f}; // Dimensions - important for containers
+    Vec2d m_scale = Vec2d{1.f, 1.f}; // Scale - the dimensions are generally multiplied by this value
+    float m_depth = 0.1; // How 'deep' the widget is on the screen. Widgets with a depth lower than another widget are 'in front' of the deeper widget.
+    float m_child_depth_step = 0.005; // When we add a child sprite, by how many units should it be 'in front' of the parent?
     int32_t m_z_rotation = 0;
-    alignas(4) bool m_interactable = false;
     etl::string<8> m_label;
 
     static constexpr uint32_t WIDGET_MAX_CHILDREN = 12;
     etl::list<etl::unique_ptr<Widget>, WIDGET_MAX_CHILDREN> m_children;
 
-    static constexpr uint32_t WIDGET_MAX_MODIFIERS = 4;
+    static constexpr uint32_t WIDGET_MAX_MODIFIERS = 1;
     etl::list<etl::unique_ptr<Modifier>, WIDGET_MAX_MODIFIERS> m_tick_modifier;
-
-    uint32_t m_counter = 0;
 
     WidgetCallback m_callback;
 
-    alignas(4) bool m_sort = true;
-    alignas(4) bool m_visible = true;
-    alignas(4) bool m_active = true;
+    etl::bitset<8, uint8_t> m_flags;
+
+    enum WidgetFlags {
+        WIDGET_FLAG_VISIBLE, // Whether the widget should be drawn - should the disp() func be called?
+        WIDGET_FLAG_ACTIVE, // Whether the widget is active - inactive widgets are queued to be freed
+        WIDGET_FLAG_SORT // Whether the widget should be sorted if it is in a container.
+    };
 
     void* m_user_data = nullptr;
 
@@ -82,14 +80,8 @@ public:
     s32 get_z_rotation() const { return m_z_rotation; }
     void set_z_rotation(s32 m_z_rotation) { Widget::m_z_rotation = m_z_rotation; }
 
-    uint32_t get_counter() const { return m_counter; }
-    void increment_counter() { m_counter++; }
-    void reset_counter() { m_counter = 0; }
-
-    uint32_t is_visible() const { return m_visible; }
-    void set_visible(uint32_t is_visible) { Widget::m_visible = is_visible; }
-
-    const bool is_interactable() const { return m_interactable; }
+    uint32_t is_visible() const { return m_flags[WIDGET_FLAG_VISIBLE]; }
+    void set_visible(bool is_visible) { m_flags.set(WIDGET_FLAG_VISIBLE, is_visible); }
 
     const etl::string<8>& get_label() const { return m_label; }
     void set_label(const char* mLabel) { m_label = mLabel; }
@@ -98,7 +90,7 @@ public:
     static void set_inactive(Widget& widget);
 
     // Checks if the widget is active (not queued to be removed
-    bool is_inactive() { return !m_active; }
+    bool is_inactive() { return !m_flags[WIDGET_FLAG_ACTIVE]; }
 
     void set_callback(WidgetCallback callback) { m_callback = callback; }
     void set_callback(WidgetCallback callback, void* user_data) {
@@ -121,10 +113,10 @@ public:
     }
 
     bool is_sort() const {
-        return m_sort;
+        return m_flags[WIDGET_FLAG_SORT];
     }
     void set_sort(bool sort) {
-        m_sort = sort;
+        m_flags.set(WIDGET_FLAG_SORT, sort);
     }
     void free_inactive();
 };
