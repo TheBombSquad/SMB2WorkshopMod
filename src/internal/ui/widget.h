@@ -1,7 +1,7 @@
 #pragma once
 
 #include "etl/delegate.h"
-#include "etl/list.h"
+#include "etl/vector.h"
 #include "etl/string.h"
 #include "etl/bitset.h"
 #include "internal/ui/modifier.h"
@@ -29,13 +29,13 @@ protected:
     float m_depth = 0.1; // How 'deep' the widget is on the screen. Widgets with a depth lower than another widget are 'in front' of the deeper widget.
     float m_child_depth_step = 0.005; // When we add a child sprite, by how many units should it be 'in front' of the parent?
     int32_t m_z_rotation = 0;
-    etl::string<8> m_label;
+    etl::string<8> m_label; // Not as horribly inefficient as you might think
 
     static constexpr uint32_t WIDGET_MAX_CHILDREN = 12;
-    etl::list<etl::unique_ptr<Widget>, WIDGET_MAX_CHILDREN> m_children;
+    etl::vector<etl::unique_ptr<Widget>, WIDGET_MAX_CHILDREN> m_children;
 
     static constexpr uint32_t WIDGET_MAX_MODIFIERS = 1;
-    etl::list<etl::unique_ptr<Modifier>, WIDGET_MAX_MODIFIERS> m_tick_modifier;
+    etl::vector<etl::unique_ptr<Modifier>, WIDGET_MAX_MODIFIERS> m_tick_modifier;
 
     WidgetCallback m_callback;
 

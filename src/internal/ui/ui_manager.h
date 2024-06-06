@@ -12,7 +12,7 @@ constexpr size_t WIDGET_CAPACITY = 16;
 
 class WidgetManager {
 public:
-    typedef etl::list<etl::unique_ptr<Widget>, WIDGET_CAPACITY> WidgetVec;
+    typedef etl::vector<etl::unique_ptr<Widget>, WIDGET_CAPACITY> WidgetVec;
 
     const WidgetManager::WidgetVec& get_widgets() const {
         return m_widgets;

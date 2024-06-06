@@ -22,9 +22,8 @@ void Widget::tick() {
     for (auto iter = m_children.begin(); iter != m_children.end();) {
         // Clean up children if they are marked as inactive
         if (iter->get()->is_inactive()) {
-            m_children.erase(iter);
+            iter = m_children.erase(iter);
             // LOG("In widget, inactive widget/child found and will be erased");
-            ++iter;
             continue;
         }
         iter->get()->tick();
@@ -75,9 +74,7 @@ void Widget::remove(const char* label) {
 
 // Remove all child widgets
 void Widget::clear() {
-    for (auto iter = m_children.begin(); iter != m_children.end();) {
-        m_children.erase(iter++);
-    }
+    m_children.clear();
 }
 
 // Marks the widget as inactive (queued to be removed)
@@ -91,16 +88,13 @@ void Widget::set_inactive(Widget& widget) {
 }
 
 void Widget::free_inactive() {
-    // Tick and disp all of our children
     for (auto iter = m_children.begin(); iter != m_children.end();) {
         // Clean up children if they are marked as inactive
         if (iter->get()->is_inactive()) {
-            m_children.erase(iter);
+            iter = m_children.erase(iter);
             // LOG("In widget, inactive widget/child found and will be erased");
-            ++iter;
             continue;
         }
-        // iter->get()->tick();
         ++iter;
     }
 }

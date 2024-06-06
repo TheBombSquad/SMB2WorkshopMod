@@ -28,8 +28,7 @@ void WidgetManager::tick() {
     for (auto iter = m_widgets.begin(); iter != m_widgets.end();) {
         if (iter->get()->is_inactive()) {
             // LOG("In manager, inactive widget %s found and will be erased", iter->get()->get_label().c_str());
-            m_widgets.erase(iter);
-            ++iter;
+            iter = m_widgets.erase(iter);
             continue;
         }
         iter->get()->tick();
@@ -63,7 +62,7 @@ void WidgetManager::remove(const char* label) {
 
 void WidgetManager::clear() {
     for (auto iter = m_widgets.begin(); iter != m_widgets.end();) {
-        m_widgets.erase(iter++);
+        iter = m_widgets.erase(iter);
     }
 }
 
