@@ -4,7 +4,7 @@
 
 namespace ui {
 
-Window::Window(const Vec2d pos, const Vec2d dimensions) : Container(pos, dimensions) {
+Window::Window(const Vec2d pos, const Vec2d dimensions) : Layout(pos, dimensions) {
     m_margin = 8;// Bigger default margin for window borders
 }
 

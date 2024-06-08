@@ -1,11 +1,11 @@
 #pragma once
 
 #include "internal/ui/widget.h"
-#include "internal/ui/widget_container.h"
+#include "internal/ui/widget_layout.h"
 
 namespace ui {
 
-class Window : public Container {
+class Window : public Layout {
 public:
     Window(const Vec2d pos, const Vec2d dimensions);
     ~Window();

@@ -1,14 +1,14 @@
-#include "widget_container.h"
+#include "widget_layout.h"
 
 #include "internal/log.h"
 
 namespace ui {
 
-Container::Container(const Vec2d pos, const Vec2d dimensions) : Widget(pos, dimensions) {}
-Container::~Container() = default;
+Layout::Layout(const Vec2d pos, const Vec2d dimensions) : Widget(pos, dimensions) {}
+Layout::~Layout() = default;
 
-void Container::tick() {
-    if (m_layout != ContainerLayout::NONE) {
+void Layout::tick() {
+    if (m_layout != LayoutArrangement::NONE) {
         const unsigned int child_count = m_children.size();
 
         // Origin constraints for widgets
@@ -67,15 +67,15 @@ void Container::tick() {
             const auto& child = *child_iterator;
             const auto& dimensions = Vec2d(child->get_dimensions().x * child->get_scale().x, child->get_dimensions().y * child->get_scale().y);
             // LOG("child %d: pos: %f, %f dim %f, %f", child_index, child->get_pos().x, child->get_pos().y, dimensions.x, dimensions.y);
-            if (m_layout == ContainerLayout::VERTICAL) {
+            if (m_layout == LayoutArrangement::VERTICAL) {
                 if (dimensions.x > total_child_dimensions.x) total_child_dimensions.x = dimensions.x;
                 total_child_dimensions.y += dimensions.y;
-                if (child_index != child_count - 1) total_child_dimensions.y += m_layout_spacing;// Add spacing, unless last element
+                if (child_index != child_count - 1) total_child_dimensions.y += m_spacing;// Add spacing, unless last element
             }
             else {
                 if (dimensions.y > total_child_dimensions.y) total_child_dimensions.y = dimensions.y;
                 total_child_dimensions.x += dimensions.x;
-                if (child_index != child_count - 1) total_child_dimensions.x += m_layout_spacing;// Add spacing, unless last element
+                if (child_index != child_count - 1) total_child_dimensions.x += m_spacing;// Add spacing, unless last element
             }
             child_iterator++;
             child_index++;
@@ -101,13 +101,13 @@ void Container::tick() {
             child->set_scale({child->get_scale().x * child_scale.x, child->get_scale().y * child_scale.y});
 
             if (child->is_sort()) {
-                if (m_layout == ContainerLayout::VERTICAL) {
+                if (m_layout == LayoutArrangement::VERTICAL) {
                     widget_origin.y += child->get_dimensions().y * child_scale.y;
-                    widget_origin.y += m_layout_spacing;
+                    widget_origin.y += m_spacing;
                 }
                 else {
                     widget_origin.x += child->get_dimensions().x * child_scale.x;
-                    widget_origin.x += m_layout_spacing;
+                    widget_origin.x += m_spacing;
                 }
             }
 

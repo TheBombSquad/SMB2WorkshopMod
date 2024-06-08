@@ -1,7 +1,7 @@
 #include "ui_manager.h"
 
-#include "widget_container.h"
 #include "widget_input.h"
+#include "widget_layout.h"
 #include "widget_menu.h"
 #include "widget_sprite.h"
 #include "widget_text.h"
@@ -17,7 +17,7 @@ T& WidgetManager::add(T* widget) {
 }
 // Template specializations to avoid vague linkage
 // This is a ELF section count optimization, only really relevant when compiling with -Os
-template Container& WidgetManager::add<Container>(Container*);
+template Layout& WidgetManager::add<Layout>(Layout*);
 template Text& WidgetManager::add<Text>(Text*);
 template Input& WidgetManager::add<Input>(Input*);
 template Menu& WidgetManager::add<Menu>(Menu*);

@@ -8,7 +8,7 @@ Menu::Menu(const Vec2d pos, const Vec2d dimensions) : Window(pos, dimensions) {}
 Menu::~Menu() = default;
 
 void Menu::tick() {
-    Container::tick();
+    Layout::tick();
 
     if (!m_active_index) {
         size_t index = 0;

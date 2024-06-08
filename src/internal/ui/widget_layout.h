@@ -4,30 +4,32 @@
 
 namespace ui {
 
-enum class ContainerLayout {
+enum class LayoutArrangement {
     HORIZONTAL,// Newly added widgets are placed in a horizontal row
     VERTICAL,  // Newly added widgets are placed in a vertical column
     NONE,      // Newly added widgets are not organized or auto-scaled
 };
 
-class Container : public Widget {
+
+// Widget for neatly organizing other widgets
+class Layout : public Widget {
 public:
-    Container(const Vec2d pos, const Vec2d dimensions);
+    Layout(const Vec2d pos, const Vec2d dimensions);
     virtual void tick() override;
     virtual void disp() override{};
-    ~Container();
+    ~Layout();
 
-    ContainerLayout get_layout() const {
+    LayoutArrangement get_arrangement() const {
         return m_layout;
     }
-    void set_layout(ContainerLayout layout) {
+    void set_layout(LayoutArrangement layout) {
         m_layout = layout;
     }
-    u16 get_layout_spacing() const {
-        return m_layout_spacing;
+    u16 get_spacing() const {
+        return m_spacing;
     }
-    void set_layout_spacing(u16 layout_spacing) {
-        m_layout_spacing = layout_spacing;
+    void set_spacing(u16 layout_spacing) {
+        m_spacing = layout_spacing;
     }
     mkb::SpriteAlignment get_alignment() const {
         return m_alignment;
@@ -46,10 +48,10 @@ protected:
     // The layout of widgets within the container.
     // Vertical resizes child widgets to fit the height of the container, then stacks them on top of each other.
     // Horizontal resizes child widgets to fit the width of the container, then orders them left-to-right.
-    alignas(4) ContainerLayout m_layout = ContainerLayout::VERTICAL;
+    alignas(4) LayoutArrangement m_layout = LayoutArrangement::VERTICAL;
 
     // Spacing between widgets in the container.
-    u16 m_layout_spacing = 5;
+    u16 m_spacing = 5;
 
     // Margin around the container
     u16 m_margin = 5;

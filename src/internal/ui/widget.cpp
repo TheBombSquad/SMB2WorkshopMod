@@ -1,7 +1,7 @@
 #include "widget.h"
 
-#include "widget_container.h"
 #include "widget_input.h"
+#include "widget_layout.h"
 #include "widget_menu.h"
 #include "widget_sprite.h"
 #include "widget_text.h"
@@ -42,7 +42,7 @@ T& Widget::add(T* widget) {
 
 // Template specializations to avoid vague linkage
 // This is a ELF section count optimization, only really relevant when compiling with -Os
-template Container& Widget::add<Container>(Container*);
+template Layout& Widget::add<Layout>(Layout*);
 template Text& Widget::add<Text>(Text*);
 template Input& Widget::add<Input>(Input*);
 template Menu& Widget::add<Menu>(Menu*);
