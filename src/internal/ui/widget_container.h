@@ -11,9 +11,9 @@ protected:
     Container(const Vec2d pos, const Vec2d dimensions) : Widget(pos, dimensions) {}
 
 public:
-    virtual ~Container() = default;
     virtual void tick();
     virtual void disp() = 0;
+    virtual ~Container() {};
     Container(const Container&) = delete;
     Container& operator=(const Container&) = delete;
 

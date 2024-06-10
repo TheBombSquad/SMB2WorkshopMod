@@ -7,7 +7,7 @@ Embedded Template Library.
 https://github.com/ETLCPP/etl
 https://www.etlcpp.com
 
-Copyright(c) 2017 John Wellbelove
+Copyright(c) 2018 John Wellbelove
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files(the "Software"), to deal
@@ -45,6 +45,5 @@ SOFTWARE.
 #define ETL_NO_LARGE_CHAR_SUPPORT 0
 #define ETL_CPP11_TYPE_TRAITS_IS_TRIVIAL_SUPPORTED 0
 #define ETL_NO_STL
-#define ETL_NO_CHECKS
 
 #endif
