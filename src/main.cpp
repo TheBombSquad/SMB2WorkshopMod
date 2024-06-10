@@ -1,10 +1,12 @@
 #include "config/config.h"
 #include "internal/assembly.h"
 #include "internal/heap.h"
+#include "internal/log.h"
 #include "internal/modlink.h"
 #include "internal/pad.h"
 #include "internal/patch.h"
 #include "internal/tickable.h"
+#include "internal/ui/ui_manager.h"
 #include "internal/version.h"
 #include "mkb/mkb.h"
 
@@ -28,10 +30,10 @@ since it reports every frame, and thus clutters the console */
 }
 
 void init() {
-    mkb::OSReport("[wsmod] SMB2 Workshop Mod v%d.%d.%d loaded\n",
-                  version::WSMOD_VERSION.major,
-                  version::WSMOD_VERSION.minor,
-                  version::WSMOD_VERSION.patch);
+    LOG("SMB2 Workshop Mod v%d.%d.%d loaded",
+        version::WSMOD_VERSION.major,
+        version::WSMOD_VERSION.minor,
+        version::WSMOD_VERSION.patch);
 
     heap::init();
     modlink::write();
@@ -51,6 +53,8 @@ void init() {
             // These run after all controller inputs have been processed on the current frame,
             // to ensure lowest input delay
 
+            pad::tick();
+
             // Tick functions (REL patches)
             for (const auto& tickable: tickable::get_tickable_manager().get_tickables()) {
                 if (tickable->enabled && tickable->tick) {
@@ -58,7 +62,7 @@ void init() {
                 }
             }
 
-            pad::tick();
+            ui::get_widget_manager().tick();
         });
 }
 

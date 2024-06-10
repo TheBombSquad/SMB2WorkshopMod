@@ -164,7 +164,7 @@ void parse_config() {
         char* eof = config_file_buf + config_file_info.length;
 
         if (read_length > 0) {
-            mkb::OSReport("[wsmod] Now parsing config file...\n");
+            LOG("Now parsing config file...");
             char section[64] = {0};
             char* file = config_file_buf;
             do {
@@ -181,7 +181,7 @@ void parse_config() {
 
                     mkb::strncpy(section, section_start, (section_end - section_start));
 
-                    mkb::OSReport("[wsmod] Now parsing category %s...\n", section);
+                    LOG("Now parsing category %s...", section);
 
                     // Parsing function toggles
                     if (STREQ(section, "REL Patches")) {
@@ -194,20 +194,20 @@ void parse_config() {
 
                     else if (STREQ(section, "Theme IDs")) {
                         parse_stageid_list(section_end, main::theme_id_lookup);
-                        mkb::OSReport("[wsmod]  Theme ID list loaded at: 0x%X\n", &main::theme_id_lookup);
+                        LOG("Theme ID list loaded at: 0x%X", &main::theme_id_lookup);
                     }
 
                     else if (STREQ(section, "Difficulty Layout")) {
-                        mkb::OSReport("%s\n", section);
+                        LOG("%s", section);
                     }
 
                     else if (STREQ(section, "Music IDs")) {
                         parse_stageid_list(section_end, main::bgm_id_lookup);
-                        mkb::OSReport("[wsmod]  Music ID list loaded at: 0x%X\n", &main::bgm_id_lookup);
+                        LOG("Music ID list loaded at: 0x%X", &main::bgm_id_lookup);
                     }
 
                     else {
-                        mkb::OSReport("[wsmod]  Unknown category %s found in config!\n", section);
+                        LOG("Unknown category %s found in config!", section);
                     }
 
                     file = mkb::strchr(section_end, '\n') + 1;
