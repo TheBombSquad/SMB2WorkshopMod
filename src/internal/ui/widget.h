@@ -1,9 +1,9 @@
 #pragma once
 
-#include "etl/delegate.h"
-#include "etl/vector.h"
-#include "etl/string.h"
 #include "etl/bitset.h"
+#include "etl/delegate.h"
+#include "etl/string.h"
+#include "etl/vector.h"
 #include "internal/ui/modifier.h"
 #include "log.h"
 #include "mkb/mkb.h"
@@ -18,18 +18,18 @@ class Modifier;
 // Before optimization pass, the size was 444 bytes.
 class __attribute((aligned(4))) Widget {
 protected:
-    explicit Widget(Vec2d pos = Vec2d{0.f, 0.f}, Vec2d dimensions = Vec2d{0.f, 0.f}) : m_pos(pos), m_dimensions(dimensions){
+    explicit Widget(Vec2d pos = Vec2d{0.f, 0.f}, Vec2d dimensions = Vec2d{0.f, 0.f}) : m_pos(pos), m_dimensions(dimensions) {
         m_flags.set(WIDGET_FLAG_VISIBLE, true);
         m_flags.set(WIDGET_FLAG_ACTIVE, true);
         m_flags.set(WIDGET_FLAG_SORT, true);
     };
-    Vec2d m_pos = Vec2d{0.f, 0.f}; // Position of the widget
-    Vec2d m_dimensions = Vec2d{0.f, 0.f}; // Dimensions - important for containers
-    Vec2d m_scale = Vec2d{1.f, 1.f}; // Scale - the dimensions are generally multiplied by this value
-    float m_depth = 0.1; // How 'deep' the widget is on the screen. Widgets with a depth lower than another widget are 'in front' of the deeper widget.
-    float m_child_depth_step = 0.005; // When we add a child sprite, by how many units should it be 'in front' of the parent?
+    Vec2d m_pos = Vec2d{0.f, 0.f};       // Position of the widget
+    Vec2d m_dimensions = Vec2d{0.f, 0.f};// Dimensions - important for containers
+    Vec2d m_scale = Vec2d{1.f, 1.f};     // Scale - the dimensions are generally multiplied by this value
+    float m_depth = 0.1;                 // How 'deep' the widget is on the screen. Widgets with a depth lower than another widget are 'in front' of the deeper widget.
+    float m_child_depth_step = 0.005;    // When we add a child sprite, by how many units should it be 'in front' of the parent?
     int32_t m_z_rotation = 0;
-    etl::string<8> m_label; // Not as horribly inefficient as you might think
+    etl::string<8> m_label;// Not as horribly inefficient as you might think
 
     static constexpr uint32_t WIDGET_MAX_MODIFIERS = 1;
     etl::vector<etl::unique_ptr<Modifier>, WIDGET_MAX_MODIFIERS> m_tick_modifier;
@@ -39,9 +39,9 @@ protected:
     etl::bitset<8, uint8_t> m_flags;
 
     enum WidgetFlags {
-        WIDGET_FLAG_VISIBLE, // Whether the widget should be drawn - should the disp() func be called?
+        WIDGET_FLAG_VISIBLE,// Whether the widget should be drawn - should the disp() func be called?
         WIDGET_FLAG_ACTIVE, // Whether the widget is active - inactive widgets are queued to be freed
-        WIDGET_FLAG_SORT // Whether the widget should be sorted if it is in a container.
+        WIDGET_FLAG_SORT    // Whether the widget should be sorted if it is in a container.
     };
 
     void* m_user_data = nullptr;

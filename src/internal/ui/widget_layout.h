@@ -16,7 +16,7 @@ class Layout : public Container {
 public:
     Layout(const Vec2d pos, const Vec2d dimensions);
     virtual void tick() override;
-    virtual void disp() override{};
+    virtual void disp() override {};
     ~Layout();
 
     LayoutArrangement get_arrangement() const {

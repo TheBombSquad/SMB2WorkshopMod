@@ -42,7 +42,7 @@ public:
     Input(pad::Dir direction, WidgetCallback callback);
     ~Input();
     virtual void tick() override;
-    virtual void disp() override{};
+    virtual void disp() override {};
 
     mkb::PadDigitalInput get_input() const {
         return m_input;

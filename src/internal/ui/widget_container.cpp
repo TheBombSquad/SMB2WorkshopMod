@@ -20,7 +20,6 @@ void Container::tick() {
         iter->get()->tick();
         ++iter;
     }
-
 }
 
 // Add child widget, and return a reference to the added child
