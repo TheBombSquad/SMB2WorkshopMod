@@ -57,7 +57,7 @@ void Container::remove(Widget& widget) {
 // Remove child widget by label
 void Container::remove(const char* label) {
     for (auto& widget: m_children) {
-        if (strcmp(label, widget->get_label().c_str()) == 0) {
+        if (strcmp(label, widget->get_label()) == 0) {
             widget->set_inactive();
             break;
         }

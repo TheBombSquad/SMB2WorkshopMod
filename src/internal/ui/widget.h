@@ -29,7 +29,7 @@ protected:
     float m_depth = 0.1;                 // How 'deep' the widget is on the screen. Widgets with a depth lower than another widget are 'in front' of the deeper widget.
     float m_child_depth_step = 0.005;    // When we add a child sprite, by how many units should it be 'in front' of the parent?
     int32_t m_z_rotation = 0;
-    etl::string<8> m_label;// Not as horribly inefficient as you might think
+    const char* m_label = "";
 
     static constexpr uint32_t WIDGET_MAX_MODIFIERS = 1;
     etl::vector<etl::unique_ptr<Modifier>, WIDGET_MAX_MODIFIERS> m_tick_modifier;
@@ -74,7 +74,7 @@ public:
     uint32_t is_visible() const { return m_flags[WIDGET_FLAG_VISIBLE]; }
     void set_visible(bool is_visible) { m_flags.set(WIDGET_FLAG_VISIBLE, is_visible); }
 
-    const etl::string<8>& get_label() const { return m_label; }
+    const char* get_label() const { return m_label; }
     void set_label(const char* mLabel) { m_label = mLabel; }
 
     // Marks the widget as inactive (queued to be removed)

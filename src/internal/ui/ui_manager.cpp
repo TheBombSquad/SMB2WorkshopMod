@@ -50,7 +50,7 @@ void WidgetManager::remove(Widget& widget) {
 
 void WidgetManager::remove(const char* label) {
     for (auto iter = m_widgets.begin(); iter != m_widgets.end();) {
-        if (strcmp(label, iter->get()->get_label().c_str()) == 0) {
+        if (strcmp(label, iter->get()->get_label()) == 0) {
             iter->get()->set_inactive();
             break;
         }
@@ -68,7 +68,7 @@ void WidgetManager::clear() {
 
 Widget& WidgetManager::find(const char* label) {
     for (auto& widget: m_widgets) {
-        if (strcmp(label, widget->get_label().c_str()) == 0) {
+        if (strcmp(label, widget->get_label()) == 0) {
             return *widget;
         }
     }
