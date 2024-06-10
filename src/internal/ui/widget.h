@@ -48,7 +48,7 @@ protected:
 public:
     virtual void tick();
     virtual void disp() = 0;
-    virtual ~Widget() {};
+    virtual ~Widget(){};
     Widget(const Widget&) = delete;
     Widget& operator=(const Widget&) = delete;
 

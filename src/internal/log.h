@@ -9,24 +9,24 @@ constexpr char* LOG_PREFIX_LINE = "[wsmod] At %s:%d: ";
 // These seem terribly hacky, maybe a better replacement could be made in the future
 // Maybe we could even show a custom crash screen!
 
-#define MOD_ASSERT(exp)                                                               \
-    ({                                                                                \
-        if (!(exp)) {                                                                 \
+#define MOD_ASSERT(exp)                                                          \
+    ({                                                                           \
+        if (!(exp)) {                                                            \
             mkb::OSPanic(__FILE__, __LINE__, "Failed assertion " #exp);          \
             LOG("Failed assertion in %s line %d: %s", __FILE__, __LINE__, #exp); \
-            while (true)                                                              \
-                ;                                                                     \
-        }                                                                             \
+            while (true)                                                         \
+                ;                                                                \
+        }                                                                        \
     })
 
-#define MOD_ASSERT_MSG(exp, msg)                                                       \
-    ({                                                                                 \
-        if (!(exp)) {                                                                  \
+#define MOD_ASSERT_MSG(exp, msg)                                                  \
+    ({                                                                            \
+        if (!(exp)) {                                                             \
             mkb::OSPanic(__FILE__, __LINE__, msg);                                \
             LOG("Failed assertion in %s line %d: %s", __FILE__, __LINE__, (msg)); \
-            while (true)                                                               \
-                ;                                                                      \
-        }                                                                              \
+            while (true)                                                          \
+                ;                                                                 \
+        }                                                                         \
     })
 
 // Fancy logging - note that this is less space-efficient than just calling mkb::OSReport
@@ -38,12 +38,12 @@ constexpr char* LOG_PREFIX_LINE = "[wsmod] At %s:%d: ";
     }
 
 #if DEBUG_LOGGING
-#define LOG_DEBUG(msg, ...)                                                       \
-                                                                                  \
-    {                                                                             \
+#define LOG_DEBUG(msg, ...)                                                  \
+                                                                             \
+    {                                                                        \
         mkb::printf(const_cast<char*>(LOG_PREFIX_LINE), __FILE__, __LINE__); \
-        mkb::printf(const_cast<char*>(msg), ##__VA_ARGS__);                       \
-        mkb::printf("\n");                                                        \
+        mkb::printf(const_cast<char*>(msg), ##__VA_ARGS__);                  \
+        mkb::printf("\n");                                                   \
     }
 #else
 #define LOG_DEBUG(msg, ...)

@@ -17,7 +17,7 @@ protected:
 public:
     virtual void tick();
     virtual void disp() = 0;
-    virtual ~Container() {};
+    virtual ~Container(){};
     Container(const Container&) = delete;
     Container& operator=(const Container&) = delete;
 

@@ -27,11 +27,11 @@ void sprite_init(float x, float y) {
     char* author_name;
 
     if (mkb::current_stage_id >= 0 && mkb::current_stage_id < STAGE_COUNT) {
-        if (mkb::main_mode != mkb::MD_EXOPT) { 
-            author_name = author_list[mkb::current_stage_id]; // Handle the name to load in most cases
+        if (mkb::main_mode != mkb::MD_EXOPT) {
+            author_name = author_list[mkb::current_stage_id];// Handle the name to load in most cases
         }
         else {
-            author_name = author_list[mkb::g_replay_stage_id_to_load]; // Handle the name to load when loading a replay
+            author_name = author_list[mkb::g_replay_stage_id_to_load];// Handle the name to load when loading a replay
         }
     }
     else {
