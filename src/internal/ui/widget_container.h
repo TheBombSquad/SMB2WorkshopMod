@@ -8,6 +8,8 @@ class Container : public Widget {
 protected:
     static constexpr uint32_t WIDGET_MAX_CHILDREN = 12;
     etl::vector<etl::unique_ptr<Widget>, WIDGET_MAX_CHILDREN> m_children;
+
+    float m_child_depth_step = 0.005;    // When we add a child sprite, by how many units should it be 'in front' of the parent?
     Container(const Vec2d pos, const Vec2d dimensions) : Widget(pos, dimensions) {}
 
 public:

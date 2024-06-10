@@ -27,7 +27,6 @@ protected:
     Vec2d m_dimensions = Vec2d{0.f, 0.f};// Dimensions - important for containers
     Vec2d m_scale = Vec2d{1.f, 1.f};     // Scale - the dimensions are generally multiplied by this value
     float m_depth = 0.1;                 // How 'deep' the widget is on the screen. Widgets with a depth lower than another widget are 'in front' of the deeper widget.
-    float m_child_depth_step = 0.005;    // When we add a child sprite, by how many units should it be 'in front' of the parent?
     int32_t m_z_rotation = 0;
     const char* m_label = "";
 
