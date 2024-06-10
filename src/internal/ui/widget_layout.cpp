@@ -4,7 +4,7 @@
 
 namespace ui {
 
-Layout::Layout(const Vec2d pos, const Vec2d dimensions) : Widget(pos, dimensions) {}
+Layout::Layout(const Vec2d pos, const Vec2d dimensions) : Container(pos, dimensions) {}
 Layout::~Layout() = default;
 
 void Layout::tick() {
@@ -114,7 +114,7 @@ void Layout::tick() {
             child_iterator++;
         }
     }
-    Widget::tick();
+    Container::tick();
 }
 
 }// namespace ui

@@ -31,9 +31,6 @@ protected:
     int32_t m_z_rotation = 0;
     etl::string<8> m_label; // Not as horribly inefficient as you might think
 
-    static constexpr uint32_t WIDGET_MAX_CHILDREN = 12;
-    etl::vector<etl::unique_ptr<Widget>, WIDGET_MAX_CHILDREN> m_children;
-
     static constexpr uint32_t WIDGET_MAX_MODIFIERS = 1;
     etl::vector<etl::unique_ptr<Modifier>, WIDGET_MAX_MODIFIERS> m_tick_modifier;
 
@@ -56,12 +53,6 @@ public:
     Widget(const Widget&) = delete;
     Widget& operator=(const Widget&) = delete;
 
-    // Add child widget, and return a reference to the added child
-    template<typename T>
-    T& add(T* widget);
-    void remove(Widget& widget);
-    void remove(const char* label);
-    void clear();
 
     const Vec2d& get_pos() const { return m_pos; }
     void set_pos(const Vec2d& m_pos) { Widget::m_pos = m_pos; }
@@ -87,7 +78,7 @@ public:
     void set_label(const char* mLabel) { m_label = mLabel; }
 
     // Marks the widget as inactive (queued to be removed)
-    static void set_inactive(Widget& widget);
+    void set_inactive();
 
     // Checks if the widget is active (not queued to be removed
     bool is_inactive() { return !m_flags[WIDGET_FLAG_ACTIVE]; }
@@ -118,7 +109,6 @@ public:
     void set_sort(bool sort) {
         m_flags.set(WIDGET_FLAG_SORT, sort);
     }
-    void free_inactive();
 };
 
 }// namespace ui

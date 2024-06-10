@@ -3,7 +3,7 @@
 #include "internal/pad.h"
 #include "internal/tickable.h"
 #include "internal/ui/ui_manager.h"
-#include "internal/ui/widget_container.h"
+#include "internal/ui/widget_layout.h"
 #include "internal/ui/widget_text.h"
 #include "internal/ui/widget_window.h"
 

@@ -39,7 +39,7 @@ void WidgetManager::tick() {
 void WidgetManager::remove(Widget& widget) {
     for (auto iter = m_widgets.begin(); iter != m_widgets.end();) {
         if (&widget == iter->get()) {
-            Widget::set_inactive(*iter->get());
+            iter->get()->set_inactive();
             break;
         }
         else {
@@ -51,7 +51,7 @@ void WidgetManager::remove(Widget& widget) {
 void WidgetManager::remove(const char* label) {
     for (auto iter = m_widgets.begin(); iter != m_widgets.end();) {
         if (strcmp(label, iter->get()->get_label().c_str()) == 0) {
-            Widget::set_inactive(*iter->get());
+            iter->get()->set_inactive();
             break;
         }
         else {
@@ -72,6 +72,7 @@ Widget& WidgetManager::find(const char* label) {
             return *widget;
         }
     }
+    LOG("Failed to find: %s\n", label);
     MOD_ASSERT_MSG(false, "Failed to find widget!");
 }
 WidgetManager& get_widget_manager() {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "internal/ui/widget.h"
+#include "internal/ui/widget_container.h"
 
 namespace ui {
 
@@ -12,7 +12,7 @@ enum class LayoutArrangement {
 
 
 // Widget for neatly organizing other widgets
-class Layout : public Widget {
+class Layout : public Container {
 public:
     Layout(const Vec2d pos, const Vec2d dimensions);
     virtual void tick() override;
