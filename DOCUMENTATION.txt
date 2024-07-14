@@ -1,0 +1,87 @@
+
+Usage:
+You run ./PPCInject [input file name] [file name to output to] [one or more assembly files]
+
+Terminology:
+A ``function'' is a snippet of code. It need not be an actual function. 
+You could use it to replace a few lines of code, or a whole function
+I got this convention from Star Rod, the epic Paper Mario tool
+
+Format of assembly files:
+An assembly file is made up of one or more functions. 
+
+To start a function, you write a line like: 
+#function [function label] [offset] (optionally maxSize [max size])
+A function label must start with a dollar sign, like $betta
+A offset can either be a unsigned offset or "after [function label]"
+When you use "after $betta", you are saying that you want to have a function placed after the code for function $betta
+You could optionally put "maxSize [size]" at the end, which makes sure that you don't write more code the max size you specify allows
+
+After that, for the body of the function, each line either specifies a local label or an instruction
+A local label must start with a period, like .bagel
+You would write an instruction just like the PowerPC documentation tells you to.
+There are some shortcuts like andi instead of andi. , and cmpw r2,r1 instead of cmpw cr0,r2,r1
+Note that Dolphin's convention of adding +/- to the end of conditional branches instruction names is NOT supported.
+
+To end a function, just start another function with the #function line. The end of the file also ends a function 
+
+Throughout, you could use the percent sign to specify line comments
+
+You may also specify global offsets by using "#offset [offset label] [offset]". These let you specify out of file offsets
+An offset label must start with an '@'
+
+IMPORTANT: Any offset that you specify is relative to how far we are from the beginning of the file.
+For example, if we want to replace function at RAM address 0x803133cc and the file is loaded at 0x80270100, the offset we want is 803133cc-80270100 = a32cc
+Keep this in mind also when specify out-of-file addresses using #offset
+The number system defaults to decimal so be sure to use "0x" when specify hexadecimal
+
+
+See my example bagel.asm to see an example of an assembly file
+
+Instructions supported:
+b/bl
+bc/bcl/beq/bne/bgt/blt/bge/ble
+blr
+cmpw
+cmplw
+cmpwi
+cmplwi
+add
+mullw
+subf/sub
+and
+or/mr
+nand
+nor/not
+xor
+slw
+sraw
+srw
+extsb
+extsh
+addi/li
+addis/lis
+mulli
+andi/andi.
+andis/andis.
+ori/nop
+oris
+xori
+xoris
+rlwinm
+lbz
+lhz
+lha
+lwz
+stb
+sth
+stw
+stwu
+lwzx
+lfs
+lfd
+stfs
+fmr
+mflr
+mtlr
+Can specify the machine code for an instruction (for example, mflr r0 can be specified by writing 0x7c0802a6)

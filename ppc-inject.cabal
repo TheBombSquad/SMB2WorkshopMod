@@ -1,0 +1,77 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.4.
+--
+-- see: https://github.com/sol/hpack
+
+name:           ppc-inject
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/ppc-inject#readme>
+homepage:       https://github.com/githubuser/ppc-inject#readme
+bug-reports:    https://github.com/githubuser/ppc-inject/issues
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2021 Author name here
+license:        BSD3
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/ppc-inject
+
+library
+  exposed-modules:
+      FileParser
+      FileStuff
+      Helpers
+      HexStuff
+      InstructionParser
+      InstructionSet
+      LabelResolver
+      Lib
+      Main
+      ParseHelpers
+      ParseMonad
+      Types
+  other-modules:
+      Paths_ppc_inject
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , bytestring
+    , dlist
+    , free
+    , lens
+    , mtl
+    , semigroupoids
+  default-language: Haskell2010
+
+executable PPCInject
+  main-is: Main.hs
+  other-modules:
+      FileParser
+      FileStuff
+      Helpers
+      HexStuff
+      InstructionParser
+      InstructionSet
+      LabelResolver
+      Lib
+      ParseHelpers
+      ParseMonad
+      Types
+      Paths_ppc_inject
+  hs-source-dirs:
+      src
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , bytestring
+    , dlist
+    , free
+    , lens
+    , mtl
+    , ppc-inject
+    , semigroupoids
+  default-language: Haskell2010
