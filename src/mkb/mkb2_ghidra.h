@@ -7015,7 +7015,7 @@ extern "C" {
     void PSMTXScale(double param_1, double param_2, double param_3, float * param_4);
     void C_MTXLookAt(Mtx * mtx, struct Vec * cam_pos, struct Vec * cam_up, struct Vec * target);
     void C_MTXFrustum(double param_1, double param_2, double param_3, double param_4, double param_5, double param_6, float * param_7);
-    void C_MTXPerspective(Mtx44 * m, double fovy, double aspect, double n, double f);
+    void C_MTXPerspective(Mtx44 m, double fovy, double aspect, double n, double f);
     void C_MTXOrtho(double param_1, double param_2, double param_3, double param_4, double param_5, double param_6, float * m);
     void PSVECAdd(float * param_1, float * param_2, float * param_3);
     void PSVECSubtract(float * param_1, float * param_2, float * param_3);
@@ -7448,7 +7448,7 @@ extern "C" {
     void GXBeginDisplayList(void * list, u32 size);
     u32 GXEndDisplayList(void);
     void GXCallDisplayList(void * list, u32 nbytes);
-    void GXSetProjection(f32 mtx[4][4], GXProjectionType  type);
+    void GXSetProjection(Mtx44 mtx, GXProjectionType  type);
     void GXSetProjectionv(f32 * ptr);
     void GXGetProjectionv(float * ptr);
     undefined8 WriteMTXPS4x3(float * param_1, float * param_2);

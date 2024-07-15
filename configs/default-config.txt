@@ -197,6 +197,7 @@
 	four-digit-banana-counter: disabled
 	fix-minimap-color: disabled
 	fix-widescreen: disabled
+	smb1-timer: disabled
 }
 
 // Toggles which party games are accessible from the party game menu.
