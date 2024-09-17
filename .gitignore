@@ -287,3 +287,4 @@ __pycache__/
 /ApeSphere.*
 /.qtc_clangd
 /out
+/.cache
