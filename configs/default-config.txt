@@ -193,6 +193,7 @@
 	enable-menu-reflections: disabled
 	custom-world-count: 10
 	stobj-draw-fix: disabled
+	stage-author-names: disabled
 	fix-view-stage: disabled
 	four-digit-banana-counter: disabled
 	fix-minimap-color: disabled
