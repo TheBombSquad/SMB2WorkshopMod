@@ -71,7 +71,7 @@ void init_main_game() {
     mkb::memset(death_count, 0, sizeof(death_count));
 
     patch::write_nop(reinterpret_cast<void*>(0x808fa4f4));
-    patch::write_nop(reinterpret_cast<void*>(0x808f509c));
+    patch::write_nop(reinterpret_cast<void*>(0x802b8210));
 
     patch::write_branch_bl(reinterpret_cast<void*>(0x808fa560), reinterpret_cast<void*>(update_death_count));
     patch::write_branch(reinterpret_cast<void*>(mkb::sprite_monkey_counter_tick),
