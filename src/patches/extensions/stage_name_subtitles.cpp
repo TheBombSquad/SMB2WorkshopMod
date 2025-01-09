@@ -1,4 +1,4 @@
-#include "stage_author_names.h"
+#include "stage_name_subtitles.h"
 
 #include "internal/heap.h"
 #include "internal/log.h"
@@ -7,35 +7,35 @@
 #include "mkb/mkb.h"
 
 
-// Allows for stage author names to be displayed under the stage name.
-namespace stage_author_names {
+// Allows for subtitles to be displayed under the stage name.
+namespace stage_name_subtitles {
 
 TICKABLE_DEFINITION((
-        .name = "stage-author-names",
-        .description = "Stage author name display",
+        .name = "stage-name-subtitles",
+        .description = "Stage name subtitles",
         .init_main_loop = init_main_loop,
         .init_exoption = init_exoption, ))
 
-static char author_file_path[] = "/stgname/authors.str";
-static char author_fallback_name = '\0';
-static char* author_file_buf = nullptr;
+static char subtitle_file_path[] = "/stgname/subtitles.str";
+static char fallback_subtitle = '\0';
+static char* subtitle_file_buf = nullptr;
 static constexpr u16 STAGE_COUNT = 421;
-static char author_list[STAGE_COUNT][64];
+static char subtitle_list[STAGE_COUNT][64];
 
 void sprite_init(float x, float y) {
 
-    char* author_name;
+    char* subtitle;
 
     if (mkb::current_stage_id >= 0 && mkb::current_stage_id < STAGE_COUNT) {
         if (mkb::main_mode != mkb::MD_EXOPT) {
-            author_name = author_list[mkb::current_stage_id];// Handle the name to load in most cases
+            subtitle = subtitle_list[mkb::current_stage_id];// Handle the subtitle to load in most cases
         }
         else {
-            author_name = author_list[mkb::g_replay_stage_id_to_load];// Handle the name to load when loading a replay
+            subtitle = subtitle_list[mkb::g_replay_stage_id_to_load];// Handle the subtitle to load when loading a replay
         }
     }
     else {
-        author_name = &author_fallback_name;
+        subtitle = &fallback_subtitle;
     }
 
     mkb::Sprite* sprite = mkb::create_sprite();
@@ -56,7 +56,7 @@ void sprite_init(float x, float y) {
         sprite->field22_0x24 = 1.0;
         sprite->g_flags1 = sprite->g_flags1 | 0xa1000000;
         sprite->widescreen_translation_x = 0x60;
-        mkb::sprintf(sprite->text, author_name);
+        mkb::sprintf(sprite->text, subtitle);
         sprite->tick_func = mkb::sprite_hud_stage_name_tick;
     }
 
@@ -78,49 +78,49 @@ void sprite_init(float x, float y) {
         sprite_shadow->field22_0x24 = 0;
         sprite_shadow->g_flags1 = sprite->g_flags1 | 0xa1000000;
         sprite_shadow->widescreen_translation_x = 0x60;
-        mkb::sprintf(sprite_shadow->text, author_name);
+        mkb::sprintf(sprite_shadow->text, subtitle);
         sprite_shadow->tick_func = mkb::sprite_hud_stage_name_tick;
     }
 }
 
 void init_main_loop() {
-    // Read the author file. This should only be run once.
-    if (author_file_buf == nullptr) {
-        mkb::DVDFileInfo author_file_info;
-        int author_file_length = mkb::DVDOpen(author_file_path, &author_file_info);
+    // Read the subtitle file. This should only be run once.
+    if (subtitle_file_buf == nullptr) {
+        mkb::DVDFileInfo subtitle_file_info;
+        int subtitle_file_length = mkb::DVDOpen(subtitle_file_path, &subtitle_file_info);
 
-        MOD_ASSERT_MSG(author_file_length != 0,
-                       "Author name file (stgname/authors.str) failed to load from disc");
+        MOD_ASSERT_MSG(subtitle_file_length != 0,
+                       "Subtitle file (stgname/subtitles.str) failed to load from disc");
 
-        // Round the length of the author file to a multiple of 32, necessary for DVDReadAsyncPrio
-        author_file_length = (author_file_info.length + 0x1f) & 0xffffffe0;
-        author_file_buf = static_cast<char*>(heap::alloc(author_file_length));
-        author_file_length = mkb::read_entire_file_using_dvdread_prio_async(&author_file_info, author_file_buf,
-                                                                            author_file_length, 0);
-        char* eof = author_file_buf + author_file_info.length;
+        // Round the length of the subtitle file to a multiple of 32, necessary for DVDReadAsyncPrio
+        subtitle_file_length = (subtitle_file_info.length + 0x1f) & 0xffffffe0;
+        subtitle_file_buf = static_cast<char*>(heap::alloc(subtitle_file_length));
+        subtitle_file_length = mkb::read_entire_file_using_dvdread_prio_async(&subtitle_file_info, subtitle_file_buf,
+                                                                            subtitle_file_length, 0);
+        char* eof = subtitle_file_buf + subtitle_file_info.length;
 
-        MOD_ASSERT_MSG(author_file_length != 0,
-                       "Author name file (stgname/authors.str) failed to load from disc");
+        MOD_ASSERT_MSG(subtitle_file_length != 0,
+                       "Subtitle file (stgname/subtitles.str) failed to load from disc");
 
-        LOG("Now parsing stage author list file...");
+        LOG("Now parsing stage subtitle list file...");
         u16 current_stage_id = 0;
 
         do {
             char name[128] = {0};
-            char* name_end = mkb::strchr(author_file_buf, '\n');
+            char* name_end = mkb::strchr(subtitle_file_buf, '\n');
             MOD_ASSERT_MSG(name_end != nullptr,
-                           "Author name author_file_buf ended unexpectedly, please ensure there are 421 lines in the author_file_buf");
-            MOD_ASSERT_MSG((name_end - author_file_buf) < 128,
-                           "Author name for a stage is greater than the limit of 127 characters");
+                           "Subtitle subtitle_file_buf ended unexpectedly, please ensure there are 421 lines in the subtitle_file_buf");
+            MOD_ASSERT_MSG((name_end - subtitle_file_buf) < 128,
+                           "Subtitle for a stage is greater than the limit of 127 characters");
 
-            mkb::strncpy(name, author_file_buf, (name_end - author_file_buf));
+            mkb::strncpy(name, subtitle_file_buf, (name_end - subtitle_file_buf));
 
-            mkb::strcpy(author_list[current_stage_id], name);
+            mkb::strcpy(subtitle_list[current_stage_id], name);
             current_stage_id++;
-            author_file_buf = name_end + 1;
-        } while (current_stage_id < STAGE_COUNT && author_file_buf <= eof);
+            subtitle_file_buf = name_end + 1;
+        } while (current_stage_id < STAGE_COUNT && subtitle_file_buf <= eof);
 
-        mkb::DVDClose(&author_file_info);
+        mkb::DVDClose(&subtitle_file_info);
     }
 
     static patch::Tramp<decltype(&mkb::create_hud_stage_name_sprites)> s_stage_name_tramp;
@@ -142,4 +142,4 @@ void init_exoption() {
         });
 }
 
-}// namespace stage_author_names
+}// namespace stage_name_subtitles
