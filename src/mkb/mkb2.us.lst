@@ -8206,6 +8206,7 @@
 804727A8:switchdataD_8039c560
 804727EC:switchdataD_8039c5a4
 80472824:switchdataD_8039c5dc
+80472A28:ball_colors
 80472A80:switchdataD_8039c838
 80472F40:switchdataD_8039ccf8
 80473100:g_fog_type
@@ -8769,6 +8770,7 @@
 8061CC60:storymode_save_files
 8061CF58:g_storymode_unlock_entries_copy
 8061CF65:g_cm_unlock_entries_copy
+8061CF7B:autosave
 8061FB20:g_some_string
 8061FC10:g_some_pad_motor_array1
 8061FC20:g_some_pad_motor_array2
@@ -9385,8 +9387,13 @@
 8097F4F8:g_are_story_select_sprites_visible
 8097F4FC:g_amount_of_stages_per_world
 8097F4FE:g_amount_of_beaten_stages_in_world
+8097F508:g_story_select_sprites_anim_state
+8097F50A:g_story_select_sprites_timer
 8097F50C:some_ape_float
 8097F510:some_ape_float2
+8097F514:g_some_story_select_sprite_timer
+8097F518:g_some_story_select_sprite_timer_2
+8097F51C:g_some_story_select_sprite_initial_timer
 8097F534:some_ape_float3
 8097F750:g_storymode_preview_textures
 8098005C:g_storymode_stageselect_state
