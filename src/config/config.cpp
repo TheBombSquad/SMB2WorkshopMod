@@ -136,6 +136,7 @@ void parse_function_toggles(char* buf) {
 
                     // Set the enabled to the parsed value, if it differes from the default passed value
                     if (parsed_value != tickable->active_value) {
+                        tickable->enabled = true;
                         tickable->active_value = parsed_value;
                         break;
                     }
