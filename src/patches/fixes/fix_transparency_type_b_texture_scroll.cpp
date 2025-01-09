@@ -9,7 +9,6 @@ namespace fix_transparency_type_b_texture_scroll {
 TICKABLE_DEFINITION((
         .name = "fix-transparency-type-b-texture-scroll",
         .description = "Transparency Type B texture scroll fix",
-        .enabled = true,
         .init_main_loop = init_main_loop, ))
 
 // Always return 'true' for a specific instruction that checks if the texture should

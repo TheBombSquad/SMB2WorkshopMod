@@ -185,7 +185,7 @@
 	skip-intro-movie: disabled
 	smb1-camera-toggle: disabled
 	fix-missing-w: disabled
-	skip-cutscenes: disabled
+	skip-cutscenes: 0
 	remove-playpoints: disabled
 	fix-storm-continue-platform: disabled
 	fix-any-percent-crash: disabled

@@ -9,7 +9,6 @@ namespace fix_view_stage {
 TICKABLE_DEFINITION((
         .name = "fix-view-stage",
         .description = "Various 'View Stage' fixes",
-        .enabled = true,
         .init_main_game = init_main_game, ))
 
 void new_render_func(void) {

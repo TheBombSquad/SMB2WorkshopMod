@@ -1,21 +1,27 @@
-#include "story_skip_cutscenes.h"
+#include "skip_cutscenes.h"
 
 #include "internal/patch.h"
 #include "internal/tickable.h"
 #include "mkb/mkb.h"
+#include "utils/ppcutil.h"
 
 
-namespace story_skip_cutscenes {
+namespace skip_cutscenes {
+
+static u16 DEFAULT_CUTSCENE_SKIP_SETTING = 0;
 
 TICKABLE_DEFINITION((
         .name = "skip-cutscenes",
         .description = "Cutscene skip patch",
+        .active_value = DEFAULT_CUTSCENE_SKIP_SETTING,
+        .lower_bound = 0,
+        .upper_bound = 3,
         .init_main_game = init_main_game, ))
 
 constexpr auto WORLD_COUNT = 10;// TODO: attach to patch that changes this
 
 // Skips cutscenes in story mode.
-// TODO: Maybe fade the screen out so the transition screen color is not based off the  world fog
+// TODO: Maybe fade the screen out so the transition screen color is not based off the world fog
 
 // Variable for keeping track of the 'state' of the current story mode game.
 // This basically represents the active world, except world 11 is the credits sequence,
@@ -119,6 +125,8 @@ void handle_preloading() {
 }
 
 void init_main_game() {
+    // 1 skips Story cutscenes only, 2 skips Challenge cutscenes only, 3 skips both
+    if (active_tickable_ptr->active_value == 1) {
     patch::write_branch(reinterpret_cast<void*>(mkb::dmd_scen_newgame_main),
                         reinterpret_cast<void*>(dmd_scen_newgame_main_patch));
     patch::write_branch(reinterpret_cast<void*>(mkb::dmd_scen_sceneplay_init),
@@ -127,6 +135,28 @@ void init_main_game() {
                         reinterpret_cast<void*>(dmd_scen_sel_floor_init_patch));
     patch::write_branch(reinterpret_cast<void*>(mkb::g_preload_next_stage_files),
                         reinterpret_cast<void*>(handle_preloading));
+    }
+    else if (active_tickable_ptr->active_value == 2) {
+        // In the function which handles what to do when you goal, start the credits
+        // sequence instead of the ending cutscene in Challenge Mode
+        patch::write_word(reinterpret_cast<void*>(0x808f6274), PPC_INSTR_LI(PPC_R0, mkb::MD_GAME));
+        patch::write_word(reinterpret_cast<void*>(0x808f6284), PPC_INSTR_LI(PPC_R0, mkb::SMD_GAME_ROLL_INIT));
+    }
+    else if (active_tickable_ptr->active_value == 3) {
+    patch::write_branch(reinterpret_cast<void*>(mkb::dmd_scen_newgame_main),
+                        reinterpret_cast<void*>(dmd_scen_newgame_main_patch));
+    patch::write_branch(reinterpret_cast<void*>(mkb::dmd_scen_sceneplay_init),
+                        reinterpret_cast<void*>(dmd_scen_sceneplay_init_patch));
+    patch::write_branch(reinterpret_cast<void*>(mkb::dmd_scen_sel_floor_init),
+                        reinterpret_cast<void*>(dmd_scen_sel_floor_init_patch));
+    patch::write_branch(reinterpret_cast<void*>(mkb::g_preload_next_stage_files),
+                        reinterpret_cast<void*>(handle_preloading));
+    patch::write_word(reinterpret_cast<void*>(0x808f6274), PPC_INSTR_LI(PPC_R0, mkb::MD_GAME));
+    patch::write_word(reinterpret_cast<void*>(0x808f6284), PPC_INSTR_LI(PPC_R0, mkb::SMD_GAME_ROLL_INIT));
+    }
+    else {
+        return;
+    }
 }
 
-}// namespace story_skip_cutscenes
+}// namespace skip_cutscenes
