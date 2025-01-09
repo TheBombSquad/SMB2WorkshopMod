@@ -2,6 +2,6 @@
 
 namespace fix_storm_continue_platform {
 
-void init_main_loop();
+void tick();
 
 }// namespace fix_storm_continue_platform
