@@ -80,7 +80,7 @@ void init_main_game() {
 }
 
 // In the function which handles inputs on the Challenge Mode level select
-// menu, change the check for unlocked monkeys to be less than 3 to less than
+// menu, change the check for unlocked monkeys to be less than 4 to less than
 // 255, effectively never displaying the Gameplay Settings menu
 void init_sel_ngc() {
     patch::write_word(reinterpret_cast<void*>(0x808ffb14), 0x2c0300ff); // cmpwi r3, 255
