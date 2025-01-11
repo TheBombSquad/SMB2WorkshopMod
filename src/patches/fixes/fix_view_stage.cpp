@@ -16,7 +16,6 @@ void new_render_func(void) {
     bool bVar4;
     mkb::uint uVar2;
     mkb::GmaModel* pGVar3;
-    int* piVar5;
     mkb::StagedefStageModelPtrB* pSVar6;
     int iVar7;
     mkb::StagedefStageModelInstance* pSVar8;
@@ -101,20 +100,17 @@ void new_render_func(void) {
     }
     if (mkb::g_some_draw_var != (int*) 0x0) {
         mkb::mtxa_from_mtxb();
-        for (piVar5 = mkb::g_some_draw_var; *piVar5 != 0; piVar5 = piVar5 + 6) {
-            mkb::g_some_draw_func5((int*) piVar5[5]);
-        }
     }
     mkb::g_draw_collision_triangles();
     return;
 }
 
 void init_main_game() {
-    // Prevent background animations from animating twice as fast in 'View Stage'
-    patch::write_nop(reinterpret_cast<void*>(0x80912d90));
     patch::write_branch(
         reinterpret_cast<void*>(mkb::g_smth_with_rendering_models_for_reflective_surfaces),
         reinterpret_cast<void*>(new_render_func));
+    // Prevent background animations from animating twice as fast in 'View Stage'
+    patch::write_nop(reinterpret_cast<void*>(0x80912d90));
 }
 
 }// namespace fix_view_stage

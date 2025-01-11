@@ -9,7 +9,6 @@ namespace fix_monkey_counter {
 TICKABLE_DEFINITION((
         .name = "fix-monkey-counter",
         .description = "Monkey counter sprite fix",
-        .enabled = true,
         .init_main_loop = init_main_loop, ))
 
 // In the function responsible for displaying the monkey
