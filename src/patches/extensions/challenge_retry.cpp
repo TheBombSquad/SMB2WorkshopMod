@@ -10,7 +10,6 @@ namespace challenge_retry {
 TICKABLE_DEFINITION((
         .name = "challenge-mode-retry",
         .description = "Challenge Mode retry",
-        .enabled = true,
         .init_main_loop = init))
 
 static patch::Tramp<decltype(&mkb::pause_game)> s_pause_game_tramp;
