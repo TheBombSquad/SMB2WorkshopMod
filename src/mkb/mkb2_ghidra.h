@@ -5664,7 +5664,7 @@ extern "C" {
     extern float FLOAT0;
     extern float FLOAT1;
     extern float FLOAT400;
-    extern undefined1 pausemenu_entry_counts;
+    extern byte pausemenu_entry_counts[8];
     extern undefined4 g_something_with_camera;
     extern double g_related_to_camera_turn_rate_and_stage_tilt;
     extern float camera_near_clip_z;
@@ -5878,6 +5878,9 @@ extern "C" {
     extern pointer switchdataD_803a8800;
     extern pointer switchdataD_803a8894;
     extern undefined * switchdataD_803a88cc;
+    extern char * challenge_play_pausemenu_entries[24];
+    extern char * goal_pausemenu_entries[24];
+    extern char * * pausemenu_entry_pointers[16];
     extern char LOADIN_TEXT_ROUND[9];
     extern char LOADIN_TEXT_WORLD[12];
     extern char LOADIN_TEXT_MASTER_EX[12];

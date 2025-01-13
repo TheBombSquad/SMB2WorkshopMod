@@ -8313,6 +8313,9 @@
 8047EA48:switchdataD_803a8800
 8047EADC:switchdataD_803a8894
 8047EB14:switchdataD_803a88cc
+8047EED4:challenge_play_pausemenu_entries
+8047EF94:goal_pausemenu_entries
+8047F4A4:pausemenu_entry_pointers
 8047F770:LOADIN_TEXT_ROUND
 8047F77C:LOADIN_TEXT_WORLD
 8047F788:LOADIN_TEXT_MASTER_EX
