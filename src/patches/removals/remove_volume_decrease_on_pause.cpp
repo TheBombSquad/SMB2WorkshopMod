@@ -1,12 +1,12 @@
-#include "pause_volume_fix.h"
+#include "remove_volume_decrease_on_pause.h"
 
 #include "internal/patch.h"
 #include "internal/tickable.h"
 
-namespace pause_volume_fix {
+namespace remove_volume_decrease_on_pause {
 
 TICKABLE_DEFINITION((
-        .name = "no-music-vol-decrease-on-pause",
+        .name = "remove-volume-decrease-on-pause",
         .description = "No music volume decrease on pause",
         .init_main_loop = init_main_loop, ))
 
@@ -15,4 +15,4 @@ void init_main_loop() {
     patch::write_nop(reinterpret_cast<void*>(0x802a32a8));
 }
 
-}// namespace pause_volume_fix
+}// namespace remove_volume_decrease_on_pause

@@ -1,20 +1,35 @@
-#include "fix_labyrinth_camera.h"
+#include "remove_hardcodes.h"
 
 #include "internal/patch.h"
 #include "internal/tickable.h"
 #include "utils/ppcutil.h"
 
-namespace fix_labyrinth_camera {
+namespace remove_hardcodes {
 
 TICKABLE_DEFINITION((
-        .name = "fix-labyrinth-camera",
-        .description = "Labyrinth stage slot fix",
-        .init_main_loop = init_main_loop, ))
+        .name = "remove-stage-slot-hardcodes",
+        .description = "Remove stage slot hardcodes",
+        .init_main_loop = init_main_loop,
+        .init_main_game = init_main_game, ))
 
-// Always compare the stage ID to 0xFFFF when these camera functions check
-// if the current stage ID is 0x15a when determining specific constants.
-// 0x2c00ffff = cmpwi r0. 0xFFFF
 void init_main_loop() {
+    // Nop a call to handle hardcoded stage object drawing for
+    // SMB2 stages
+    patch::write_nop(reinterpret_cast<void*>(0x802c96d8));
+    // Nop a call to handle hardcoded stage lights leftover from
+    // SMB1
+    patch::write_nop(reinterpret_cast<void*>(0x802945d8));
+    // In the function which handles Bonus Wave's collision, nop
+    // the part which decides what space has hardcoded collision
+    patch::write_nop(reinterpret_cast<void*>(0x802c79b4));
+    // In an array for hardcoded camera settings, check for stage ID
+    // 0xffffffff instead of any used stage slots
+    patch::write_word(reinterpret_cast<void*>(0x8044b208), 0xffffffff);
+    patch::write_word(reinterpret_cast<void*>(0x8044b1e0), 0xffffffff);
+    patch::write_word(reinterpret_cast<void*>(0x8044b1f4), 0xffffffff);
+    // Always compare the stage ID to 0xFFFF when these camera functions check
+    // if the current stage ID is 0x15a when determining specific constants.
+    // 0x2c00ffff = cmpwi r0. 0xFFFF
     patch::write_word(reinterpret_cast<void*>(0x802858D4), 0x2c00ffff);
     patch::write_word(reinterpret_cast<void*>(0x802874BC), 0x2c00ffff);
     patch::write_word(reinterpret_cast<void*>(0x8028751C), 0x2c00ffff);
@@ -36,4 +51,10 @@ void init_main_loop() {
     patch::write_word(reinterpret_cast<void*>(0x80291AEC), 0x2c00ffff);
 }
 
-}// namespace fix_labyrinth_camera
+void init_main_game() {
+    // Nop a call to handle hardcoded stage object drawing for
+    // SMB2 stages
+    patch::write_nop(reinterpret_cast<void*>(0x809140f4));
+}
+
+}// namespace remove_hardcodes

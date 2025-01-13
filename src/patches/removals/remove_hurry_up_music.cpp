@@ -1,13 +1,13 @@
-#include "no_hurry_up_music.h"
+#include "remove_hurry_up_music.h"
 
 #include "internal/patch.h"
 #include "internal/tickable.h"
 #include "mkb/mkb.h"
 
-namespace no_hurry_up_music {
+namespace remove_hurry_up_music {
 
 TICKABLE_DEFINITION((
-        .name = "no-hurry-up-music",
+        .name = "remove-hurry-up-music",
         .description = "Hurry up music removal",
         .init_main_game = init_main_game,
         .tick = tick, ))
@@ -25,4 +25,4 @@ void tick() {
         mkb::g_SoftStreamStart_with_some_defaults_2(0x2c);
     }
 }
-}// namespace no_hurry_up_music
+}// namespace remove_hurry_up_music

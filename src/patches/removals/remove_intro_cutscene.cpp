@@ -1,14 +1,14 @@
-#include "skip_intro_movie.h"
+#include "remove_intro_cutscene.h"
 
 #include "internal/patch.h"
 #include "internal/tickable.h"
 #include "mkb/mkb.h"
 
-namespace skip_intro_movie {
+namespace remove_intro_cutscene {
 
 TICKABLE_DEFINITION((
-        .name = "skip-intro-movie",
-        .description = "Skip intro movie patch",
+        .name = "remove-intro-cutscene",
+        .description = "Intro cutscene removal",
         .init_main_loop = init_main_loop, ))
 
 // Immediately goes to the title screen
@@ -22,4 +22,4 @@ void init_main_loop() {
 }
 
 
-}// namespace skip_intro_movie
+}// namespace remove_intro_cutscene

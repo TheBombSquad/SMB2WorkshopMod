@@ -1,4 +1,4 @@
-#include "skip_cutscenes.h"
+#include "remove_story_cutscenes.h"
 
 #include "internal/patch.h"
 #include "internal/tickable.h"
@@ -6,13 +6,13 @@
 #include "utils/ppcutil.h"
 
 
-namespace skip_cutscenes {
+namespace remove_story_cutscenes {
 
 static u16 DEFAULT_CUTSCENE_SKIP_SETTING = 0;
 
 TICKABLE_DEFINITION((
-        .name = "skip-cutscenes",
-        .description = "Cutscene skip patch",
+        .name = "remove-story-cutscenes",
+        .description = "Story Mode cutscene removal",
         .active_value = DEFAULT_CUTSCENE_SKIP_SETTING,
         .lower_bound = 0,
         .upper_bound = 3,
@@ -159,4 +159,4 @@ void init_main_game() {
     }
 }
 
-}// namespace skip_cutscenes
+}// namespace remove_story_cutscenes
