@@ -27,6 +27,7 @@ void init_main_loop() {
     patch::write_word(reinterpret_cast<void*>(0x8044b208), 0xffffffff);
     patch::write_word(reinterpret_cast<void*>(0x8044b1e0), 0xffffffff);
     patch::write_word(reinterpret_cast<void*>(0x8044b1f4), 0xffffffff);
+    // Labyrinth camera removal
     // Always compare the stage ID to 0xFFFF when these camera functions check
     // if the current stage ID is 0x15a when determining specific constants.
     // 0x2c00ffff = cmpwi r0. 0xFFFF
@@ -49,6 +50,10 @@ void init_main_loop() {
     patch::write_word(reinterpret_cast<void*>(0x80291960), 0x2c00ffff);
     patch::write_word(reinterpret_cast<void*>(0x8029198C), 0x2c00ffff);
     patch::write_word(reinterpret_cast<void*>(0x80291AEC), 0x2c00ffff);
+    // Wormhole surface fix
+    // Always return 'true' for a specific function that checks if the stage ID
+    // belongs to a slot normally used for party games.
+    patch::write_word(reinterpret_cast<void*>(0x802c8ce4), PPC_INSTR_LI(PPC_R0, 0x1));
 }
 
 void init_main_game() {
