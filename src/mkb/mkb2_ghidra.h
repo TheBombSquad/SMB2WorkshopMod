@@ -5902,6 +5902,7 @@ extern "C" {
     extern char HUD_TEXT_WORLD_STAGE_NO[6];
     extern char HUD_TEXT_STAGE_NO[3];
     extern char HUD_TEXT_STAGE_NAME[3];
+    extern char SPRITE_TEXT_FINAL_STAGE[12];
     extern char sprite_banana_count_fmt_string[5];
     extern MinimapMode  g_minimap_mode;
     extern undefined4 minimap_zoom_level;
