@@ -13,6 +13,15 @@ TICKABLE_DEFINITION((
 
 static patch::Tramp<decltype(&mkb::create_hud_sprites)> s_create_hud_sprites_tramp;
 
+void new_bonus_sprite_tick(u8 *status, mkb::Sprite *sprite) {
+    if (mkb::sub_mode == mkb::SMD_GAME_GOAL_REPLAY_MAIN) {
+        sprite->alpha -= 0.07;
+    }
+    if (sprite->alpha < 0) {
+        sprite-> alpha = 0;
+    }
+}
+
 void create_bonus_sprite(void) {
     // Check if we're on a bonus stage and if the sprite already exists
     mkb::Sprite *special_stage_text_sprite = mkb::get_sprite_with_unique_id(mkb::SPRITE_SPECIAL_STAGE);
@@ -34,6 +43,7 @@ void create_bonus_sprite(void) {
         sprite->height = 0.3;
         sprite->g_flags1 = sprite->g_flags1 | 0x1001000;
         sprite->widescreen_translation_x = 0x27f;
+        sprite->tick_func = new_bonus_sprite_tick;
         mkb::strcpy(sprite->text, "BONUS STAGE");
     }
       }
@@ -42,8 +52,8 @@ void create_bonus_sprite(void) {
 void init_main_loop() {
     // Hook the function which creates HUD sprites and call our new sprite create function
     patch::hook_function(s_create_hud_sprites_tramp, mkb::create_hud_sprites, []() {
-        create_bonus_sprite();
         s_create_hud_sprites_tramp.dest();
+        create_bonus_sprite();
     });
 }
 
