@@ -14,8 +14,8 @@ TICKABLE_DEFINITION((
         .init_main_game = init_main_game, ))
 
 void init_main_game() {
-        patch::write_word(reinterpret_cast<void*>(0x808f6274), PPC_INSTR_LI(PPC_R0, mkb::MD_GAME));
-        patch::write_word(reinterpret_cast<void*>(0x808f6284), PPC_INSTR_LI(PPC_R0, mkb::SMD_GAME_ROLL_INIT));
+    patch::write_word(reinterpret_cast<void*>(0x808f6274), PPC_INSTR_LI(PPC_R0, mkb::MD_GAME));
+    patch::write_word(reinterpret_cast<void*>(0x808f6284), PPC_INSTR_LI(PPC_R0, mkb::SMD_GAME_ROLL_INIT));
 }
 
 }// namespace remove_challenge_cutscenes

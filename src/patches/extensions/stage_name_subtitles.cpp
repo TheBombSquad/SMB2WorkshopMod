@@ -96,7 +96,7 @@ void init_main_loop() {
         subtitle_file_length = (subtitle_file_info.length + 0x1f) & 0xffffffe0;
         subtitle_file_buf = static_cast<char*>(heap::alloc(subtitle_file_length));
         subtitle_file_length = mkb::read_entire_file_using_dvdread_prio_async(&subtitle_file_info, subtitle_file_buf,
-                                                                            subtitle_file_length, 0);
+                                                                              subtitle_file_length, 0);
         char* eof = subtitle_file_buf + subtitle_file_info.length;
 
         MOD_ASSERT_MSG(subtitle_file_length != 0,

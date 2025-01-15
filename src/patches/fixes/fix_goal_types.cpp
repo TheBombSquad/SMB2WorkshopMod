@@ -16,8 +16,8 @@ TICKABLE_DEFINITION((
 // preventing score and warp issues on stages with loads of
 // goals
 void init_main_loop() {
-    patch::write_word(reinterpret_cast<void*>(0x802d81a8), 0x2c0800ff); // cmpwi r8, 255
-    patch::write_word(reinterpret_cast<void*>(0x8031373c), 0x2c0500ff); // cmpwi r5, 255
+    patch::write_word(reinterpret_cast<void*>(0x802d81a8), 0x2c0800ff);// cmpwi r8, 255
+    patch::write_word(reinterpret_cast<void*>(0x8031373c), 0x2c0500ff);// cmpwi r5, 255
 }
 
 }// namespace fix_goal_types
