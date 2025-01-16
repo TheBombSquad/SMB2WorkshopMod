@@ -14,8 +14,10 @@ TICKABLE_DEFINITION((
 // every frame, ensuring even once unpaused the player must wait
 // a full second before pausing again
 void tick() {
-    if (mkb::g_pause_status == 2) {
-        mkb::g_repause_cooldown_counter = 0x3c;
+    if (mkb::sub_mode == mkb::SMD_GAME_PLAY_MAIN) {
+        if (mkb::g_pause_status == 2) {
+            mkb::g_repause_cooldown_counter = 0x3c;
+        }
     }
 }
 
