@@ -5878,8 +5878,12 @@ extern "C" {
     extern pointer switchdataD_803a8800;
     extern pointer switchdataD_803a8894;
     extern undefined * switchdataD_803a88cc;
+    extern char PAUSEMENU_EXIT_GAME_STRING[10];
     extern char * challenge_play_pausemenu_entries[24];
-    extern char * goal_pausemenu_entries[24];
+    extern char * challenge_goal_pausemenu_entries[24];
+    extern char PAUSEMENU_STAGE_SELECT_STRING[13];
+    extern char * story_play_pausemenu_entries[36];
+    extern char * story_goal_pausemenu_entries[36];
     extern char * * pausemenu_entry_pointers[16];
     extern char LOADIN_TEXT_ROUND[9];
     extern char LOADIN_TEXT_WORLD[12];

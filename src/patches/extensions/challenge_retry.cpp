@@ -59,7 +59,7 @@ void pausemenu_handler() {
             mkb::balls[0].monkey_count < 2 || (mkb::mode_info.ball_mode & mkb::BALLMODE_GOALED)) {
             mkb::pausemenu_entry_counts[1] = 4;
             mkb::g_current_pause_menu_entry_count = 4;
-            mkb::pausemenu_entry_pointers[9] = mkb::goal_pausemenu_entries;
+            mkb::pausemenu_entry_pointers[9] = mkb::challenge_goal_pausemenu_entries;
             mkb::pausemenu_entry_pointers[1] = mkb::challenge_play_pausemenu_entries;
             patch::write_word(reinterpret_cast<void*>(0x80273cc8), 0x2c000004);// in the instruction which handles pausemenu input, Exit Game when option 4 is selected
         }
