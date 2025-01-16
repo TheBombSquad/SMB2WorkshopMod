@@ -8,8 +8,6 @@
 
 namespace remove_story_cutscenes {
 
-static u16 DEFAULT_CUTSCENE_SKIP_SETTING = 0;
-
 TICKABLE_DEFINITION((
         .name = "remove-story-cutscenes",
         .description = "Story Mode cutscene removal",

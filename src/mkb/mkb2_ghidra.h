@@ -9581,7 +9581,7 @@ extern "C" {
     int g_get_debug_level_select_loading_left_asterisks(void);
     undefined4 g_swapDiscQueueGroup(undefined4 newValue);
     void g_fill_some_memory_with_0x0_and_0xff(void * ptr);
-    void g_some_shadow_draw_func(int * param_1);
+    void g_some_shadow_draw_func(void * pointer);
     undefined4 g_check_some_condition(ushort param_1);
     void debug_draw_shadow_textures(void);
     void md_mini_func(void);
