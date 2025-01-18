@@ -1,7 +1,7 @@
 # :confetti_ball: SMB2 Workshop Mod
 
-An extension of ComplexPlane's [Super Monkey Ball 2 mod, ApeSphere](htps://github.com/ComplexPlane/ApeSphere), adding
-features useful to custom pack creators. Includes the original practice mod, as well as quality-of-life and
+A variant of ComplexPlane's [Super Monkey Ball 2 mod, PracticeMod](htps://github.com/ComplexPlane/SMB2PracticeMod), adding
+features useful to custom pack creators. Includes quality-of-life and
 feature-adding patches, and easier options for tweaking in-game variables.
 
 Features include:
@@ -14,21 +14,10 @@ Features include:
 * Patch that automatically skips story mode cutscenes
 * And more miscellaneous patches!
 
-Original ApeSphere features included:
-
-* Console savestates
-* An RTA timer that tracks time spent paused
-* An individual-world practice mode
-* Frame advance
-* [Jump mod](https://www.youtube.com/watch?v=kWAunK6Av-Q)
-
-...and more to come!
-
 Planned upcoming features:
 
 * Difficulty rearrangement in configuration file
 * Lighting modification in configuration file
-* Double 'Stage Select' REL patch
 * Ultimate mode patch
 * Custom party game configuration (lap timer, course names, etc)
 * Custom stage timers
@@ -40,7 +29,7 @@ Instructions for setup and usage of this mod are located in
 the [relevant section](https://docs.google.com/document/d/194QZxrimkjHEzSSMKbafs86PnmiYmFBZUnoaEnks4es/edit#heading=h.t4unx1ftb63d)
 of the Super Monkey Ball Custom Level Guide.
 
-# Original ApeSphere Credits
+# Original PracticeMod Credits
 
 Thank you to:
 
