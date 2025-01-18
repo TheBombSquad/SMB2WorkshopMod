@@ -7,7 +7,7 @@
 
 namespace menu_stage_id {
 
-u16 stage_id;
+u16 stage_id = 201;
 
 // Always enabled
 

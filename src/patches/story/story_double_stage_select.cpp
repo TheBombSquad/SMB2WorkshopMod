@@ -1,14 +1,14 @@
-#include "double_stage_select.h"
+#include "story_double_stage_select.h"
 #include "../internal/pad.h"
 #include "internal/patch.h"
 #include "internal/tickable.h"
 #include "mkb/mkb.h"
 
-namespace double_stage_select {
+namespace story_double_stage_select {
 
 TICKABLE_DEFINITION((
         .name = "double-stage-select",
-        .description = "Double stage select",
+        .description = "Story mode double stage select",
         .init_main_loop = init,
         .tick = tick))
 
@@ -72,4 +72,4 @@ void tick() {
         patch::write_word(reinterpret_cast<void*>(0x80273ad0), 0x3803ffff);
     }
 }
-}// namespace double_stage_select
+}// namespace story_double_stage_select

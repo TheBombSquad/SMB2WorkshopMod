@@ -4,7 +4,7 @@
 #include "internal/heap.h"
 #include "internal/log.h"
 #include "internal/tickable.h"
-#include "patches/custom/party_game_toggle.h"
+#include "patches/custom/menu_option_toggle.h"
 
 #define STREQ(x, y) (mkb::strcmp(const_cast<char*>(x), const_cast<char*>(y)) == 0)
 #define KEY_ENABLED(x) (STREQ(key, x) && STREQ(value, "enabled"))
@@ -42,7 +42,7 @@ u16* parse_stageid_list(char* buf, u16* array) {
     return array;
 }
 
-void parse_party_game_toggles(char* buf) {
+void parse_menu_option_toggles(char* buf) {
     buf = mkb::strchr(buf, '\n') + 1;
 
     char* end_of_section;
@@ -59,30 +59,43 @@ void parse_party_game_toggles(char* buf) {
         mkb::strncpy(value, key_end + 2, (end_of_line - key_end) - 2);
 
         if KEY_ENABLED ("monkey-race")
-            party_game_toggle::party_game_bitflag |= 0x1;
+            menu_option_toggle::party_game_bitflag |= 0x1;
         else if KEY_ENABLED ("monkey-fight")
-            party_game_toggle::party_game_bitflag |= 0x2;
+            menu_option_toggle::party_game_bitflag |= 0x2;
         else if KEY_ENABLED ("monkey-target")
-            party_game_toggle::party_game_bitflag |= 0x4;
+            menu_option_toggle::party_game_bitflag |= 0x4;
         else if KEY_ENABLED ("monkey-billiards")
-            party_game_toggle::party_game_bitflag |= 0x8;
+            menu_option_toggle::party_game_bitflag |= 0x8;
         else if KEY_ENABLED ("monkey-bowling")
-            party_game_toggle::party_game_bitflag |= 0x10;
+            menu_option_toggle::party_game_bitflag |= 0x10;
         else if KEY_ENABLED ("monkey-golf")
-            party_game_toggle::party_game_bitflag |= 0x20;
+            menu_option_toggle::party_game_bitflag |= 0x20;
         else if KEY_ENABLED ("monkey-boat")
-            party_game_toggle::party_game_bitflag |= 0x40;
+            menu_option_toggle::party_game_bitflag |= 0x40;
         else if KEY_ENABLED ("monkey-shot")
-            party_game_toggle::party_game_bitflag |= 0x80;
+            menu_option_toggle::party_game_bitflag |= 0x80;
         else if KEY_ENABLED ("monkey-dogfight")
-            party_game_toggle::party_game_bitflag |= 0x100;
+            menu_option_toggle::party_game_bitflag |= 0x100;
         else if KEY_ENABLED ("monkey-soccer")
-            party_game_toggle::party_game_bitflag |= 0x200;
+            menu_option_toggle::party_game_bitflag |= 0x200;
         else if KEY_ENABLED ("monkey-baseball")
-            party_game_toggle::party_game_bitflag |= 0x400;
+            menu_option_toggle::party_game_bitflag |= 0x400;
         else if KEY_ENABLED ("monkey-tennis")
-            party_game_toggle::party_game_bitflag |= 0x800;
-
+            menu_option_toggle::party_game_bitflag |= 0x800;
+        else if KEY_ENABLED ("party-games")
+            menu_option_toggle::mode_bitflag &= ~0x2;
+        else if KEY_ENABLED ("challenge-mode")
+            menu_option_toggle::main_game_bitflag &= ~0x2;
+        else if KEY_ENABLED ("story-mode")
+            menu_option_toggle::main_game_bitflag &= ~0x1;
+        else if KEY_ENABLED ("beginner")
+            menu_option_toggle::level_bitflag &= ~0x1;
+        else if KEY_ENABLED ("advanced")
+            menu_option_toggle::level_bitflag &= ~0x2;
+        else if KEY_ENABLED ("expert")
+            menu_option_toggle::level_bitflag &= ~0x4;
+        else if KEY_ENABLED ("master")
+            menu_option_toggle::level_bitflag &= ~0x8;
         buf = end_of_line + 1;
         mkb::memset(key, '\0', 64);
         mkb::memset(value, '\0', 64);
@@ -189,8 +202,8 @@ void parse_config() {
                         parse_function_toggles(section_end);
                     }
 
-                    else if (STREQ(section, "Party Game Toggles")) {
-                        parse_party_game_toggles(section_end);
+                    else if (STREQ(section, "Menu Option Toggles")) {
+                        parse_menu_option_toggles(section_end);
                     }
 
                     else if (STREQ(section, "Theme IDs")) {

@@ -11,6 +11,7 @@ TICKABLE_DEFINITION((
         .name = "remove-playpoints",
         .description = "Playpoint removal patch",
         .init_main_game = init_main_game,
+        .init_sel_ngc = init_sel_ngc,
         .tick = tick, ))
 
 void init_main_game() {
@@ -24,6 +25,11 @@ void init_main_game() {
 
     // Removes playpoint screen when saving game data in story mode.
     patch::write_nop(reinterpret_cast<void*>(0x80274c94));
+}
+
+void init_sel_ngc() {
+    // Disables gift menu
+    patch::write_nop(reinterpret_cast<void*>(0x808f9890));
 }
 
 void tick() {

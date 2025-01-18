@@ -6472,6 +6472,7 @@ extern "C" {
     extern pointer switchdataD_805748e8;
     extern pointer switchdataD_805749f8;
     extern pointer switchdataD_80574bb0;
+    extern char CAN_PLAY_NUM_PARTY_GAMES_NEED_UNLOCK_STRING[124];
     extern struct MenuEntry menu_mode_select_entries;
     extern char CAN_PLAY_NUM_PARTY_GAMES_STRING[49];
     extern undefined menu_party_game_select_entries;
@@ -6485,6 +6486,8 @@ extern "C" {
     extern struct MenuEntry menu_character_select_1_entries[4];
     extern char CHARACTER_SELECT_DESCRIPTION_UNUSED[76];
     extern struct MenuEntry menu_character_select_2_entries[4];
+    extern char MENU_STORY_DESCRIPTION_TEXT[151];
+    extern char MENU_CHALLENGE_DESCRIPTION_TEXT[135];
     extern struct MenuEntry menu_main_game_select_entries[3];
     extern undefined menu_level_select_1_entries;
     extern undefined menu_level_select_2_entries;

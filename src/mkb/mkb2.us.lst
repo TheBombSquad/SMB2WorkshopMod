@@ -10027,6 +10027,7 @@
 8091E980:switchdataD_805748e8
 8091EA90:switchdataD_805749f8
 8091EC48:switchdataD_80574bb0
+8091ED98:CAN_PLAY_NUM_PARTY_GAMES_NEED_UNLOCK_STRING
 8091EF54:menu_mode_select_entries
 8091F098:CAN_PLAY_NUM_PARTY_GAMES_STRING
 8091FA7C:menu_party_game_select_entries
@@ -10040,6 +10041,8 @@
 80920A24:menu_character_select_1_entries
 80920AF4:CHARACTER_SELECT_DESCRIPTION_UNUSED
 80920BA0:menu_character_select_2_entries
+809216D4:MENU_STORY_DESCRIPTION_TEXT
+80921824:MENU_CHALLENGE_DESCRIPTION_TEXT
 80921A20:menu_main_game_select_entries
 80921D00:menu_level_select_1_entries
 80921DAC:menu_level_select_2_entries

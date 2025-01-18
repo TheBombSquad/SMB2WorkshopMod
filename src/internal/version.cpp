@@ -2,7 +2,7 @@
 
 namespace version {
 
-const SemVer WSMOD_VERSION = {0, 3, 1};
+const SemVer WSMOD_VERSION = {1, 0, 0};
 
 s32 compare(const SemVer& v1, const SemVer& v2) {
     if (v1.major < v2.major) return -1;
