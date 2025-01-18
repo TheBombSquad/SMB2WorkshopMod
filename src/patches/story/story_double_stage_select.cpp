@@ -7,7 +7,7 @@
 namespace story_double_stage_select {
 
 TICKABLE_DEFINITION((
-        .name = "double-stage-select",
+        .name = "story-double-stage-select",
         .description = "Story mode double stage select",
         .init_main_loop = init,
         .tick = tick))

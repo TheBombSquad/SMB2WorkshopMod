@@ -8,7 +8,7 @@
 namespace story_missing_w_fix {
 
 TICKABLE_DEFINITION((
-        .name = "fix-missing-w",
+        .name = "story-fix-missing-w",
         .description = "Missing 'w' patch",
         .init_main_game = init_main_game, ))
 
