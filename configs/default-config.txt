@@ -1,4 +1,4 @@
-// This is the config file for Workshop Mod 1.0.0!
+// This is the config file for Workshop Mod 1.0.1!
 // Place this in the root of your game directory, and name it config.txt
 // It should be in the same folder as the included REL file, mkb2.rel_sample.rel
 //
@@ -55,7 +55,7 @@
 // Fixes an issue where goal posts would not reflect properly, and makes any 
 // stage object with the effect bitflag 0x4 reflect in a reflective stage object.
 
-// enhance-reflective-surfaces
+// enhance-reflective-surfaces (CURRENTLY UNAVAILABLE)
 //
 // Allows for arbitrarily many mirror planes on a stage, rendering the mirror plane
 // from the origin of the reflective object nearest to the player. Also applies the
@@ -111,12 +111,12 @@
 // Permanently enables or disables various menu options based off the Menu Option Toggles
 // list, defined below.
 
-// enable-menu-reflections
+// enable-menu-reflections (CURRENTLY UNAVAILABLE)
 //
 // Allows for the stages that appear in the background of the menu, stages 3 and 201,
 // to have mirrors in the background. This is experimental and may cause issues.
 
-// custom-world-count
+// custom-world-count (CURRENTLY UNAVAILABLE)
 //
 // Allows for the number of worlds in story mode to be modified. After the final world,
 // the end cutscene will play, or the credits sequence will start if the cutscene skip
@@ -172,6 +172,11 @@
 //
 // Fixes an issue where the 'BONUS STAGE' sprite would disappear upon respawn on a bonus stage
 // in Practice Mode
+
+// fix-final-stage
+//
+// Fixes various issues with final stage, such as the sprite appearing in Story Mode under certain
+// conditions and issues when a final stage is a bonus stage
 
 // fix-goal-types
 //
@@ -272,10 +277,10 @@
 	perfect-bonus-completion: disabled
 }
 
-// Toggles which party games are accessible from the party game menu.
-// Party games marked with 'disabled' will be permanently disabled, and
+// Toggles which menu options are accessible.
+// Options marked with 'disabled' will be permanently disabled, and
 // cannot be unlocked or accessed. 
-// Requires the patch 'party-game-toggle' to be enabled.
+// Requires the patch 'menu-option-toggle' to be enabled.
 
 # Menu Option Toggles {
 	party-games: enabled
