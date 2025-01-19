@@ -57,10 +57,8 @@ void init_sel_ngc() {
     mkb::strcpy(mkb::CANNOT_SELECT_PARTY_GAME_STRING, "You cannot play this game\n in this custom pack.");
     mkb::strcpy(mkb::CAN_PURCHASE_PARTY_GAME_STRING, "You cannot unlock this game\n in this custom pack.");
     if (mode_bitflag == 0x2) {
-        mkb::sprintf(mkb::CAN_PLAY_NUM_PARTY_GAMES_STRING, "Play the Main Game!",
-                     number_of_unlocked_party_games(party_game_bitflag));
-        mkb::sprintf(mkb::CAN_PLAY_NUM_PARTY_GAMES_NEED_UNLOCK_STRING, "Play the Main Game!",
-                     number_of_unlocked_party_games(party_game_bitflag));
+        mkb::sprintf(mkb::CAN_PLAY_NUM_PARTY_GAMES_STRING, "Play the Main Game!");
+        mkb::sprintf(mkb::CAN_PLAY_NUM_PARTY_GAMES_NEED_UNLOCK_STRING, "Play the Main Game!");
     }
     else {
         mkb::sprintf(mkb::CAN_PLAY_NUM_PARTY_GAMES_STRING, "You can play /bcff8000/%d/bcffff00/ party games!",
@@ -68,10 +66,10 @@ void init_sel_ngc() {
         mkb::sprintf(mkb::CAN_PLAY_NUM_PARTY_GAMES_NEED_UNLOCK_STRING, "You can play /bcff8000/%d/bcffff00/ party games!",
                      number_of_unlocked_party_games(party_game_bitflag));
     }
-    if (main_game_bitflag |= 0x1) {
+    if (main_game_bitflag & 0x1) {
         mkb::sprintf(mkb::MENU_STORY_DESCRIPTION_TEXT, "Play Challenge Mode!");
     }
-    else if (main_game_bitflag |= 0x2) {
+    else if (main_game_bitflag & 0x2) {
         mkb::sprintf(mkb::MENU_CHALLENGE_DESCRIPTION_TEXT, "Play Story Mode!");
     }
 }

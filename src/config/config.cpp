@@ -84,10 +84,10 @@ void parse_menu_option_toggles(char* buf) {
             menu_option_toggle::party_game_bitflag |= 0x800;
         else if KEY_ENABLED ("party-games")
             menu_option_toggle::mode_bitflag &= ~0x2;
-        else if KEY_ENABLED ("challenge-mode")
-            menu_option_toggle::main_game_bitflag &= ~0x2;
         else if KEY_ENABLED ("story-mode")
             menu_option_toggle::main_game_bitflag &= ~0x1;
+        else if KEY_ENABLED ("challenge-mode")
+            menu_option_toggle::main_game_bitflag &= ~0x2;
         else if KEY_ENABLED ("beginner")
             menu_option_toggle::level_bitflag &= ~0x1;
         else if KEY_ENABLED ("advanced")
