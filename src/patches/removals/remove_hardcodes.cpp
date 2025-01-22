@@ -16,6 +16,10 @@ void init_main_loop() {
     // Nop a call to handle hardcoded stage object drawing for
     // SMB2 stages
     patch::write_nop(reinterpret_cast<void*>(0x802c96d8));
+    // Revolution hardcode removal
+    // Always return 'false' for a specific function that checks if the stage ID
+    // is 348 when determining whether or not to handle level loading specially
+    patch::write_word(reinterpret_cast<void*>(0x802ca9fc), PPC_INSTR_LI(PPC_R3, 0x0));
     // Nop a call to handle hardcoded stage lights leftover from
     // SMB1
     patch::write_nop(reinterpret_cast<void*>(0x802945d8));
