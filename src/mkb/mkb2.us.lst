@@ -8206,6 +8206,7 @@
 804727A8:switchdataD_8039c560
 804727EC:switchdataD_8039c5a4
 80472824:switchdataD_8039c5dc
+80472A28:ball_colors
 80472A80:switchdataD_8039c838
 80472F40:switchdataD_8039ccf8
 80473100:g_fog_type
@@ -8312,6 +8313,13 @@
 8047EA48:switchdataD_803a8800
 8047EADC:switchdataD_803a8894
 8047EB14:switchdataD_803a88cc
+8047EDF4:PAUSEMENU_EXIT_GAME_STRING
+8047EED4:challenge_play_pausemenu_entries
+8047EF94:challenge_goal_pausemenu_entries
+8047F02C:PAUSEMENU_STAGE_SELECT_STRING
+8047F33C:story_play_pausemenu_entries
+8047F3CC:story_goal_pausemenu_entries
+8047F4A4:pausemenu_entry_pointers
 8047F770:LOADIN_TEXT_ROUND
 8047F77C:LOADIN_TEXT_WORLD
 8047F788:LOADIN_TEXT_MASTER_EX
@@ -8334,6 +8342,7 @@
 80494208:HUD_TEXT_WORLD_STAGE_NO
 80494210:HUD_TEXT_STAGE_NO
 80494214:HUD_TEXT_STAGE_NAME
+80494288:SPRITE_TEXT_FINAL_STAGE
 8049440C:sprite_banana_count_fmt_string
 80494444:g_minimap_mode
 8049445C:minimap_zoom_level
@@ -8769,6 +8778,7 @@
 8061CC60:storymode_save_files
 8061CF58:g_storymode_unlock_entries_copy
 8061CF65:g_cm_unlock_entries_copy
+8061CF7B:autosave
 8061FB20:g_some_string
 8061FC10:g_some_pad_motor_array1
 8061FC20:g_some_pad_motor_array2
@@ -9385,8 +9395,13 @@
 8097F4F8:g_are_story_select_sprites_visible
 8097F4FC:g_amount_of_stages_per_world
 8097F4FE:g_amount_of_beaten_stages_in_world
+8097F508:g_story_select_sprites_anim_state
+8097F50A:g_story_select_sprites_timer
 8097F50C:some_ape_float
 8097F510:some_ape_float2
+8097F514:g_some_story_select_sprite_timer
+8097F518:g_some_story_select_sprite_timer_2
+8097F51C:g_some_story_select_sprite_initial_timer
 8097F534:some_ape_float3
 8097F750:g_storymode_preview_textures
 8098005C:g_storymode_stageselect_state
@@ -10012,6 +10027,7 @@
 8091E980:switchdataD_805748e8
 8091EA90:switchdataD_805749f8
 8091EC48:switchdataD_80574bb0
+8091ED98:CAN_PLAY_NUM_PARTY_GAMES_NEED_UNLOCK_STRING
 8091EF54:menu_mode_select_entries
 8091F098:CAN_PLAY_NUM_PARTY_GAMES_STRING
 8091FA7C:menu_party_game_select_entries
@@ -10025,6 +10041,8 @@
 80920A24:menu_character_select_1_entries
 80920AF4:CHARACTER_SELECT_DESCRIPTION_UNUSED
 80920BA0:menu_character_select_2_entries
+809216D4:MENU_STORY_DESCRIPTION_TEXT
+80921824:MENU_CHALLENGE_DESCRIPTION_TEXT
 80921A20:menu_main_game_select_entries
 80921D00:menu_level_select_1_entries
 80921DAC:menu_level_select_2_entries

@@ -7,7 +7,8 @@ namespace death_counter {
 
 TICKABLE_DEFINITION((.name = "challenge-mode-death-count",
                      .description = "Challenge mode death count",
-                     .init_main_game = init_main_game))
+                     .init_main_game = init_main_game,
+                     .init_sel_ngc = init_sel_ngc))
 
 // Death count for each of the four players
 static u32 death_count[4];
@@ -71,11 +72,18 @@ void init_main_game() {
     mkb::memset(death_count, 0, sizeof(death_count));
 
     patch::write_nop(reinterpret_cast<void*>(0x808fa4f4));
-    patch::write_nop(reinterpret_cast<void*>(0x808f509c));
+    patch::write_nop(reinterpret_cast<void*>(0x802b8210));
 
     patch::write_branch_bl(reinterpret_cast<void*>(0x808fa560), reinterpret_cast<void*>(update_death_count));
     patch::write_branch(reinterpret_cast<void*>(mkb::sprite_monkey_counter_tick),
                         reinterpret_cast<void*>(death_counter_sprite_tick));
+}
+
+// In the function which handles inputs on the Challenge Mode level select
+// menu, change the check for unlocked monkeys to be less than 4 to less than
+// 255, effectively never displaying the Gameplay Settings menu
+void init_sel_ngc() {
+    patch::write_word(reinterpret_cast<void*>(0x808ffb14), 0x2c0300ff);// cmpwi r3, 255
 }
 
 }// namespace death_counter

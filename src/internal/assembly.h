@@ -40,9 +40,6 @@ void get_theme_id_hook_2();
 
 // story_mode_char_select
 void get_monkey_id_hook();
-
-extern mkb::SubMode sub_mode;
-void fix_rain_ripple();
 }
 
 }// namespace main

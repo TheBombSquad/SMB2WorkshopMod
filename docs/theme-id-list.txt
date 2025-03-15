@@ -1,7 +1,7 @@
 Credits to Eucalyptus for this list. Background file names in parentheses.
 
 00 Default - Background objects don't load.
-01 Early Volcanic Magma - Background objects don't load.
+01 Early Volcanic Magma - Does not load a background .gma/.tpl; will load (bg_lav) with load-extra-bg-files
 02 Jungle (bg_jun) - Has lens flare.
 03 Water (bg_wat) - Has water effects.
 04 Night (bg_nig) - Texture scroll on background and foreground objects is weird in this theme ID.
@@ -12,7 +12,7 @@ Credits to Eucalyptus for this list. Background file names in parentheses.
 09 Storm (bg_stm) - Has rain, flame objects appear inside bumpers. Crashes if BG does not contain flame objects
 10 Bonus 1 (bg_bns) - Crashes unless the .lz references BNS_MAIN.
 11 Monkey Target (bg_pil) - Crashes unless the .lz references PIL_SEA_A.
-12 Monkey Billiards - Does not load a background .gma/.tpl.
+12 Monkey Billiards - Does not load a background .gma/.tpl; will load (bg_bil) with load-extra-bg-files
 13 Monkey Golf (bg_gol) - bg_gol.gma/.tpl needs to manually be added in.
 14 Monkey Bowling (bg_bow)
 15 Master (bg_mst)
@@ -30,15 +30,15 @@ Credits to Eucalyptus for this list. Background file names in parentheses.
 27 Monkey Soccer (bg_fut2) - Crashes in debug mode stage select, works during gameplay.
 28 Monkey Bowling 2 (bg_bow2)
 29 Monkey Target 2 (bg_tar2) - Crashes unless the .lz references TAR_SEA_A.
-30 Monkey Billiards 2 - Does not load a background .gma/.tpl.
-31 Monkey Boat - Does not load a background .gma/.tpl.
+30 Monkey Billiards 2 - Does not load a background .gma/.tpl; will load (bg_bil2) with load-extra-bg-files
+31 Monkey Boat - Does not load a background .gma/.tpl; will load (bg_boa2) with load-extra-bg-files
 32 Inside A Whale (bg_wha2) - Has special lighting rules.
 33 Monkey Golf 2 (bg_gol2)
-34 Monkey Fight 2 - Boiling Pot (bg_pot2)
+34 Monkey Fight 2 - Boiling Pot (bg_pot2); will load (bg_au_pot2) with load-extra-bg-files
 35 Jungle Village (bg_vil2) - bg_vil2.gma/.tpl needs to manually be added in.
 36 Cutscene - Bubbly Washing Machine (bg_au_bub2)
 37 Cutscene - Amusement Park (bg_au_par2)
 38 Cutscene - Clock Tower Factory (bg_au_gea2) - Stages should not switch between the vanilla background and custom.
 39 Cutscene - Under The Ocean (bg_au_wat2) - Has water and particle effects.
 40 Cutscene - Monkey Target 2 (bg_au_tar2) - Crashes unless the .lz references TAR_SEA_A.
-41 Cutscene - Monkey Bowling 2 (bg_bow2)
+41 Cutscene - Monkey Bowling 2 (bg_bow2); will load (bg_au_bow2) with load-extra-bg-files

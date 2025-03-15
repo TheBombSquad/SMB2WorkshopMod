@@ -5,8 +5,6 @@
 #include "mkb/mkb.h"
 
 // Enables reflective surfaces on the menu. Experimental and I don't really know why this works.
-// Assumes the menu stage slot is 3 or 201.
-// TODO: If/when I make a patch/toggle for changing the menu BG stage slots, don't hardcode the value.
 namespace menu_reflections {
 
 TICKABLE_DEFINITION((

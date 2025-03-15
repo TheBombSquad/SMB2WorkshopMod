@@ -1,9 +1,6 @@
 #include "fix_storm_continue_platform.h"
-
-#include "internal/assembly.h"
 #include "internal/patch.h"
 #include "internal/tickable.h"
-#include "utils/ppcutil.h"
 
 // Fixes an issue with rain droplets not appearing correctly on the continue platform in the storm theme.
 namespace fix_storm_continue_platform {
@@ -11,11 +8,25 @@ namespace fix_storm_continue_platform {
 TICKABLE_DEFINITION((
         .name = "fix-storm-continue-platform",
         .description = "Storm continue platform patch",
-        .init_main_loop = init_main_loop, ))
+        .tick = tick, ))
 
-void init_main_loop() {
-    patch::write_branch(reinterpret_cast<void*>(mkb::effect_bgstm_rainripple_disp),
-                        reinterpret_cast<void*>(main::fix_rain_ripple));
+void tick() {
+    // Check if we're entering or on the continue screen
+    // Frame counter check helps prevent race conditions
+    if ((mkb::sub_mode == (mkb::SMD_GAME_CONTINUE_MAIN) || mkb::sub_mode == (mkb::SMD_GAME_CONTINUE_INIT)) && (mkb::sub_mode_frame_counter >= 2)) {
+        // Nop some branches to code which handle rotating the storm raindrops
+        patch::write_nop(reinterpret_cast<void*>(0x802de2e4));
+        patch::write_nop(reinterpret_cast<void*>(0x802de2ec));
+        patch::write_nop(reinterpret_cast<void*>(0x802de2f4));
+        patch::write_nop(reinterpret_cast<void*>(0x802de2fc));
+    }
+    else {
+        // Original instructions
+        patch::write_word(reinterpret_cast<void*>(0x802de2e4), 0x4bd84c4d);
+        patch::write_word(reinterpret_cast<void*>(0x802de2ec), 0x4bd84bd1);
+        patch::write_word(reinterpret_cast<void*>(0x802de2f4), 0x4bd84cc9);
+        patch::write_word(reinterpret_cast<void*>(0x802de2fc), 0x4bd84bc1);
+    }
 }
 
 }// namespace fix_storm_continue_platform

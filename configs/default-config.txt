@@ -1,4 +1,4 @@
-// This is the config file for Workshop Mod 0.3.1!
+// This is the config file for Workshop Mod 1.0.1!
 // Place this in the root of your game directory, and name it config.txt
 // It should be in the same folder as the included REL file, mkb2.rel_sample.rel
 //
@@ -22,14 +22,13 @@
 // remove-desert-haze
 //
 // Removes the heat haze on levels in theme ID 7 (sand). 
-// Indirectly fixes the widescreen issue with heat haze.
 
 // story-mode-music-fix
 //
 // Prevents the world music from being interrupted by the stage select music 
 // in Story Mode.
 
-// no-music-vol-decrease-on-pause
+// remove-music-vol-decrease-on-pause
 //
 // Prevents the music volume from being lowered when the game is paused.
 
@@ -37,39 +36,26 @@
 //
 // Allows the player to select between the four playable monkeys in Story Mode.
 
-// no-hurry-up-music
+// remove-hurry-up-music
 //
 // Stops the 'hurry up' music from playing.
-
-// fix-revolution-slot
-//
-// Removes hardcoded elements from Revolution's level slot.
-
-// fix-labyrinth-camera
-//
-// Fixes the lower-angle camera hardcoded to Labyrinth's level slot.
 
 // challenge-mode-death-count
 //
 // Challenge mode has infinite lives, and the life counter is converted into 
 // a counter that tracks the number of deaths.
 
-// disable-how-to-play-screen
+// remove-how-to-play-screen
 //
 // Disables the tutorial/ranking sequence that shows up when the player goes 
 // idle at the title screen.
-
-// fix-wormhole-surfaces
-//
-// Fixes an issue where wormhole surfaces do not appear on stage IDs 130 
-// through 180, and stage ID 199.
 
 // fix-stage-object-reflection
 //
 // Fixes an issue where goal posts would not reflect properly, and makes any 
 // stage object with the effect bitflag 0x4 reflect in a reflective stage object.
 
-// enhance-reflective-surfaces
+// enhance-reflective-surfaces (CURRENTLY UNAVAILABLE)
 //
 // Allows for arbitrarily many mirror planes on a stage, rendering the mirror plane
 // from the origin of the reflective object nearest to the player. Also applies the
@@ -86,7 +72,7 @@
 // Draws theme ID data from a per-stage list, defined below, instead of using
 // the built-in list.
 
-// skip-intro-movie
+// remove-intro-movie
 //
 // Skips the AV logo and intro movie sequence on game start, immediately
 // skipping to the title screen.
@@ -95,12 +81,12 @@
 //
 // Allows for the SMB1 camera to be toggled with the Z button mid-game.
 
-// fix-missing-w
+// story-fix-missing-w
 //
 // Replaces the misplaced 't' letter in the story mode data entry screen with
 // the correct letter, a lowercase 'w'.
 
-// skip-cutscenes
+// remove-story-cutscenes
 //
 // Skips the cutscenes in story mode.
 
@@ -114,29 +100,29 @@
 // Fixes an issue with the storm theme where rain droplet splashes would not appear
 // correctly on the continue platform.
 
-// fix-any-percent-crash
+// story-any-percent-fix
 //
 // Fixes an issue where skipping more than two or three stages in story mode with the
 // any% skip glitch would lead to the game crashing. Please note that this allows for
 // up to 99 skips to be performed. 
 
-// party-game-toggle
+// menu-option-toggle
 //
-// Permanently enables or disables party games based off the Party Game Toggles
+// Permanently enables or disables various menu options based off the Menu Option Toggles
 // list, defined below.
 
-// enable-menu-reflections
+// enable-menu-reflections (CURRENTLY UNAVAILABLE)
 //
 // Allows for the stages that appear in the background of the menu, stages 3 and 201,
 // to have mirrors in the background. This is experimental and may cause issues.
 
-// custom-world-count
+// custom-world-count (CURRENTLY UNAVAILABLE)
 //
 // Allows for the number of worlds in story mode to be modified. After the final world,
 // the end cutscene will play, or the credits sequence will start if the cutscene skip
 // patch is enabled. The minimum value is 1, and the maximum value is 10.
 
-// stobj-draw-fix
+// fix-stobj-draw
 //
 // Stage objects (stobjs) like party balls and goaltapes may show up incorrectly
 // or not at all if they reside on an itemgroup whose index is >127. This patch
@@ -159,7 +145,87 @@
 //
 // Fixes an issue where widescreen would display less vertically compared to 
 // 4:3. Additionally fixes View Stage stretching and Sand's haze breaking in
-// widescreen. Sprites will be fixed in the future.
+// widescreen. More sprites will be fixed in the future.
+
+// stage-name-subtitles
+//
+// Allows subtitles for stagenames to be displayed underneath the lower-left
+// stagename. Subtitles are read from stgname/subtitles.txt
+
+// challenge-mode-retry
+//
+// Adds a retry option to Challenge Mode's pausemenu. Only accessible during
+// gameplay, when the player has fallen out or when the player has ran out of time
+
+// goal-texture-scroll
+//
+// Allows goal models to have texture scroll based on their Item Group's texture scroll
+// values
+
+// load-extra-bg-files
+//
+// Allows extra background .gma and .tpls to be read for theme IDs which were missing them
+// as well as separate multiple theme IDs which read the same set of background files to load
+// their own
+
+// fix-bonus-sprite
+//
+// Fixes an issue where the 'BONUS STAGE' sprite would disappear upon respawn on a bonus stage
+// in Practice Mode
+
+// fix-final-stage
+//
+// Fixes various issues with final stage, such as the sprite appearing in Story Mode under certain
+// conditions and issues when a final stage is a bonus stage
+
+// fix-goal-types
+//
+// Fixes an issue with goal type reading on stages with more than three goals
+
+// fix-monkey-counter
+//
+// Fix weird animation issues with the monkey counter when going from 4 to 3 lives
+// as well as its missing shadow
+
+// fix-transparency-type-b-texture-scroll
+//
+// Fix an issue where stage models with bitflag 0x10 would not support texture scroll
+
+// remove-1up-sprite
+//
+// Remove the intrusive 1UP sprite
+
+// remove-ball-rolling-sound
+//
+// Removes the ball rolling sound during gameplay, similar to SMBDX
+
+// remove-challenge-cutscenes
+//
+// Removes the ending cutscenes from Challenge Mode
+
+// remove-extras
+//
+// Removes extras when playing Challenge Mode
+
+// remove-stage-slot-hardcodes
+//
+// Removes various stage slot hardcodes which made certain slots 'unusable'
+// when creating custom stages
+
+// remove-ice-fog
+//
+// Removes hardcoded fog from the Ice theme (theme ID 8)
+
+// story-double-stage-select
+//
+// Adds an extra 'Stage select' button to Story Mode's pausemenu in place
+// of the 'Exit game' button and moves the 'Exit game' button to replace
+// 'How to play'
+
+// pause-cooldown
+//
+// Adds a one-second interval where the player cannot pause after pausing once
+// during gameplay
 
 // ----------------------------------------------------------------------------
 
@@ -167,56 +233,75 @@
 // 'disabled' - Does not apply the patch
 
 # REL Patches {
-	perfect-bonus-completion: disabled
-	remove-desert-haze: disabled
-	story-mode-music-fix: disabled
-	no-music-vol-decrease-on-pause: disabled
-	story-mode-char-select: disabled
-	no-hurry-up-music: disabled
-	fix-revolution-slot: disabled
-	fix-labyrinth-camera: disabled
-	challenge-mode-death-count: disabled
-	disable-how-to-play-screen: disabled
-	fix-wormhole-surfaces: disabled
-	fix-stage-object-reflection: disabled
-	enhance-reflective-surfaces: disabled
 	custom-music-id: disabled
 	custom-theme-id: disabled
-	skip-intro-movie: disabled
-	smb1-camera-toggle: disabled
-	fix-missing-w: disabled
-	skip-cutscenes: disabled
-	remove-playpoints: disabled
-	fix-storm-continue-platform: disabled
-	fix-any-percent-crash: disabled
-	party-game-toggle: disabled
-	enable-menu-reflections: disabled
-	custom-world-count: 10
-	stobj-draw-fix: disabled
-	fix-view-stage: disabled
+	menu-option-toggle: disabled
+	menu-stage-id: 201
+	challenge-mode-retry: disabled
+	challenge-mode-death-count: disabled
 	four-digit-banana-counter: disabled
+	goal-texture-scroll: disabled
+	load-extra-bg-files: disabled
+	smb1-camera-toggle: disabled
+	stage-name-subtitles: disabled
+	fix-bonus-sprite: disabled
+	fix-final-stage: disabled
+	fix-goal-types: disabled
 	fix-minimap-color: disabled
+	fix-monkey-counter: disabled
+	fix-stobj-draw: disabled
+	fix-stage-object-reflection: disabled
+	fix-storm-continue-platform: disabled
+	fix-transparency-type-b-texture-scroll: disabled
+	fix-view-stage: disabled
 	fix-widescreen: disabled
+	remove-1up-sprite: disabled
+	remove-ball-rolling-sound: disabled
+	remove-challenge-cutscenes: disabled
+	remove-desert-haze: disabled
+	remove-extras: disabled
+	remove-stage-slot-hardcodes: disabled
+	remove-hurry-up-music: disabled
+	remove-ice-fog: disabled
+	remove-intro-cutscene: disabled
+	remove-playpoints: disabled
+	remove-story-cutscenes: disabled
+	remove-tutorial: disabled
+	remove-volume-decrease-on-pause: disabled
+	story-any-percent-fix: disabled
+	story-mode-char-select: disabled
+	story-mode-music-fix: disabled
+	story-double-stage-select: disabled
+	story-fix-missing-w: disabled
+	pause-cooldown: disabled
+	perfect-bonus-completion: disabled
 }
 
-// Toggles which party games are accessible from the party game menu.
-// Party games marked with 'disabled' will be permanently disabled, and
+// Toggles which menu options are accessible.
+// Options marked with 'disabled' will be permanently disabled, and
 // cannot be unlocked or accessed. 
-// Requires the patch 'party-game-toggle' to be enabled.
+// Requires the patch 'menu-option-toggle' to be enabled.
 
-# Party Game Toggles {
-	monkey-race: disabled
-	monkey-fight: disabled
-	monkey-target: disabled
-	monkey-billiards: disabled
-	monkey-bowling: disabled
-	monkey-golf: disabled
-	monkey-boat: disabled
-	monkey-shot: disabled
-	monkey-dogfight: disabled
-	monkey-soccer: disabled
-	monkey-baseball: disabled
-	monkey-tennis: disabled
+# Menu Option Toggles {
+	party-games: enabled
+	story-mode: enabled
+	challenge-mode: enabled
+	beginner: enabled
+	advanced: enabled
+	expert: enabled
+	master: enabled
+	monkey-race: enabled
+	monkey-fight: enabled
+	monkey-target: enabled
+	monkey-billiards: enabled
+	monkey-bowling: enabled
+	monkey-golf: enabled
+	monkey-boat: enabled
+	monkey-shot: enabled
+	monkey-dogfight: enabled
+	monkey-soccer: enabled
+	monkey-baseball: enabled
+	monkey-tennis: enabled
 }
 
 // Stage ID to theme ID mapping. Theme IDs are in decimal.
